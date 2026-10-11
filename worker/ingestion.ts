@@ -1,14 +1,14 @@
 import type { Env } from './types';
 import {
-  WarEraClient, WarEraError, articleSchema, countryFeedSchema, namedSchema,
+  WarEraClient, WarEraError, articleSchema, countryDetailSchema, countryFeedSchema, namedSchema,
   objectSchema, pagedObjectsSchema, pagedPlayersSchema,
-  playerSchema, pricesSchema, regionsObjectSchema,
+  playerSchema, pricesSchema, regionDetailSchema, regionsObjectSchema,
 } from './warera';
 
 type SourceId = 'countries' | 'regions' | 'players' | 'parties' | 'military-units' | 'battles' | 'articles' | 'markets';
 type Row = Record<string, unknown>;
 type SourceRow = { id: string; endpoint: string; interval_seconds: number; cursor: string | null; next_run_at: string; lease_until: string | null };
-type Cursor = { offset?: number; token?: string; pages?: number; countryId?: string };
+type Cursor = { offset?: number; ids?: string[]; token?: string; pages?: number; countryId?: string };
 type Normalized = { table: string; id: string; name: string; country_id: string | null; source_url: string; updated_at: string; data_json: string; extra: Record<string, string | number | null> };
 export type SyncResult = { status: 'ok' | 'error' | 'busy' | 'idle' | 'quota-paused' | 'unknown-source'; source?: string; processed?: number; changed?: number; nextRunAt?: string; error?: string };
 
@@ -16,7 +16,7 @@ const MAX_ROWS = 3;
 const MAX_PLAYER_ROWS = 1;
 const RESERVED_WRITES_PER_TICK = 140;
 const DAILY_INGESTION_WRITE_BUDGET = 60_000;
-const TICK_SUBREQUEST_UPPER_BOUND = 28; // 2 player calls with retries + <=22 D1 statements
+const TICK_SUBREQUEST_UPPER_BOUND = 28; // 3 detail calls with retries + <=19 D1 statements
 const sourceTable: Record<SourceId, string> = {
   countries: 'countries', regions: 'regions', players: 'players', parties: 'parties',
   'military-units': 'military_units', battles: 'battles', articles: 'articles', markets: 'market_items',
@@ -131,21 +131,46 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
 }
 
 type Batch = { records: unknown[]; next: Cursor | null; sourceUrl?: string };
-async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor: Cursor): Promise<Batch> {
-  if (source === 'countries') {
-    const records = await client.get('country.getAllCountries', undefined, countryFeedSchema);
-    const offset = Math.max(0, Number(cursor.offset) || 0);
-    return { records: records.slice(offset, offset + MAX_ROWS), next: offset + MAX_ROWS < records.length ? { offset: offset + MAX_ROWS } : null };
+const checkedIds = (values: unknown, allowEmpty = false): string[] => {
+  if (!Array.isArray(values) || (!allowEmpty && !values.length) || values.length > 5000) throw new Error('Invalid discovery cursor IDs');
+  const unique = new Set<string>();
+  for (const value of values) {
+    const candidate = id(value);
+    if (!candidate || unique.has(candidate)) throw new Error('Invalid or repeated discovery ID');
+    unique.add(candidate);
   }
-  if (source === 'regions') {
-    const records = await client.get('region.getRegionsObject', undefined, regionsObjectSchema);
-    const values = Object.entries(records).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0);
-    const offset = Math.max(0, Number(cursor.offset) || 0);
-    const selected = values.slice(offset, offset + MAX_ROWS).map(([key, value]) => {
-      if (asRow(value)._id !== key) throw new Error('region.getRegionsObject returned a mismatched ID');
-      return value;
-    });
-    return { records: selected, next: offset + MAX_ROWS < values.length ? { offset: offset + MAX_ROWS } : null };
+  return values as string[];
+};
+async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor: Cursor): Promise<Batch> {
+  if (source === 'countries' || source === 'regions') {
+    const offset = cursor.offset ?? 0;
+    if (!Number.isInteger(offset) || offset < 0) throw new Error('Invalid discovery cursor offset');
+    let ids: string[];
+    let records: unknown[];
+    if (cursor.ids !== undefined) {
+      ids = checkedIds(cursor.ids);
+      const selected = ids.slice(offset, offset + MAX_ROWS);
+      const [procedure, key] = detailProcedure[source];
+      const schema = source === 'countries' ? countryDetailSchema : regionDetailSchema;
+      records = [];
+      for (const recordId of selected) {
+        const detail = await client.get(procedure, { [key]: recordId }, schema);
+        if (detail._id !== recordId) throw new Error(`${procedure} returned a mismatched ID`);
+        records.push(detail);
+      }
+    } else if (source === 'countries') {
+      const feed = await client.get('country.getAllCountries', undefined, countryFeedSchema);
+      ids = checkedIds(feed.map(record => asRow(record)._id), true);
+      records = feed.slice(offset, offset + MAX_ROWS);
+    } else {
+      const feed = await client.get('region.getRegionsObject', undefined, regionsObjectSchema);
+      ids = checkedIds(Object.keys(feed).sort((a, b) => a < b ? -1 : a > b ? 1 : 0), true);
+      for (const recordId of ids) {
+        if (asRow(feed[recordId])._id !== recordId) throw new Error('region.getRegionsObject returned a mismatched ID');
+      }
+      records = ids.slice(offset, offset + MAX_ROWS).map(recordId => feed[recordId]);
+    }
+    return { records, next: offset + MAX_ROWS < ids.length ? { offset: offset + MAX_ROWS, ids } : null };
   }
   if (source === 'markets') {
     const prices = await client.get('itemTrading.getPrices', undefined, pricesSchema);

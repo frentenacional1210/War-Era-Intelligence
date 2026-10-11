@@ -31,5 +31,38 @@
     "source": "regions",
     "status": "ok",
     "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:08:52.590Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 22,
+    "exceptionCount": 0,
+    "version": "2b592360-e377-496b-bb48-7e9dde84e20d",
+    "source": "countries",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:09:52.540Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 9,
+    "exceptionCount": 0,
+    "version": "2b592360-e377-496b-bb48-7e9dde84e20d",
+    "source": "players",
+    "status": "ok",
+    "processed": 1
+  },
+  {
+    "observedAt": "2026-10-11T22:10:54.471Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 8,
+    "exceptionCount": 0,
+    "version": "2b592360-e377-496b-bb48-7e9dde84e20d",
+    "source": "parties",
+    "status": "ok",
+    "processed": 3
   }
 ]

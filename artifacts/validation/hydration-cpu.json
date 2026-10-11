@@ -1,0 +1,70 @@
+[
+  {
+    "observedAt": "2026-10-11T22:13:40.822Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 26,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4"
+  },
+  {
+    "observedAt": "2026-10-11T22:13:41.195Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 11,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4"
+  },
+  {
+    "observedAt": "2026-10-11T22:13:41.609Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 20,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4"
+  },
+  {
+    "observedAt": "2026-10-11T22:13:41.993Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 9,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4"
+  },
+  {
+    "observedAt": "2026-10-11T22:13:52.579Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 17,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4",
+    "source": "markets",
+    "status": "ok",
+    "processed": 1
+  },
+  {
+    "observedAt": "2026-10-11T22:14:52.343Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 10,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4",
+    "source": "battles",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:15:57.305Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 10,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4",
+    "source": "countries",
+    "status": "ok",
+    "processed": 3
+  }
+]

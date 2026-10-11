@@ -69,7 +69,7 @@ class MemoryDb {
           if (sql.startsWith('UPDATE ingestion_cursors SET next_run_at=')) {
             this.due = String(values[0]); this.lease = null; return { meta: { changes: 1 } };
           }
-          if (sql.startsWith('INSERT INTO countries') || sql.startsWith('INSERT INTO articles')) {
+          if (sql.startsWith('INSERT INTO countries') || sql.startsWith('INSERT INTO regions') || sql.startsWith('INSERT INTO articles')) {
             const key = String(values[0]), hash = String(values[6]);
             if (key === this.failOnId) throw new Error('simulated D1 write failure');
             const previous = this.rows.get(key);
@@ -175,10 +175,69 @@ describe('incremental ingestion', () => {
     vi.stubGlobal('fetch', vi.fn(async () => Response.json({ result: { data: countries } })));
     const env = { DB: database as unknown as D1Database } as Env;
     expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'ok', processed: 3, changed: 3 });
-    expect(database.cursor).toBe('{"offset":3}');
+    expect(JSON.parse(database.cursor!)).toEqual({ offset: 3, ids: ['country0', 'country1', 'country2', 'bad'] });
     expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'error' });
-    expect(database.cursor).toBe('{"offset":3}');
+    expect(JSON.parse(database.cursor!)).toEqual({ offset: 3, ids: ['country0', 'country1', 'country2', 'bad'] });
     expect(database.rows.size).toBe(3);
+  });
+
+  it('discovers countries once, then hydrates only the remaining IDs before a new sweep', async () => {
+    const database = new MemoryDb();
+    const feed = Array.from({ length: 5 }, (_, index) => ({ _id: `country${index}`, name: `Country ${index}`, currentPopulation: index + 1 }));
+    const procedures: string[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (input: string) => {
+      const url = new URL(input);
+      const procedure = url.pathname.split('/').at(-1)!;
+      procedures.push(procedure);
+      if (procedure === 'country.getAllCountries') return Response.json({ result: { data: feed } });
+      const recordId = JSON.parse(url.searchParams.get('input')!).countryId;
+      return Response.json({ result: { data: feed.find(row => row._id === recordId) } });
+    }));
+    const env = { DB: database as unknown as D1Database } as Env;
+    expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'ok', processed: 3 });
+    expect(JSON.parse(database.cursor!)).toEqual({ offset: 3, ids: feed.map(row => row._id) });
+    expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'ok', processed: 2 });
+    expect(database.cursor).toBeNull();
+    expect(procedures).toEqual(['country.getAllCountries', 'country.getCountryById', 'country.getCountryById']);
+    expect(database.rows.size).toBe(5);
+    expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'ok', processed: 3, changed: 0 });
+    expect(procedures.at(-1)).toBe('country.getAllCountries');
+  });
+
+  it('preserves a legacy offset and stores ordered region IDs for later detail requests', async () => {
+    const database = new MemoryDb(); database.sourceId = 'regions'; database.cursor = '{"offset":3}';
+    const ids = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+    const feed = Object.fromEntries([...ids].reverse().map(_id => [_id, { _id, name: `Region ${_id}`, country: 'country1' }]));
+    const requested: string[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (input: string) => {
+      const url = new URL(input), procedure = url.pathname.split('/').at(-1)!;
+      requested.push(procedure);
+      if (procedure === 'region.getRegionsObject') return Response.json({ result: { data: feed } });
+      const recordId = JSON.parse(url.searchParams.get('input')!).regionId;
+      requested.push(recordId);
+      return Response.json({ result: { data: feed[recordId] } });
+    }));
+    const env = { DB: database as unknown as D1Database } as Env;
+    expect(await runSync(env, { source: 'regions', force: true })).toMatchObject({ status: 'ok', processed: 3 });
+    expect(JSON.parse(database.cursor!)).toEqual({ offset: 6, ids });
+    expect([...database.rows.keys()]).toEqual(['d', 'e', 'f']);
+    expect(await runSync(env, { source: 'regions', force: true })).toMatchObject({ status: 'ok', processed: 1 });
+    expect(requested).toEqual(['region.getRegionsObject', 'region.getById', 'g']);
+    expect(database.cursor).toBeNull();
+  });
+
+  it('refuses malformed discovery IDs and mismatched detail IDs without advancing', async () => {
+    const database = new MemoryDb();
+    const fetcher = vi.fn(async () => Response.json({ result: { data: { _id: 'wrong', name: 'Wrong' } } }));
+    vi.stubGlobal('fetch', fetcher);
+    const env = { DB: database as unknown as D1Database } as Env;
+    database.cursor = '{"offset":0,"ids":["country1","country1"]}';
+    expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'error' });
+    expect(fetcher).not.toHaveBeenCalled();
+    database.cursor = '{"offset":0,"ids":["country1","country2"]}';
+    expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'error' });
+    expect(database.cursor).toBe('{"offset":0,"ids":["country1","country2"]}');
+    expect(database.rows.size).toBe(0);
   });
 
   it('does not advance a cursor when the final state transaction fails', async () => {

@@ -83,7 +83,9 @@ export class WarEraClient {
 
 export const countryListSchema = z.array(namedSchema);
 export const countryFeedSchema = z.custom<unknown[]>(Array.isArray);
+export const countryDetailSchema = namedSchema.passthrough();
 // The region map is large; validate its envelope here and each selected row during normalization.
 export const regionsObjectSchema = z.custom<Record<string, unknown>>(value => value !== null && typeof value === 'object' && !Array.isArray(value));
+export const regionDetailSchema = objectSchema.passthrough();
 export const pagedObjectsSchema = pageSchema;
 export const pagedPlayersSchema = pageSchema.extend({ items: z.array(objectSchema) });

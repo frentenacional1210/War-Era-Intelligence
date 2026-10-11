@@ -1,0 +1,26 @@
+[
+  {
+    "observedAt": "2026-10-11T22:16:52.412Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 9,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4",
+    "source": "regions",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:17:52.440Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 7,
+    "exceptionCount": 0,
+    "version": "4aa139d7-b907-48f2-bc28-8d4e5723a5c4",
+    "source": "players",
+    "status": "ok",
+    "processed": 1
+  }
+]

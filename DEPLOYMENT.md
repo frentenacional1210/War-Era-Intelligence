@@ -68,4 +68,6 @@ node scripts/watch-cron.mjs
 
 `verify-live.mjs` utiliza internamente el archivo privado, comprueba la sesión y su revocación y escribe evidencias sin credenciales en `artifacts/validation/live.json`. `--sync` recopila un lote por fuente y consume ocho ejecuciones de sincronización. `watch-cron.mjs` observa cuatro minutos de eventos programados y conserva solo resultados, CPU y número de excepciones; descarta cabeceras y metadatos de visitantes. La propagación inicial del Cron puede tardar hasta quince minutos. El panel administrativo muestra las últimas ejecuciones y un presupuesto estimado, independiente de la medición de Cloudflare.
 
+`node scripts/verify-hydration.mjs` fuerza dos lotes de países y dos de regiones para comprobar descubrimiento y continuación. Usa la credencial local sin imprimirla y consume cuatro solicitudes de sincronización. Para observar también su CPU, ejecute el observador con `WINT_TAIL_SYNC=true`; solo registra resúmenes de `/api/admin/sync`, nunca cabeceras, cuerpos ni cookies. La continuación normal del Cron no necesita esa opción.
+
 El remoto GitHub de esta entrega es `https://github.com/frentenacional1210/War-Era-Intelligence.git`. La publicación conserva su commit inicial y licencia AGPL-3.0. El despliegue de Cloudflare utiliza Wrangler y no depende de GitHub para seguir funcionando.

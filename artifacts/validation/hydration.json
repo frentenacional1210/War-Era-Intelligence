@@ -1,0 +1,42 @@
+[
+  {
+    "startedAt": "2026-10-11T22:13:40.263Z",
+    "finishedAt": "2026-10-11T22:13:40.794Z",
+    "httpStatus": 200,
+    "source": "countries",
+    "status": "ok",
+    "processed": 3,
+    "changed": 3,
+    "nextRunAt": "2026-10-11T22:14:42.661Z"
+  },
+  {
+    "startedAt": "2026-10-11T22:13:40.794Z",
+    "finishedAt": "2026-10-11T22:13:41.167Z",
+    "httpStatus": 200,
+    "source": "countries",
+    "status": "ok",
+    "processed": 3,
+    "changed": 3,
+    "nextRunAt": "2026-10-11T22:14:43.048Z"
+  },
+  {
+    "startedAt": "2026-10-11T22:13:41.167Z",
+    "finishedAt": "2026-10-11T22:13:41.582Z",
+    "httpStatus": 200,
+    "source": "regions",
+    "status": "ok",
+    "processed": 3,
+    "changed": 3,
+    "nextRunAt": "2026-10-11T22:14:43.461Z"
+  },
+  {
+    "startedAt": "2026-10-11T22:13:41.583Z",
+    "finishedAt": "2026-10-11T22:13:41.981Z",
+    "httpStatus": 200,
+    "source": "regions",
+    "status": "ok",
+    "processed": 3,
+    "changed": 3,
+    "nextRunAt": "2026-10-11T22:14:43.862Z"
+  }
+]

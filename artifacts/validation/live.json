@@ -1,15 +1,15 @@
 {
-  "verifiedAt": "2026-10-11T21:50:01.041Z",
+  "verifiedAt": "2026-10-11T22:19:41.884Z",
   "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
   "homeStatus": 200,
   "healthStatus": 200,
   "totals": {
-    "countries": 10,
-    "players": 5,
-    "parties": 10,
-    "military-units": 10,
-    "battles": 10,
-    "articles": 5,
+    "countries": 35,
+    "players": 13,
+    "parties": 29,
+    "military-units": 26,
+    "battles": 26,
+    "articles": 10,
     "companies": 0,
     "alerts": 0
   },
@@ -29,23 +29,23 @@
       "id": "articles",
       "endpoint": "article.getArticlesPaginated",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:43.455Z",
-      "last_attempt": "2026-10-11T21:47:42.941Z",
+      "last_success": "2026-10-11T22:12:54.297Z",
+      "last_attempt": "2026-10-11T22:12:53.938Z",
       "last_error": null,
       "interval_seconds": 300,
       "enabled": 1,
-      "record_count": 5
+      "record_count": 10
     },
     {
       "id": "battles",
       "endpoint": "battle.getBattles",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:45.866Z",
-      "last_attempt": "2026-10-11T21:47:45.271Z",
+      "last_success": "2026-10-11T22:14:54.199Z",
+      "last_attempt": "2026-10-11T22:14:53.934Z",
       "last_error": null,
       "interval_seconds": 120,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 26
     },
     {
       "id": "companies",
@@ -60,14 +60,14 @@
     },
     {
       "id": "countries",
-      "endpoint": "country.getAllCountries",
+      "endpoint": "country.getAllCountries + country.getCountryById",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:39.779Z",
-      "last_attempt": "2026-10-11T21:47:39.131Z",
+      "last_success": "2026-10-11T22:15:59.150Z",
+      "last_attempt": "2026-10-11T22:15:58.840Z",
       "last_error": null,
       "interval_seconds": 86400,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 35
     },
     {
       "id": "events",
@@ -84,68 +84,378 @@
       "id": "markets",
       "endpoint": "itemTrading.getPrices",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:44.639Z",
-      "last_attempt": "2026-10-11T21:47:43.770Z",
+      "last_success": "2026-10-11T22:13:54.380Z",
+      "last_attempt": "2026-10-11T22:13:54.057Z",
       "last_error": null,
       "interval_seconds": 600,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 24
     },
     {
       "id": "military-units",
       "endpoint": "mu.getManyPaginated",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:42.586Z",
-      "last_attempt": "2026-10-11T21:47:41.986Z",
+      "last_success": "2026-10-11T22:11:54.238Z",
+      "last_attempt": "2026-10-11T22:11:53.946Z",
       "last_error": null,
       "interval_seconds": 3600,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 26
     },
     {
       "id": "parties",
       "endpoint": "party.getManyPaginated",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:41.670Z",
-      "last_attempt": "2026-10-11T21:47:41.016Z",
+      "last_success": "2026-10-11T22:18:54.202Z",
+      "last_attempt": "2026-10-11T22:18:53.938Z",
       "last_error": null,
       "interval_seconds": 3600,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 29
     },
     {
       "id": "players",
       "endpoint": "user.getUsersByCountry + user.getUserLite",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:40.685Z",
-      "last_attempt": "2026-10-11T21:47:40.062Z",
+      "last_success": "2026-10-11T22:17:54.284Z",
+      "last_attempt": "2026-10-11T22:17:53.933Z",
       "last_error": null,
       "interval_seconds": 3600,
       "enabled": 1,
-      "record_count": 5
+      "record_count": 13
     },
     {
       "id": "regions",
-      "endpoint": "region.getRegionsObject",
+      "endpoint": "region.getRegionsObject + region.getById",
       "status": "ok",
-      "last_success": "2026-10-11T21:47:47.108Z",
-      "last_attempt": "2026-10-11T21:47:46.293Z",
+      "last_success": "2026-10-11T22:16:54.252Z",
+      "last_attempt": "2026-10-11T22:16:53.936Z",
       "last_error": null,
       "interval_seconds": 21600,
       "enabled": 1,
-      "record_count": 10
+      "record_count": 32
     }
   ],
   "quota": {
     "day": "2026-10-11",
     "dailyBudget": 60000,
-    "reserved": 1120,
-    "remaining": 58880,
-    "tickCount": 8,
+    "reserved": 5460,
+    "remaining": 54540,
+    "tickCount": 39,
     "estimate": true
   },
   "syncResults": [],
   "runs": [
+    {
+      "id": "5429add5-4c85-466a-9657-a49fd77ec29b",
+      "source_id": "parties",
+      "started_at": "2026-10-11T22:18:53.938Z",
+      "finished_at": "2026-10-11T22:18:54.202Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 264
+    },
+    {
+      "id": "ec8a3c2f-768a-4a58-a63d-e89834eca914",
+      "source_id": "players",
+      "started_at": "2026-10-11T22:17:53.933Z",
+      "finished_at": "2026-10-11T22:17:54.284Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 351
+    },
+    {
+      "id": "a095e376-6706-48f6-b63f-343835e8fa87",
+      "source_id": "regions",
+      "started_at": "2026-10-11T22:16:53.936Z",
+      "finished_at": "2026-10-11T22:16:54.252Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 316
+    },
+    {
+      "id": "58a96928-1bbe-4d64-a9d2-81565465da51",
+      "source_id": "countries",
+      "started_at": "2026-10-11T22:15:58.840Z",
+      "finished_at": "2026-10-11T22:15:59.150Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 310
+    },
+    {
+      "id": "70287599-680f-41e3-8641-c6a409a35d48",
+      "source_id": "battles",
+      "started_at": "2026-10-11T22:14:53.934Z",
+      "finished_at": "2026-10-11T22:14:54.199Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 265
+    },
+    {
+      "id": "5e2ba12c-4392-4ccf-8806-ff7ada633492",
+      "source_id": "markets",
+      "started_at": "2026-10-11T22:13:54.057Z",
+      "finished_at": "2026-10-11T22:13:54.380Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 323
+    },
+    {
+      "id": "76a5c749-6abd-4ea1-83b3-c2bc4701707d",
+      "source_id": "regions",
+      "started_at": "2026-10-11T22:13:43.652Z",
+      "finished_at": "2026-10-11T22:13:43.862Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 210
+    },
+    {
+      "id": "875fde8d-6403-4e73-a22e-d3a34eaee01b",
+      "source_id": "regions",
+      "started_at": "2026-10-11T22:13:43.232Z",
+      "finished_at": "2026-10-11T22:13:43.461Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 229
+    },
+    {
+      "id": "5bdd7d95-03fb-4f78-a222-98ec09866e88",
+      "source_id": "countries",
+      "started_at": "2026-10-11T22:13:42.851Z",
+      "finished_at": "2026-10-11T22:13:43.048Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 197
+    },
+    {
+      "id": "cd7588b9-07cc-4e8a-b422-3f3fa1cbc7c0",
+      "source_id": "countries",
+      "started_at": "2026-10-11T22:13:42.423Z",
+      "finished_at": "2026-10-11T22:13:42.661Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 238
+    },
+    {
+      "id": "0efbec72-8461-4f41-b5f1-813462c25f8e",
+      "source_id": "articles",
+      "started_at": "2026-10-11T22:12:53.938Z",
+      "finished_at": "2026-10-11T22:12:54.297Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 359
+    },
+    {
+      "id": "1fd104d8-8642-40a6-9617-70c5aa5cb93a",
+      "source_id": "military-units",
+      "started_at": "2026-10-11T22:11:53.946Z",
+      "finished_at": "2026-10-11T22:11:54.238Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 292
+    },
+    {
+      "id": "056c4b65-e264-45af-a019-0537912957c5",
+      "source_id": "parties",
+      "started_at": "2026-10-11T22:10:56.043Z",
+      "finished_at": "2026-10-11T22:10:56.310Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 267
+    },
+    {
+      "id": "0ccaa301-1582-4ad4-b32c-7452fb40ed18",
+      "source_id": "players",
+      "started_at": "2026-10-11T22:09:53.933Z",
+      "finished_at": "2026-10-11T22:09:54.253Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 320
+    },
+    {
+      "id": "c02a898a-9b42-4e16-b74e-de48c40c9fbf",
+      "source_id": "countries",
+      "started_at": "2026-10-11T22:08:54.045Z",
+      "finished_at": "2026-10-11T22:08:54.371Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 326
+    },
+    {
+      "id": "e7dce8ac-6b86-464c-b8e4-b1d6a1be3900",
+      "source_id": "regions",
+      "started_at": "2026-10-11T22:07:53.936Z",
+      "finished_at": "2026-10-11T22:07:54.393Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 457
+    },
+    {
+      "id": "f95dc42b-6e5d-4847-8cc0-3e5951f39bed",
+      "source_id": "battles",
+      "started_at": "2026-10-11T22:06:54.038Z",
+      "finished_at": "2026-10-11T22:06:54.328Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 290
+    },
+    {
+      "id": "5534989f-569b-4a1d-b2af-720fb66bcf7f",
+      "source_id": "markets",
+      "started_at": "2026-10-11T22:05:54.268Z",
+      "finished_at": "2026-10-11T22:05:54.678Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 410
+    },
+    {
+      "id": "7ca66be8-e0b4-4c7f-93f4-ff40664cd16e",
+      "source_id": "articles",
+      "started_at": "2026-10-11T22:04:53.934Z",
+      "finished_at": "2026-10-11T22:04:54.418Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 484
+    },
+    {
+      "id": "4f11ac53-4c41-4ec5-9175-3e5b4ffcf168",
+      "source_id": "military-units",
+      "started_at": "2026-10-11T22:03:53.936Z",
+      "finished_at": "2026-10-11T22:03:54.345Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 409
+    },
+    {
+      "id": "986c5fd8-1d38-475d-a4b9-745c1c96e225",
+      "source_id": "parties",
+      "started_at": "2026-10-11T22:02:53.942Z",
+      "finished_at": "2026-10-11T22:02:54.334Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 392
+    },
+    {
+      "id": "c664e508-82c9-4965-99bb-35a1b3ae9d98",
+      "source_id": "players",
+      "started_at": "2026-10-11T22:02:15.932Z",
+      "finished_at": "2026-10-11T22:02:16.430Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 498
+    },
+    {
+      "id": "21b9a08e-b479-4b08-8e01-feb426176c3f",
+      "source_id": "countries",
+      "started_at": "2026-10-11T22:01:29.445Z",
+      "finished_at": "2026-10-11T22:01:29.962Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 517
+    },
+    {
+      "id": "a02b1a99-66f8-473b-a41f-ec7c343951eb",
+      "source_id": "regions",
+      "started_at": "2026-10-11T21:59:53.935Z",
+      "finished_at": "2026-10-11T21:59:54.391Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 456
+    },
+    {
+      "id": "3fd809d6-754e-4ca8-9126-1cb8db2dec00",
+      "source_id": "battles",
+      "started_at": "2026-10-11T21:58:54.031Z",
+      "finished_at": "2026-10-11T21:58:54.461Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 430
+    },
+    {
+      "id": "cdcc514f-2a36-4ddc-8baf-18799bb24786",
+      "source_id": "markets",
+      "started_at": "2026-10-11T21:57:53.937Z",
+      "finished_at": "2026-10-11T21:57:54.651Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 714
+    },
+    {
+      "id": "e89a4111-5256-4e90-a25b-7c95b07e9e55",
+      "source_id": "articles",
+      "started_at": "2026-10-11T21:56:54.035Z",
+      "finished_at": "2026-10-11T21:56:54.879Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 844
+    },
+    {
+      "id": "08e5496d-19ef-4691-8777-945b62e4220c",
+      "source_id": "military-units",
+      "started_at": "2026-10-11T21:55:53.940Z",
+      "finished_at": "2026-10-11T21:55:55.144Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 1204
+    },
+    {
+      "id": "deee8020-efd1-4e44-9f19-ff8c96fb276d",
+      "source_id": "parties",
+      "started_at": "2026-10-11T21:54:53.939Z",
+      "finished_at": "2026-10-11T21:54:55.122Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 1183
+    },
+    {
+      "id": "cfbda090-9933-4030-9dfd-775ef6230c54",
+      "source_id": "players",
+      "started_at": "2026-10-11T21:53:53.938Z",
+      "finished_at": "2026-10-11T21:53:55.112Z",
+      "status": "ok",
+      "records_count": 5,
+      "error": null,
+      "duration_ms": 1174
+    },
+    {
+      "id": "0812d5bb-a099-44ed-87aa-48b8a57d1849",
+      "source_id": "countries",
+      "started_at": "2026-10-11T21:52:54.032Z",
+      "finished_at": "2026-10-11T21:52:55.402Z",
+      "status": "ok",
+      "records_count": 10,
+      "error": null,
+      "duration_ms": 1370
+    },
     {
       "id": "03413b37-1251-4b9a-8f66-2a22bcf67768",
       "source_id": "regions",
