@@ -1,0 +1,519 @@
+{
+  "probedAt": "2026-10-11T21:37:44.465Z",
+  "results": [
+    {
+      "name": "countries",
+      "procedure": "country.getAllCountries",
+      "method": "GET",
+      "input": {},
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "99",
+        "reset": "60"
+      },
+      "kind": "array",
+      "count": 180,
+      "itemKeys": [
+        "taxes",
+        "unrest",
+        "_id",
+        "name",
+        "code",
+        "money",
+        "orgs",
+        "allies",
+        "warsWith",
+        "scheme",
+        "mapAccent",
+        "__v",
+        "rankings",
+        "updatedAt",
+        "specializedItem",
+        "enemy",
+        "nonAggressionUntil",
+        "coreDevelopment",
+        "averageDevelopment",
+        "currentDevelopment",
+        "currentPopulation",
+        "defensivePacts",
+        "allianceId",
+        "rulingParty"
+      ]
+    },
+    {
+      "name": "country-detail",
+      "procedure": "country.getCountryById",
+      "method": "GET",
+      "input": {
+        "countryId": "6813b6d446e731854c7ac7a8"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "98",
+        "reset": "60"
+      },
+      "kind": "object",
+      "count": 28,
+      "keys": [
+        "taxes",
+        "dates",
+        "unrest",
+        "_id",
+        "name",
+        "code",
+        "money",
+        "orgs",
+        "allies",
+        "warsWith",
+        "scheme",
+        "mapAccent"
+      ]
+    },
+    {
+      "name": "regions",
+      "procedure": "region.getRegionsObject",
+      "method": "GET",
+      "input": {},
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "97",
+        "reset": "59"
+      },
+      "kind": "object",
+      "count": 726,
+      "keys": [
+        "6813b7039403bc4170a5d68a",
+        "6813b7039403bc4170a5d6b7",
+        "6813b7049403bc4170a5d6c9",
+        "6813b7049403bc4170a5d6cf",
+        "6813b7049403bc4170a5d6ea",
+        "6813b7049403bc4170a5d71a",
+        "6813b7049403bc4170a5d720",
+        "6813b7049403bc4170a5d72f",
+        "6813b7049403bc4170a5d73b",
+        "6813b7059403bc4170a5d7a4",
+        "6813b7059403bc4170a5d7aa",
+        "6813b7079403bc4170a5d852"
+      ]
+    },
+    {
+      "name": "region-detail",
+      "procedure": "region.getById",
+      "method": "GET",
+      "input": {
+        "regionId": "6813b7039403bc4170a5d68a"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "96",
+        "reset": "58"
+      },
+      "kind": "object",
+      "count": 29,
+      "keys": [
+        "stats",
+        "dates",
+        "_id",
+        "code",
+        "country",
+        "initialCountry",
+        "neighbors",
+        "isCapital",
+        "isLinkedToCapital",
+        "upgradesV2",
+        "name",
+        "mainCity"
+      ]
+    },
+    {
+      "name": "players",
+      "procedure": "user.getUsersByCountry",
+      "method": "GET",
+      "input": {
+        "countryId": "6813b6d446e731854c7ac7a8",
+        "limit": 2
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "95",
+        "reset": "57"
+      },
+      "kind": "page",
+      "count": 2,
+      "itemKeys": [
+        "_id",
+        "createdAt"
+      ],
+      "hasNextCursor": true
+    },
+    {
+      "name": "player-detail",
+      "procedure": "user.getUserLite",
+      "method": "GET",
+      "input": {
+        "userId": "6aca36a92c8b47d37e5d5ad5"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "94",
+        "reset": "57"
+      },
+      "kind": "object",
+      "count": 12,
+      "keys": [
+        "_id",
+        "username",
+        "country",
+        "dates",
+        "leveling",
+        "isActive",
+        "skills",
+        "militaryRank",
+        "createdAt",
+        "stats",
+        "rankings",
+        "mu"
+      ]
+    },
+    {
+      "name": "parties",
+      "procedure": "party.getManyPaginated",
+      "method": "GET",
+      "input": {
+        "countryId": "6813b6d446e731854c7ac7a8",
+        "limit": 2
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "93",
+        "reset": "56"
+      },
+      "kind": "page",
+      "count": 2,
+      "itemKeys": [
+        "ethics",
+        "_id",
+        "name",
+        "description",
+        "country",
+        "region",
+        "leader",
+        "councilMembers",
+        "members",
+        "createdAt",
+        "updatedAt",
+        "__v",
+        "avatarUrl"
+      ],
+      "hasNextCursor": true
+    },
+    {
+      "name": "party-detail",
+      "procedure": "party.getById",
+      "method": "GET",
+      "input": {
+        "partyId": "6a906614c0f64bcf4a605cca"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "92",
+        "reset": "55"
+      },
+      "kind": "object",
+      "count": 13,
+      "keys": [
+        "ethics",
+        "_id",
+        "name",
+        "description",
+        "country",
+        "region",
+        "leader",
+        "councilMembers",
+        "members",
+        "createdAt",
+        "updatedAt",
+        "__v"
+      ]
+    },
+    {
+      "name": "military-units",
+      "procedure": "mu.getManyPaginated",
+      "method": "GET",
+      "input": {
+        "limit": 2
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "91",
+        "reset": "55"
+      },
+      "kind": "page",
+      "count": 2,
+      "itemKeys": [
+        "roles",
+        "leveling",
+        "_id",
+        "user",
+        "region",
+        "country",
+        "name",
+        "members",
+        "mercenaryReputation",
+        "createdAt",
+        "updatedAt",
+        "__v",
+        "activeUpgradeLevels",
+        "avatarUrl",
+        "lastAnnouncementAt",
+        "rankings"
+      ],
+      "hasNextCursor": true
+    },
+    {
+      "name": "unit-detail",
+      "procedure": "mu.getById",
+      "method": "GET",
+      "input": {
+        "muId": "6acbb455ba8896a2e9348bfd"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "90",
+        "reset": "54"
+      },
+      "kind": "object",
+      "count": 16,
+      "keys": [
+        "roles",
+        "leveling",
+        "_id",
+        "user",
+        "region",
+        "country",
+        "name",
+        "members",
+        "mercenaryReputation",
+        "createdAt",
+        "updatedAt",
+        "__v"
+      ]
+    },
+    {
+      "name": "battles",
+      "procedure": "battle.getBattles",
+      "method": "GET",
+      "input": {
+        "limit": 2,
+        "isActive": true
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "89",
+        "reset": "53"
+      },
+      "kind": "page",
+      "count": 2,
+      "itemKeys": [
+        "defender",
+        "attacker",
+        "stats",
+        "_id",
+        "war",
+        "type",
+        "rounds",
+        "roundsHistory",
+        "isActive",
+        "roundsToWin",
+        "createdAt",
+        "updatedAt",
+        "__v",
+        "currentRound"
+      ],
+      "hasNextCursor": true
+    },
+    {
+      "name": "battle-detail",
+      "procedure": "battle.getById",
+      "method": "GET",
+      "input": {
+        "battleId": "6acbf7dfdab0c6ec4e54e20d"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "88",
+        "reset": "52"
+      },
+      "kind": "object",
+      "count": 14,
+      "keys": [
+        "_id",
+        "war",
+        "type",
+        "defender",
+        "attacker",
+        "rounds",
+        "roundsHistory",
+        "isActive",
+        "roundsToWin",
+        "stats",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    {
+      "name": "articles",
+      "procedure": "article.getArticlesPaginated",
+      "method": "GET",
+      "input": {
+        "type": "last",
+        "limit": 2
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "87",
+        "reset": "52"
+      },
+      "kind": "page",
+      "count": 2,
+      "itemKeys": [
+        "stats",
+        "_id",
+        "title",
+        "content",
+        "language",
+        "category",
+        "author",
+        "isPublished",
+        "isDeleted",
+        "isPublic",
+        "createdAt",
+        "updatedAt",
+        "__v",
+        "publishedAt",
+        "slug"
+      ],
+      "hasNextCursor": true
+    },
+    {
+      "name": "article-detail",
+      "procedure": "article.getArticleById",
+      "method": "GET",
+      "input": {
+        "articleId": "6ac8d733547b03ff29db4fba"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "86",
+        "reset": "51"
+      },
+      "kind": "object",
+      "count": 15,
+      "keys": [
+        "stats",
+        "_id",
+        "title",
+        "content",
+        "language",
+        "category",
+        "author",
+        "isPublished",
+        "isDeleted",
+        "isPublic",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    {
+      "name": "article-lite",
+      "procedure": "article.getArticleLiteById",
+      "method": "GET",
+      "input": {
+        "articleId": "6ac8d733547b03ff29db4fba"
+      },
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "85",
+        "reset": "50"
+      },
+      "kind": "object",
+      "count": 3,
+      "keys": [
+        "_id",
+        "title",
+        "stats"
+      ]
+    },
+    {
+      "name": "markets",
+      "procedure": "itemTrading.getPrices",
+      "method": "GET",
+      "input": {},
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "84",
+        "reset": "49"
+      },
+      "kind": "object",
+      "count": 24,
+      "keys": [
+        "cookedFish",
+        "heavyAmmo",
+        "steel",
+        "bread",
+        "grain",
+        "limestone",
+        "coca",
+        "concrete",
+        "oil",
+        "case1",
+        "lightAmmo",
+        "steak"
+      ]
+    },
+    {
+      "name": "markets-post",
+      "procedure": "itemTrading.getPrices",
+      "method": "POST",
+      "input": {},
+      "status": 200,
+      "rateLimit": {
+        "limit": "100",
+        "remaining": "83",
+        "reset": "48"
+      },
+      "kind": "object",
+      "count": 24,
+      "keys": [
+        "cookedFish",
+        "heavyAmmo",
+        "steel",
+        "bread",
+        "grain",
+        "limestone",
+        "coca",
+        "concrete",
+        "oil",
+        "case1",
+        "lightAmmo",
+        "steak"
+      ]
+    }
+  ]
+}

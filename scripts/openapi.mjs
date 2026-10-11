@@ -1,0 +1,29 @@
+import {writeFile} from 'node:fs/promises';
+const entity={type:'object',required:['id','name','source_url'],properties:{id:{type:'string'},name:{type:'string'},country_id:{type:['string','null']},source_url:{type:'string'},updated_at:{type:'string'},first_seen:{type:'string'},data:{type:'object',additionalProperties:true}},additionalProperties:true};
+const source={type:['object','null'],properties:{id:{type:'string'},endpoint:{type:'string'},status:{type:'string'},last_success:{type:['string','null']},last_attempt:{type:['string','null']},last_error:{type:['string','null']},interval_seconds:{type:'integer'},enabled:{type:'integer',enum:[0,1]},record_count:{type:'integer'}}};
+const collection={type:'object',required:['items','total','page','limit','source'],properties:{items:{type:'array',items:{$ref:'#/components/schemas/Entity'}},total:{type:'integer'},page:{type:'integer'},limit:{type:'integer'},source:{$ref:'#/components/schemas/Source'}}};
+const response=(schema)=>({description:'Respuesta correcta',content:{'application/json':{schema}}});
+const errors={'400':{description:'Parámetros inválidos'},'429':{description:'Límite de peticiones alcanzado'},'503':{description:'D1 o configuración no disponible'}};
+const params=[{name:'q',in:'query',schema:{type:'string'},description:'Hasta 40 bytes UTF-8'},{name:'country',in:'query',schema:{type:'string'}},{name:'page',in:'query',schema:{type:'integer',minimum:1,maximum:10000,default:1}},{name:'limit',in:'query',schema:{type:'integer',minimum:1,maximum:50,default:20}},{name:'sort',in:'query',schema:{type:'string'},description:'name,updated_at; players:level,experience; articles:published_at; markets:price,captured_at'},{name:'order',in:'query',schema:{type:'string',enum:['asc','desc']}}];
+const paths={};
+for(const resource of ['countries','regions','players','parties','military-units','battles','articles','companies','events','alerts']) {
+  paths[`/api/${resource}`]={get:{summary:`Consultar ${resource}`,tags:[resource],parameters:params,responses:{'200':response({$ref:'#/components/schemas/Collection'}),...errors}}};
+  paths[`/api/${resource}/{id}`]={get:{summary:`Ficha ${resource}`,tags:[resource],parameters:[{name:'id',in:'path',required:true,schema:{type:'string',maxLength:100}}],responses:{'200':response({type:'object',properties:{item:{$ref:'#/components/schemas/Entity'},history:{type:'array',items:{type:'object',additionalProperties:true}},source:{$ref:'#/components/schemas/Source'}}}),'404':{description:'Registro no recopilado'},...errors}}};
+}
+for(const route of ['health','status','dashboard/summary'])paths[`/api/${route}`]={get:{summary:route,responses:{'200':response({type:'object',additionalProperties:true}),...errors}}};
+paths['/api/markets/prices']={get:{summary:'Últimos precios globales observados',parameters:params.filter(p=>p.name!=='country'),responses:{'200':response({$ref:'#/components/schemas/Collection'}),...errors}}};
+paths['/api/markets/history']={get:{summary:'Serie de variaciones de precios',parameters:[{name:'item',in:'query',required:true,schema:{type:'string',maxLength:100}}],responses:{'200':response({type:'object',properties:{items:{type:'array',items:{type:'object',properties:{price:{type:'number'},captured_at:{type:'string'}}}},source:{$ref:'#/components/schemas/Source'}}}),...errors}}};
+const csrf={name:'X-WINT-CSRF',in:'header',required:true,schema:{type:'string',const:'1'}};
+const requestBody=schema=>({required:true,content:{'application/json':{schema}}});
+const admin=(method,path,schema,extra=[])=>paths[path]={[method]:{tags:['admin'],summary:path,security:[{adminSession:[]}],parameters:method==='get'?extra:[csrf,...extra],...(schema?{requestBody:requestBody(schema)}:{}),responses:{'200':response({type:'object',additionalProperties:true}),'401':{description:'Sesión requerida'},'403':{description:'CSRF rechazado'},...errors}}};
+admin('post','/api/admin/login',{type:'object',required:['password'],properties:{password:{type:'string',maxLength:256}}});paths['/api/admin/login'].post.security=[];
+admin('post','/api/admin/logout');admin('get','/api/admin/status');
+admin('post','/api/admin/sync',{type:'object',properties:{source:{type:'string'}}});
+admin('patch','/api/admin/sources/{id}',{type:'object',required:['enabled','interval_seconds'],properties:{enabled:{type:'boolean'},interval_seconds:{type:'integer',minimum:120,maximum:86400}}},[{name:'id',in:'path',required:true,schema:{type:'string'}}]);
+const importSchema={type:'object',required:['resource','records'],properties:{resource:{type:'string',enum:['players','parties','military-units']},records:{type:'array',maxItems:500,items:{type:'object',additionalProperties:true}}}};
+admin('post','/api/admin/import/preview',importSchema);
+paths['/api/admin/import/preview'].post.requestBody.content['multipart/form-data']={schema:{type:'object',required:['file','resource'],properties:{file:{type:'string',contentEncoding:'binary'},resource:importSchema.properties.resource}}};
+admin('post','/api/admin/import',{...importSchema,properties:{...importSchema.properties,records:{...importSchema.properties.records,maxItems:10}}});
+paths['/api/admin/import/commit']=paths['/api/admin/import'];
+await writeFile('public/openapi.json',JSON.stringify({openapi:'3.1.0',info:{title:'WarEra Intelligence API',version:'0.1.0',description:'Datos públicos recopilados en D1. Censo inicial parcial. Ver API.md para límites y disponibilidad.'},servers:[{url:'/'}],paths,components:{schemas:{Entity:entity,Source:source,Collection:collection},securitySchemes:{adminSession:{type:'apiKey',in:'cookie',name:'wint_session'}}}},null,2)+'\n');
+console.log('OpenAPI generado en public/openapi.json');

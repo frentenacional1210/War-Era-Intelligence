@@ -1,0 +1,68 @@
+[
+  {
+    "observedAt": "2026-10-11T21:58:52.643Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 19,
+    "exceptionCount": 0,
+    "version": "3e7fed18-dac3-4944-83b1-990a72c96748",
+    "source": "battles",
+    "status": "ok",
+    "processed": 10
+  },
+  {
+    "observedAt": "2026-10-11T21:59:52.701Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 22,
+    "exceptionCount": 0,
+    "version": "3e7fed18-dac3-4944-83b1-990a72c96748",
+    "source": "regions",
+    "status": "ok",
+    "processed": 10
+  },
+  {
+    "observedAt": "2026-10-11T22:01:28.172Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 26,
+    "exceptionCount": 0,
+    "version": "3a0271ae-1e7b-4550-a986-fca62df6aa8b",
+    "source": "countries",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:02:14.711Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 20,
+    "exceptionCount": 0,
+    "version": "3a0271ae-1e7b-4550-a986-fca62df6aa8b",
+    "source": "players",
+    "status": "ok",
+    "processed": 1
+  },
+  {
+    "observedAt": "2026-10-11T22:02:52.478Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 6,
+    "exceptionCount": 0,
+    "version": "3a0271ae-1e7b-4550-a986-fca62df6aa8b",
+    "source": "parties",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:03:52.530Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 8,
+    "exceptionCount": 0,
+    "version": "3a0271ae-1e7b-4550-a986-fca62df6aa8b",
+    "source": "military-units",
+    "status": "ok",
+    "processed": 3
+  }
+]

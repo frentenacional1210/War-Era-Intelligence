@@ -1,0 +1,56 @@
+{
+  "before": {
+    "verifiedAt": "2026-10-11T21:54:26.053Z",
+    "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+    "counts": {
+      "countries": 20,
+      "regions": 10,
+      "players": 10,
+      "parties": 10,
+      "military-units": 10,
+      "battles": 10,
+      "articles": 5
+    },
+    "samples": {
+      "countries": "683ddd2c24b5a2e114af15b9",
+      "regions": "6813b7039403bc4170a5d686",
+      "players": "6a870dee9d715a83e07033ce",
+      "parties": "6aca283f319dc164e97e98a9",
+      "military-units": "6aca9b0be99bf6735de2fd21",
+      "battles": "6acbd664ea7ebd0805fe9a1f",
+      "articles": "6acbfe13c9113f8a8b978602"
+    }
+  },
+  "after": {
+    "verifiedAt": "2026-10-11T22:07:14.760Z",
+    "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+    "counts": {
+      "countries": 23,
+      "regions": 20,
+      "players": 11,
+      "parties": 23,
+      "military-units": 23,
+      "battles": 23,
+      "articles": 9
+    },
+    "samples": {
+      "countries": "6813b6d546e731854c7ac84b",
+      "regions": "6813b7039403bc4170a5d686",
+      "players": "6a870dee9d715a83e07033ce",
+      "parties": "6ac3df221d5c9309c0a4ddb9",
+      "military-units": "6aca9b0be99bf6735de2fd21",
+      "battles": "6acb7569bd72528c23fe405b",
+      "articles": "6acbf0614d988b4166bd1a46"
+    }
+  },
+  "retained": [
+    "countries",
+    "regions",
+    "players",
+    "parties",
+    "military-units",
+    "battles",
+    "articles"
+  ],
+  "passed": true
+}

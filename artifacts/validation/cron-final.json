@@ -1,0 +1,35 @@
+[
+  {
+    "observedAt": "2026-10-11T22:05:53.016Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 18,
+    "exceptionCount": 0,
+    "version": "3a0271ae-1e7b-4550-a986-fca62df6aa8b",
+    "source": "markets",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:06:52.517Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 20,
+    "exceptionCount": 0,
+    "version": "8f28f22d-c917-4d0a-a04c-dfd575916ae6",
+    "source": "battles",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-11T22:07:52.588Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 24,
+    "exceptionCount": 0,
+    "version": "8f28f22d-c917-4d0a-a04c-dfd575916ae6",
+    "source": "regions",
+    "status": "ok",
+    "processed": 3
+  }
+]

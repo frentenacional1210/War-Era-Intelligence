@@ -1,0 +1,89 @@
+import { z } from 'zod';
+
+export const objectSchema = z.object({ _id: z.string().min(1) });
+export const namedSchema = objectSchema.extend({ name: z.string().min(1) });
+export const articleSchema = objectSchema.extend({ title: z.string().min(1) });
+export const playerSchema = objectSchema.extend({ username: z.string().min(1) }).passthrough();
+export const pageSchema = z.object({
+  items: z.array(z.unknown()),
+  nextCursor: z.string().nullish(),
+}).passthrough();
+export const pricesSchema = z.record(z.string(), z.number().finite().nonnegative());
+const envelopeSchema = z.object({ result: z.object({ data: z.unknown() }) });
+
+export class WarEraError extends Error {
+  constructor(message: string, public status?: number, public retryAfterSeconds?: number) { super(message); }
+}
+
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const safeBase = (base: string) => {
+  const url = new URL(base);
+  if (url.protocol !== 'https:') throw new WarEraError('WarEra API base must use HTTPS');
+  return url.href.replace(/\/$/, '');
+};
+
+/** Fixed-procedure tRPC client. Only public calls are used by ingestion. */
+export class WarEraClient {
+  private remaining: number | null = null;
+  private resetSeconds = 60;
+  constructor(
+    baseUrl = 'https://api2.warera.io/trpc',
+    private apiKey?: string,
+    private fetcher: typeof fetch = ((input, init) => globalThis.fetch(input, init)) as typeof fetch,
+  ) { this.baseUrl = safeBase(baseUrl); }
+  private baseUrl: string;
+
+  url(procedure: string, input?: Record<string, unknown>): string {
+    if (!/^[a-zA-Z]+\.[a-zA-Z]+$/.test(procedure)) throw new WarEraError('Invalid procedure');
+    const url = new URL(`${this.baseUrl}/${procedure}`);
+    if (input && Object.keys(input).length) url.searchParams.set('input', JSON.stringify(input));
+    return url.toString();
+  }
+
+  async get<T>(procedure: string, input: Record<string, unknown> | undefined, schema: z.ZodType<T>): Promise<T> {
+    if (this.remaining !== null && this.remaining <= 1) throw new WarEraError('WarEra rate limit nearly exhausted', 429, this.resetSeconds);
+    const url = this.url(procedure, input);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 10_000);
+      let response: Response;
+      try {
+        response = await this.fetcher(url, {
+          method: 'GET', signal: controller.signal,
+          headers: { Accept: 'application/json', ...(this.apiKey ? { 'X-API-Key': this.apiKey } : {}) },
+        });
+      } catch (error) {
+        clearTimeout(timer);
+        if (attempt < 2) { await wait(250 * 2 ** attempt); continue; }
+        throw new WarEraError(error instanceof Error ? error.message : 'WarEra fetch failed');
+      }
+      clearTimeout(timer);
+      const remaining = Number(response.headers.get('ratelimit-remaining'));
+      const reset = Number(response.headers.get('ratelimit-reset'));
+      if (Number.isFinite(remaining) && response.headers.has('ratelimit-remaining')) this.remaining = remaining;
+      if (Number.isFinite(reset) && reset > 0) this.resetSeconds = reset;
+      if (!response.ok) {
+        const retryAfter = Number(response.headers.get('retry-after')) || this.resetSeconds;
+        if ((response.status === 429 || response.status >= 500) && attempt < 2 && retryAfter <= 2) {
+          await wait(Math.max(250 * 2 ** attempt, retryAfter * 1000)); continue;
+        }
+        throw new WarEraError(`WarEra HTTP ${response.status}`, response.status, response.status === 429 ? retryAfter : undefined);
+      }
+      let body: unknown;
+      try { body = await response.json(); } catch { throw new WarEraError('WarEra returned invalid JSON'); }
+      const envelope = envelopeSchema.safeParse(body);
+      if (!envelope.success) throw new WarEraError('WarEra returned an invalid tRPC envelope');
+      const parsed = schema.safeParse(envelope.data.result.data);
+      if (!parsed.success) throw new WarEraError(`WarEra ${procedure} response failed schema validation`);
+      return parsed.data;
+    }
+    throw new WarEraError('WarEra request exhausted retries');
+  }
+}
+
+export const countryListSchema = z.array(namedSchema);
+export const countryFeedSchema = z.custom<unknown[]>(Array.isArray);
+// The region map is large; validate its envelope here and each selected row during normalization.
+export const regionsObjectSchema = z.custom<Record<string, unknown>>(value => value !== null && typeof value === 'object' && !Array.isArray(value));
+export const pagedObjectsSchema = pageSchema;
+export const pagedPlayersSchema = pageSchema.extend({ items: z.array(objectSchema) });

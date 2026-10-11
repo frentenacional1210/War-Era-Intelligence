@@ -1,0 +1,37 @@
+[
+  {
+    "observedAt": "2026-10-11T21:52:53.927Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 71,
+    "exceptionCount": 0
+  },
+  {
+    "observedAt": "2026-10-11T21:53:53.510Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 34,
+    "exceptionCount": 0
+  },
+  {
+    "observedAt": "2026-10-11T21:54:53.485Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 19,
+    "exceptionCount": 0
+  },
+  {
+    "observedAt": "2026-10-11T21:55:53.531Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 24,
+    "exceptionCount": 0
+  },
+  {
+    "observedAt": "2026-10-11T21:56:53.329Z",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 25,
+    "exceptionCount": 0
+  }
+]
