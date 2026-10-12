@@ -49,4 +49,8 @@ La primera orden solo imprime el resumen y hasta 500 registros para revisión. `
 
 El código incluye migraciones D1, API de consulta, recopilador programado, panel público y administración mínima, publicados y probados en la URL indicada. No se presentan los módulos posteriores como terminados: IA generativa, integración de Discord, mapas históricos, modelos predictivos y análisis estratégico figuran en [ROADMAP.md](ROADMAP.md). Las fórmulas del simulador son escenarios editables, no mecánicas confirmadas de WarEra.
 
+La cobertura sigue siendo parcial. El recopilador ahora usa lotes de perfiles en una petición conjunta, cursores independientes por país y un archivo de artículos sin el antiguo límite de veinte páginas. GitHub Actions complementa el Cron obteniendo las respuestas grandes y enviando al Worker solo campos públicos seleccionados; ambos comparten el mismo presupuesto y no duplican históricos. El workflow `Collect public WarEra data` se programa cada quince minutos, con posibles retrasos de GitHub. La IA no interviene en la recopilación.
+
+La Fase 2 ya incluye [comparadores e históricos](https://warera-intelligence.warera-intelligence.workers.dev/analisis): selección de dos a cuatro jugadores, partidos o unidades, métricas y hasta noventa capturas reales. Una sola captura no permite calcular evolución; los datos ausentes se muestran como desconocidos.
+
 Consulte [ARCHITECTURE.md](ARCHITECTURE.md), [DEPLOYMENT.md](DEPLOYMENT.md), [API.md](API.md) y [DATA_SOURCES.md](DATA_SOURCES.md) para contratos, fuentes y puesta en producción.

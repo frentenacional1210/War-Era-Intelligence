@@ -71,3 +71,11 @@ node scripts/watch-cron.mjs
 `node scripts/verify-hydration.mjs` fuerza dos lotes de países y dos de regiones para comprobar descubrimiento y continuación. Usa la credencial local sin imprimirla y consume cuatro solicitudes de sincronización. Para observar también su CPU, ejecute el observador con `WINT_TAIL_SYNC=true`; solo registra resúmenes de `/api/admin/sync`, nunca cabeceras, cuerpos ni cookies. La continuación normal del Cron no necesita esa opción.
 
 El remoto GitHub de esta entrega es `https://github.com/frentenacional1210/War-Era-Intelligence.git`. La publicación conserva su commit inicial y licencia AGPL-3.0. El despliegue de Cloudflare utiliza Wrangler y no depende de GitHub para seguir funcionando.
+
+## Recopilación complementaria
+
+`Collect public WarEra data` ejecuta `scripts/collect.ts` cada quince minutos en un runner Ubuntu estándar. El repositorio público permite su uso gratuito; no cambie a runners grandes. El Cron de Cloudflare sigue funcionando si GitHub retrasa una tarea. Las ejecuciones comparten cursores y cuota de D1 y solo envían metadatos públicos seleccionados, sin cuerpos de artículos ni respuestas completas de perfiles.
+
+El secreto independiente `COLLECTOR_SECRET` está configurado en Cloudflare y como `WINT_COLLECTOR_SECRET` en GitHub. El archivo local `artifacts/private/COLLECTOR_SECRET.txt` está excluido de Git y restringido a la cuenta de entrega. No se usa la contraseña administrativa ni se publica ese archivo. Para reproducir la configuración en esta misma cuenta: autentique Wrangler y Git como propietario del repositorio, instale `python -m pip install PyNaCl` y ejecute `python scripts/setup-collector.py`. El script exige un repositorio público administrado por ese propietario, cifra el secreto para GitHub y no imprime su valor.
+
+Una prueba local del mismo recopilador se ejecuta con `WINT_URL`, `COLLECTOR_SECRET` y `MAX_STEPS` (1–80) como variables de entorno, mediante `npm run collect`. Para ejecución remota use **Actions → Collect public WarEra data → Run workflow**. El workflow agrupa todas sus ejecuciones para evitar solapamientos y tiene un límite de catorce minutos. Los logs contienen estados y contadores, no identificadores, páginas, perfiles ni credenciales. Con `WINT_TAIL_SYNC=true`, `watch-cron.mjs` también conserva resúmenes de CPU de los commits del recopilador.

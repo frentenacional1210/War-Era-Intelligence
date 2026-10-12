@@ -1,0 +1,146 @@
+[
+  {
+    "observedAt": "2026-10-12T07:24:53.336Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 30,
+    "exceptionCount": 0,
+    "version": "8eba65bb-d6f6-41e8-af2e-8d135f91a31c",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:26:07.193Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 18,
+    "exceptionCount": 0,
+    "version": "8eba65bb-d6f6-41e8-af2e-8d135f91a31c",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:26:52.640Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 12,
+    "exceptionCount": 0,
+    "version": "8eba65bb-d6f6-41e8-af2e-8d135f91a31c",
+    "source": "battles",
+    "status": "ok",
+    "processed": 10
+  },
+  {
+    "observedAt": "2026-10-12T07:27:52.679Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 14,
+    "exceptionCount": 0,
+    "version": "8eba65bb-d6f6-41e8-af2e-8d135f91a31c",
+    "source": "markets",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-12T07:28:52.867Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 22,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:29:44.529Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 21,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e"
+  },
+  {
+    "observedAt": "2026-10-12T07:29:44.931Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 19,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e"
+  },
+  {
+    "observedAt": "2026-10-12T07:29:45.370Z",
+    "kind": "manual-sync",
+    "outcome": "ok",
+    "cpuTimeMs": 9,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e"
+  },
+  {
+    "observedAt": "2026-10-12T07:29:59.413Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 14,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e",
+    "source": "military-units",
+    "status": "ok",
+    "processed": 10
+  },
+  {
+    "observedAt": "2026-10-12T07:31:05.681Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 6,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e",
+    "source": "articles",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:31:58.461Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 5,
+    "exceptionCount": 0,
+    "version": "4b5647e3-4550-408c-b431-184a11b1425e",
+    "source": "parties",
+    "status": "ok",
+    "processed": 10
+  },
+  {
+    "observedAt": "2026-10-12T07:32:58.936Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 12,
+    "exceptionCount": 0,
+    "version": "ed2d95a4-0e8a-4c61-b447-4387d3f0d8c7",
+    "source": "players",
+    "status": "ok",
+    "processed": 4
+  },
+  {
+    "observedAt": "2026-10-12T07:33:58.857Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 7,
+    "exceptionCount": 0,
+    "version": "ed2d95a4-0e8a-4c61-b447-4387d3f0d8c7",
+    "source": "regions",
+    "status": "ok",
+    "processed": 3
+  }
+]

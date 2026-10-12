@@ -1,4 +1,5 @@
 import type { Env } from './types';
+import { COLLECTOR_PLAYER_ROWS, DETAIL_ROWS, INGESTION_DAILY_BUDGET, INGESTION_SLOTS, PAGE_ROWS, PLAYER_ROWS } from '../shared/ingestion-config';
 import {
   WarEraClient, WarEraError, articleSchema, countryDetailSchema, countryFeedSchema, namedSchema,
   objectSchema, pagedObjectsSchema, pagedPlayersSchema,
@@ -8,15 +9,16 @@ import {
 type SourceId = 'countries' | 'regions' | 'players' | 'parties' | 'military-units' | 'battles' | 'articles' | 'markets';
 type Row = Record<string, unknown>;
 type SourceRow = { id: string; endpoint: string; interval_seconds: number; cursor: string | null; next_run_at: string; lease_until: string | null };
-type Cursor = { offset?: number; ids?: string[]; token?: string; pages?: number; countryId?: string };
+type Cursor = { offset?: number; ids?: string[]; token?: string; recentTokens?: string[]; pages?: number; countryId?: string; rotation?: boolean; archiveToken?: string; archiveComplete?: boolean; headNextAt?: string };
 type Normalized = { table: string; id: string; name: string; country_id: string | null; source_url: string; updated_at: string; data_json: string; extra: Record<string, string | number | null> };
 export type SyncResult = { status: 'ok' | 'error' | 'busy' | 'idle' | 'quota-paused' | 'unknown-source'; source?: string; processed?: number; changed?: number; nextRunAt?: string; error?: string };
 
-const MAX_ROWS = 3;
-const MAX_PLAYER_ROWS = 1;
-const RESERVED_WRITES_PER_TICK = 140;
-const DAILY_INGESTION_WRITE_BUDGET = 60_000;
-const TICK_SUBREQUEST_UPPER_BOUND = 28; // 3 detail calls with retries + <=19 D1 statements
+const MAX_ROWS = DETAIL_ROWS;
+const MAX_PLAYER_ROWS = PLAYER_ROWS;
+const DAILY_INGESTION_WRITE_BUDGET = INGESTION_DAILY_BUDGET;
+const TICK_SUBREQUEST_UPPER_BOUND = 9; // at most three upstream calls, three attempts each
+const written = (results: D1Result[]) => results.reduce((total, result) => total + Number(result.meta.rows_written ?? 0), 0);
+const measured = (results: D1Result[]) => results.every(result => Number.isFinite(result.meta.rows_written));
 const sourceTable: Record<SourceId, string> = {
   countries: 'countries', regions: 'regions', players: 'players', parties: 'parties',
   'military-units': 'military_units', battles: 'battles', articles: 'articles', markets: 'market_items',
@@ -105,8 +107,8 @@ export function normalizeWarEraEntity(source: Exclude<SourceId, 'markets'>, inpu
   return { ...base, name: label(raw.title), country_id: id(raw.country), data_json: json(data), extra: { title: label(raw.title), author_id: id(raw.author), published_at: isoOptional(raw.publishedAt), language: string(raw.language), category: string(raw.category) } };
 }
 
-async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, items: unknown[], client: WarEraClient, now: string): Promise<number> {
-  if (!items.length) return 0;
+async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, items: unknown[], client: WarEraClient, now: string): Promise<{changed:number;results:D1Result[]}> {
+  if (!items.length) return {changed:0,results:[]};
   // Validate the selected page before preparing any write. A failed item cannot advance its cursor.
   const rows = items.map(item => normalizeWarEraEntity(source, item, client, now));
   // Preserve the pre-batch digest format so a deployment does not fabricate changes or snapshots.
@@ -120,6 +122,21 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
     SELECT ?,?,?,?,? WHERE EXISTS(SELECT 1 FROM ${first.table} WHERE id=? AND hash=?)
     AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=? ORDER BY id DESC LIMIT 1),'')<>?`);
   const statements: D1PreparedStatement[] = [];
+  if(rows.length>3){
+    // Transfer one compact page instead of two D1 result envelopes per entity.
+    const page=rows.map((row,index)=>({...row,...row.extra,first_seen:now,hash:digests[index]}));
+    const encoded=json(page);
+    const fields=columns.map(column=>`json_extract(value,'$.${column}')`).join(',');
+    const bulk=env.DB.prepare(`INSERT INTO ${first.table}(${columns.join(',')}) SELECT ${fields} FROM json_each(?) WHERE 1
+      ON CONFLICT(id) DO UPDATE SET ${updates} WHERE ${first.table}.hash<>excluded.hash RETURNING id`).bind(encoded);
+    const history=env.DB.prepare(`INSERT INTO entity_snapshots(entity_type,entity_id,captured_at,hash,data_json)
+      SELECT ?,json_extract(value,'$.id'),?,json_extract(value,'$.hash'),json_extract(value,'$.data_json') FROM json_each(?)
+      WHERE EXISTS(SELECT 1 FROM ${first.table} WHERE id=json_extract(value,'$.id') AND hash=json_extract(value,'$.hash'))
+      AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=json_extract(value,'$.id') ORDER BY id DESC LIMIT 1),'')<>json_extract(value,'$.hash')`)
+      .bind(source,now,encoded,source);
+    const results=await env.DB.batch([bulk,history]);
+    return {changed:results[0].results.length,results};
+  }
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i], digest = digests[i];
     statements.push(upsert.bind(row.id, row.name, row.country_id, row.source_url, row.updated_at, now, digest, row.data_json, ...Object.values(row.extra)));
@@ -127,10 +144,10 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
   }
   // The whole page is one D1 transaction, preserving every entity/snapshot pair atomically.
   const results = await env.DB.batch(statements);
-  return results.reduce((count, result, index) => count + (index % 2 === 0 && result.meta.changes ? 1 : 0), 0);
+  return {changed:results.reduce((count, result, index) => count + (index % 2 === 0 && result.meta.changes ? 1 : 0), 0),results};
 }
 
-type Batch = { records: unknown[]; next: Cursor | null; sourceUrl?: string };
+type Batch = { records: unknown[]; next: Cursor | null; sourceUrl?: string; checkpoint?: D1PreparedStatement; delay?: number };
 const checkedIds = (values: unknown, allowEmpty = false): string[] => {
   if (!Array.isArray(values) || (!allowEmpty && !values.length) || values.length > 5000) throw new Error('Invalid discovery cursor IDs');
   const unique = new Set<string>();
@@ -141,7 +158,7 @@ const checkedIds = (values: unknown, allowEmpty = false): string[] => {
   }
   return values as string[];
 };
-async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor: Cursor): Promise<Batch> {
+async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor: Cursor, owner:string,playerLimit=MAX_PLAYER_ROWS): Promise<Batch> {
   if (source === 'countries' || source === 'regions') {
     const offset = cursor.offset ?? 0;
     if (!Number.isInteger(offset) || offset < 0) throw new Error('Invalid discovery cursor offset');
@@ -179,40 +196,59 @@ async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor
     return { records: values.slice(offset, offset + MAX_ROWS), next: offset + MAX_ROWS < values.length ? { offset: offset + MAX_ROWS } : null, sourceUrl: client.url('itemTrading.getPrices') };
   }
   if (source === 'players') {
-    const query = cursor.countryId
-      ? env.DB.prepare('SELECT id FROM countries WHERE id=? LIMIT 1').bind(cursor.countryId)
-      : env.DB.prepare('SELECT id FROM countries ORDER BY id LIMIT 1');
-    const country = await query.first<{ id: string }>();
+    const now = new Date().toISOString();
+    // Preserve a legacy in-progress country once, then rotate one page per country.
+    const country = cursor.countryId && !cursor.rotation
+      ? await env.DB.prepare('SELECT id FROM countries WHERE id=? LIMIT 1').bind(cursor.countryId).first<{id:string;token?:string}>()
+      : await env.DB.prepare(`SELECT c.id,s.cursor token FROM countries c LEFT JOIN player_census_state s ON s.country_id=c.id
+          WHERE s.next_run_at IS NULL OR s.next_run_at<=?
+          ORDER BY COALESCE(s.last_scanned_at,''),CASE WHEN lower(c.code)='es' OR c.name='Spain' THEN 0 ELSE 1 END,c.id LIMIT 1`)
+          .bind(now).first<{id:string;token?:string}>();
     if (!country) return { records: [], next: null };
-    const input = { countryId: country.id, limit: MAX_PLAYER_ROWS, ...(cursor.token ? { cursor: cursor.token } : {}) };
+    const token = cursor.countryId && !cursor.rotation ? cursor.token : country.token;
+    const input = { countryId: country.id, limit: playerLimit, ...(token ? { cursor: token } : {}) };
     const page = await client.get('user.getUsersByCountry', input, pagedPlayersSchema);
-    const records: unknown[] = [];
-    for (const reference of page.items) {
-      const userId = id(reference._id);
-      if (!userId) throw new Error('user.getUsersByCountry returned an invalid ID');
-      records.push(await client.get('user.getUserLite', { userId }, playerSchema));
-    }
-    if (page.nextCursor && page.items.length) return { records, next: { countryId: country.id, token: page.nextCursor } };
-    const nextCountry = await env.DB.prepare('SELECT id FROM countries WHERE id>? ORDER BY id LIMIT 1').bind(country.id).first<{ id: string }>();
-    return { records, next: nextCountry ? { countryId: nextCountry.id } : null };
+    if (page.items.length > playerLimit) throw new Error('Player page exceeds requested limit');
+    const ids = checkedIds(page.items.map(reference => reference._id), true);
+    const records = await client.getMany('user.getUserLite', ids.map(userId => ({userId})), playerSchema);
+    records.forEach((record,index)=>{if(record._id!==ids[index])throw new Error('Player batch returned a mismatched ID');});
+    if (page.nextCursor && page.nextCursor===token) throw new Error('Player cursor did not advance');
+    const continuing = Boolean(page.nextCursor && page.items.length);
+    return { records, next: {rotation:true}, checkpoint: env.DB.prepare(`INSERT INTO player_census_state(country_id,cursor,next_run_at,last_scanned_at,records_observed,completed_sweeps)
+      SELECT ?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+      ON CONFLICT(country_id) DO UPDATE SET cursor=excluded.cursor,next_run_at=excluded.next_run_at,
+      last_scanned_at=excluded.last_scanned_at,records_observed=records_observed+excluded.records_observed,completed_sweeps=completed_sweeps+excluded.completed_sweeps`)
+      .bind(country.id,continuing?page.nextCursor:null,continuing?now:plus(new Date(),21600),now,records.length,continuing?0:1,owner) };
+  }
+  if (source === 'articles') {
+    const now = new Date();
+    const archiveToken = cursor.archiveToken ?? cursor.token;
+    const head = cursor.archiveComplete || Boolean(archiveToken && cursor.headNextAt && cursor.headNextAt<=now.toISOString());
+    const page = await client.get('article.getArticlesPaginated', {limit:PAGE_ROWS,type:'last',...(!head && archiveToken?{cursor:archiveToken}:{})},pagedObjectsSchema);
+    if(page.items.length>PAGE_ROWS)throw new Error('Article page exceeds requested limit');
+    if(!head && page.nextCursor && (page.nextCursor===archiveToken || cursor.recentTokens?.includes(page.nextCursor)))throw new Error('Article cursor repeated');
+    if(!head && page.nextCursor && !page.items.length)throw new Error('Empty article page has a continuation cursor');
+    const records = page.items.filter(item=>{const row=asRow(item);return row.isPublic===true && row.isPublished===true && row.isDeleted!==true;});
+    const complete = cursor.archiveComplete || (!head && !page.nextCursor);
+    return {records,next:{archiveToken:head?archiveToken:page.nextCursor ?? undefined,archiveComplete:complete,
+      recentTokens:head?cursor.recentTokens:[...(cursor.recentTokens ?? []),...(archiveToken?[archiveToken]:[])].slice(-64),
+      headNextAt:head || !cursor.headNextAt?plus(now,300):cursor.headNextAt},delay:complete?300:60};
   }
   const pages = Math.max(0, Number(cursor.pages) || 0);
-  const specs: Record<'parties' | 'military-units' | 'battles' | 'articles', [string, Record<string, unknown>, number]> = {
-    parties: ['party.getManyPaginated', { limit: MAX_ROWS }, 120],
-    'military-units': ['mu.getManyPaginated', { limit: MAX_ROWS }, 120],
-    battles: ['battle.getBattles', { limit: MAX_ROWS, isActive: true }, 20],
-    articles: ['article.getArticlesPaginated', { limit: MAX_ROWS, type: 'last' }, 20],
+  const specs: Record<'parties' | 'military-units' | 'battles', [string, Record<string, unknown>]> = {
+    parties: ['party.getManyPaginated', { limit: PAGE_ROWS }],
+    'military-units': ['mu.getManyPaginated', { limit: PAGE_ROWS }],
+    battles: ['battle.getBattles', { limit: PAGE_ROWS, isActive: true }],
   };
-  const [procedure, input, maxPages] = specs[source];
+  const [procedure, input] = specs[source];
   const page = await client.get(procedure, { ...input, ...(cursor.token ? { cursor: cursor.token } : {}) }, pagedObjectsSchema);
-  const records = source === 'articles'
-    ? page.items.filter(item => { const row = asRow(item); return row.isPublic !== false && row.isDeleted !== true && row.isPublished !== false; })
-    : page.items;
-  return { records, next: page.nextCursor && page.items.length && pages + 1 < maxPages ? { token: page.nextCursor, pages: pages + 1 } : null };
+  if(page.items.length>PAGE_ROWS)throw new Error('Page exceeds requested limit');
+  if(page.nextCursor && (page.nextCursor===cursor.token || cursor.recentTokens?.includes(page.nextCursor)))throw new Error('Cursor repeated');
+  return { records:page.items, next: page.nextCursor && page.items.length ? { token: page.nextCursor, pages: pages + 1,recentTokens:[...(cursor.recentTokens ?? []),...(cursor.token?[cursor.token]:[])].slice(-64) } : null };
 }
 
-async function saveMarkets(env: Env, inputs: unknown[], sourceUrl: string, now: string): Promise<number> {
-  if (!inputs.length) return 0;
+async function saveMarkets(env: Env, inputs: unknown[], sourceUrl: string, now: string): Promise<{changed:number;results:D1Result[]}> {
+  if (!inputs.length) return {changed:0,results:[]};
   const entries = inputs.map(input => {
     if (!Array.isArray(input) || typeof input[0] !== 'string' || typeof input[1] !== 'number') throw new Error('Invalid market item');
     const [itemId, price] = input as [string, number];
@@ -232,21 +268,28 @@ async function saveMarkets(env: Env, inputs: unknown[], sourceUrl: string, now: 
     statements.push(price.bind(itemId, value, now, sourceUrl, itemId, value, itemId));
   });
   const results = await env.DB.batch(statements);
-  return results.reduce((count, result, index) => count + (index % 2 === 1 && result.meta.changes ? 1 : 0), 0);
+  return {changed:results.reduce((count, result, index) => count + (index % 2 === 1 && result.meta.changes ? 1 : 0), 0),results};
 }
 
-export async function runSync(env: Env, options: { source?: string; force?: boolean } = {}): Promise<SyncResult> {
+export async function runSync(env: Env, options: { source?: string; force?: boolean; expectedCursor?:string|null;fetcher?:typeof fetch } = {}): Promise<SyncResult> {
   const started = new Date(), now = started.toISOString();
+  const preferred = INGESTION_SLOTS[Math.floor(started.valueOf()/60000)%INGESTION_SLOTS.length];
   if (options.source && !(options.source in sourceTable)) return { status: 'unknown-source', source: options.source };
   const row = options.source
     ? await env.DB.prepare(`SELECT r.id,r.endpoint,r.interval_seconds,c.cursor,c.next_run_at,c.lease_until FROM source_registry r
         JOIN ingestion_cursors c ON c.source_id=r.id WHERE r.id=? AND r.enabled=1`).bind(options.source).first<SourceRow>()
     : await env.DB.prepare(`SELECT r.id,r.endpoint,r.interval_seconds,c.cursor,c.next_run_at,c.lease_until FROM source_registry r
         JOIN ingestion_cursors c ON c.source_id=r.id WHERE r.enabled=1 AND r.id IN (${supportedIdsSql}) AND c.next_run_at<=? AND (c.lease_until IS NULL OR c.lease_until<=?)
-        ORDER BY c.next_run_at,r.id LIMIT 1`).bind(now, now).first<SourceRow>();
+        ORDER BY CASE WHEN r.id=? THEN 0 WHEN ? IS NULL AND r.id NOT IN ('players','articles') THEN 0 ELSE 1 END,c.next_run_at,r.id LIMIT 1`).bind(now, now,preferred,preferred).first<SourceRow>();
   if (!row) return { status: 'idle' };
+  if(options.expectedCursor!==undefined && row.cursor!==options.expectedCursor)return {status:'busy',source:row.id};
   if (!options.force && row.next_run_at > now) return { status: 'idle' };
   const source = row.id as SourceId;
+  const playerLimit=options.fetcher?COLLECTOR_PLAYER_ROWS:MAX_PLAYER_ROWS;
+  const rowLimit = source==='players'?playerLimit:['parties','military-units','battles','articles'].includes(source)?PAGE_ROWS:MAX_ROWS;
+  // Cover entity/index writes, bounded retention and all bookkeeping. Refund
+  // only from authoritative D1 metadata after the run is safely finalized.
+  const reservation = 140 + rowLimit * 10;
   const leaseUntil = plus(started, 600);
   const runId = crypto.randomUUID();
   let claims: D1Result[];
@@ -285,7 +328,7 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
         reserved_writes=reserved_writes+excluded.reserved_writes,
         tick_count=tick_count+1,updated_at=excluded.updated_at
         WHERE ingestion_budget.reserved_writes+excluded.reserved_writes<=?`)
-        .bind(now.slice(0, 10), RESERVED_WRITES_PER_TICK, now, DAILY_INGESTION_WRITE_BUDGET),
+        .bind(now.slice(0, 10), reservation, now, DAILY_INGESTION_WRITE_BUDGET),
       env.DB.prepare('INSERT INTO ingestion_runs(id,source_id,started_at,status) VALUES(?,?,?,?)').bind(runId, source, now, 'running'),
     ]);
     if (!start[0].meta.changes) {
@@ -304,41 +347,70 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
       if (!paused[0].meta.changes) throw new Error('Sync lease expired before quota pause');
       return { status: 'quota-paused', source, nextRunAt };
     }
-    const client = new WarEraClient(env.WARERA_BASE_URL, env.WARERA_API_KEY);
-    const batch = await getBatch(env, client, source, parseCursor(row.cursor));
-    const changed = source === 'markets'
+    const client = new WarEraClient(env.WARERA_BASE_URL, env.WARERA_API_KEY,options.fetcher);
+    const batch = await getBatch(env, client, source, parseCursor(row.cursor),runId,playerLimit);
+    const saved = source === 'markets'
       ? await saveMarkets(env, batch.records, batch.sourceUrl!, now)
       : await saveEntities(env, source, batch.records, client, now);
     const retention = Number(env.RETENTION_DAYS);
     const days = Number.isInteger(retention) && retention >= 30 && retention <= 3650 ? retention : 365;
     const cutoff = plus(new Date(), -days * 86400);
-    const doneAt = new Date(), nextRunAt = plus(doneAt, batch.next ? 60 : row.interval_seconds);
+    const doneAt = new Date(), nextRunAt = plus(doneAt, batch.delay ?? (batch.next ? 60 : row.interval_seconds));
     const final = await env.DB.batch([
+      ...(batch.checkpoint?[batch.checkpoint]:[]),
       env.DB.prepare('DELETE FROM entity_snapshots WHERE id IN (SELECT id FROM entity_snapshots WHERE captured_at<? ORDER BY id LIMIT 10)').bind(cutoff),
       env.DB.prepare('DELETE FROM market_prices WHERE id IN (SELECT id FROM market_prices WHERE captured_at<? ORDER BY id LIMIT 10)').bind(cutoff),
       env.DB.prepare('DELETE FROM ingestion_runs WHERE id IN (SELECT id FROM ingestion_runs WHERE started_at<? AND status<>? ORDER BY started_at LIMIT 10)').bind(cutoff, 'running'),
       env.DB.prepare('DELETE FROM ingestion_budget WHERE day_key IN (SELECT day_key FROM ingestion_budget WHERE day_key<? ORDER BY day_key LIMIT 2)').bind(cutoff.slice(0, 10)),
-      env.DB.prepare('UPDATE ingestion_cursors SET cursor=?,next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?')
-        .bind(batch.next ? json(batch.next) : null, nextRunAt, source, leaseUntil),
-      env.DB.prepare(`UPDATE source_registry SET status=?,last_success=?,last_attempt=?,last_error=NULL,
-        record_count=(SELECT COUNT(*) FROM ${sourceTable[source]}) WHERE id=?`)
-        .bind(batch.records.length ? 'ok' : 'empty', doneAt.toISOString(), now, source),
-      env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,records_count=?,duration_ms=? WHERE id=?')
-        .bind(doneAt.toISOString(), 'ok', batch.records.length, doneAt.valueOf() - started.valueOf(), runId),
+      env.DB.prepare(`UPDATE ingestion_cursors SET cursor=?,next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?
+        AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>?)`)
+        .bind(batch.next ? json(batch.next) : null, nextRunAt, source, leaseUntil,runId,doneAt.toISOString()),
+      env.DB.prepare(`UPDATE source_registry SET status=?,last_success=?,last_attempt=?,last_error=NULL WHERE id=?
+        AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>?)`)
+        .bind(batch.records.length ? 'ok' : 'empty', doneAt.toISOString(), now, source,runId,doneAt.toISOString()),
+      env.DB.prepare(`UPDATE ingestion_runs SET finished_at=?,status=?,records_count=?,duration_ms=? WHERE id=?
+        AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>?)`)
+        .bind(doneAt.toISOString(), 'ok', batch.records.length, doneAt.valueOf() - started.valueOf(), runId,runId,doneAt.toISOString()),
       env.DB.prepare("UPDATE ingestion_lock SET owner=NULL,lease_until=NULL WHERE id='global' AND owner=?").bind(runId),
     ]);
     globalReleased = true;
-    if (!final[4].meta.changes) throw new Error('Sync lease expired before cursor advance');
-    return { status: 'ok', source, processed: batch.records.length, changed, nextRunAt };
+    if (!final[batch.checkpoint?5:4].meta.changes) throw new Error('Sync lease expired before cursor advance');
+    const metered = [...claims,...start,...saved.results,...final];
+    const charge = measured(metered)?written(metered)+8:reservation;
+    // Eight extra writes conservatively cover the settlement itself (including
+    // indexes). Missing metadata never gives an unearned refund.
+    try {
+      await env.DB.batch([
+        env.DB.prepare('UPDATE ingestion_budget SET reserved_writes=MAX(0,reserved_writes-?+?),updated_at=? WHERE day_key=?')
+          .bind(reservation,charge,doneAt.toISOString(),now.slice(0,10)),
+        env.DB.prepare('UPDATE ingestion_runs SET rows_written=?,reserved_writes=? WHERE id=?')
+          .bind(measured(metered)?written(metered):null,reservation,runId),
+      ]);
+    } catch {
+      // Data and cursor are already committed. Retain the larger reservation;
+      // a failed refund cannot turn a successful capture into a false retry.
+      console.warn('wint_budget_settlement_deferred',{source});
+    }
+    return { status: 'ok', source, processed: batch.records.length, changed:saved.changed, nextRunAt };
   } catch (error) {
     const doneAt = new Date();
+    if(error instanceof WarEraError && error.status===409){
+      // A runner prepared a page while another capture advanced the country or
+      // the live/archive turn. Never overwrite the successful source status.
+      await env.DB.prepare(`UPDATE ingestion_cursors SET lease_until=NULL WHERE source_id=? AND lease_until=?
+        AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`).bind(source,leaseUntil,runId).run();
+      await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=? WHERE id=?').bind(doneAt.toISOString(),'busy','Prepared page became stale',runId).run();
+      return {status:'busy',source};
+    }
     const message = error instanceof Error ? error.message.slice(0, 240) : 'Unknown sync error';
     const retryAfter = error instanceof WarEraError && error.retryAfterSeconds ? error.retryAfterSeconds : Math.min(900, Math.max(60, row.interval_seconds));
     const nextRunAt = plus(doneAt, retryAfter);
-    await env.DB.prepare('UPDATE source_registry SET status=?,last_attempt=?,last_error=? WHERE id=?')
-      .bind(error instanceof WarEraError && (error.status === 401 || error.status === 403) ? 'auth-required' : 'error', now, message, source).run();
-    await env.DB.prepare('UPDATE ingestion_cursors SET next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?')
-      .bind(nextRunAt, source, leaseUntil).run();
+    await env.DB.prepare(`UPDATE source_registry SET status=?,last_attempt=?,last_error=? WHERE id=?
+      AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`)
+      .bind(error instanceof WarEraError && (error.status === 401 || error.status === 403) ? 'auth-required' : 'error', now, message, source,runId).run();
+    await env.DB.prepare(`UPDATE ingestion_cursors SET next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?
+      AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`)
+      .bind(nextRunAt, source, leaseUntil,runId).run();
     await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=?,duration_ms=? WHERE id=?')
       .bind(doneAt.toISOString(), 'error', message, doneAt.valueOf() - started.valueOf(), runId).run();
     return { status: 'error', source, error: message, nextRunAt };
@@ -347,4 +419,4 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
   }
 }
 
-export const ingestionLimits = { maxRowsPerTick: MAX_ROWS, maxPlayerRowsPerTick: MAX_PLAYER_ROWS, estimatedMaximumSubrequests: TICK_SUBREQUEST_UPPER_BOUND, reservedWritesPerTick: RESERVED_WRITES_PER_TICK, dailyIngestionWriteBudget: DAILY_INGESTION_WRITE_BUDGET };
+export const ingestionLimits = { maxRowsPerTick: PAGE_ROWS, maxDetailRowsPerTick:MAX_ROWS,maxPlayerRowsPerTick: MAX_PLAYER_ROWS, estimatedMaximumExternalSubrequests: TICK_SUBREQUEST_UPPER_BOUND, estimatedMaximumD1Queries:42, dailyIngestionWriteBudget: DAILY_INGESTION_WRITE_BUDGET };

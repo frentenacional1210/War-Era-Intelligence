@@ -7,6 +7,7 @@ import { Badge } from './components';
 import { age, sourceState } from './utils';
 import { Dashboard, Directory, DetailPage, WorldPage, MarketPage, IndustryPage, AIPage, AlertsPage, StatusPage, AdminPage, NotFound } from './pages';
 import type { ResourceKey } from './types';
+import { AnalysisPage } from './analysis';
 
 const navigation = [
   { path: '/', label: 'Centro de mando', icon: House },
@@ -19,6 +20,7 @@ const navigation = [
   { path: '/mercados', label: 'Economía y mercados', icon: ChartNoAxesCombined },
   { path: '/industria', label: 'Empresas e industria', icon: Factory },
   { path: '/articulos', label: 'Prensa y artículos', icon: Newspaper },
+  { path: '/analisis', label: 'Comparadores e históricos', icon: Activity },
   { path: '/ia', label: 'Informes de IA', icon: Bot },
   { path: '/alertas', label: 'Alertas', icon: Bell },
   { path: '/admin', label: 'Administración', icon: LockKeyhole },
@@ -59,6 +61,7 @@ export default function App() {
     <Route path="/unidades" element={<ResourceRoute resource="military-units" />} /><Route path="/unidades/:id" element={<DetailRoute resource="military-units" />} />
     <Route path="/batallas" element={<ResourceRoute resource="battles" />} /><Route path="/batallas/:id" element={<DetailRoute resource="battles" />} />
     <Route path="/mercados" element={<MarketPage />} />
+    <Route path="/analisis" element={<AnalysisPage />} />
     <Route path="/industria" element={<IndustryPage />} /><Route path="/empresas/:id" element={<DetailRoute resource="companies" />} />
     <Route path="/articulos" element={<ResourceRoute resource="articles" />} /><Route path="/articulos/:id" element={<DetailRoute resource="articles" />} />
     <Route path="/ia" element={<AIPage />} />

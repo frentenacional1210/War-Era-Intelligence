@@ -31,6 +31,7 @@ export type Source = {
 export type Collection = { items: Row[]; total: number; page: number; limit: number; source: Source | null };
 export type Detail = { item: Row; history: Row[]; source: Source | null };
 export type Status = {
+  coverage?: {countries_started:number;countries_completed:number|null;profiles_observed:number|null};
   sources: Source[];
   ai: { enabled: boolean; status: string };
   totals: Record<string, number>;

@@ -1,0 +1,191 @@
+{
+  "rows": [
+    {
+      "at": "2026-10-12T07:29:44.487Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "players",
+      "processed": 8,
+      "changed": 16,
+      "nextRunAt": "2026-10-12T07:30:46.176Z"
+    },
+    {
+      "at": "2026-10-12T07:29:44.896Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "players",
+      "processed": 8,
+      "changed": 16,
+      "nextRunAt": "2026-10-12T07:30:46.590Z"
+    },
+    {
+      "at": "2026-10-12T07:29:45.338Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "articles",
+      "processed": 3,
+      "changed": 3,
+      "nextRunAt": "2026-10-12T07:30:47.038Z"
+    },
+    {
+      "at": "2026-10-12T07:29:45.774Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "articles",
+      "processed": 3,
+      "changed": 1,
+      "nextRunAt": "2026-10-12T07:30:47.483Z"
+    },
+    {
+      "at": "2026-10-12T07:29:46.170Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "players",
+      "processed": 8,
+      "changed": 16,
+      "nextRunAt": "2026-10-12T07:30:47.873Z"
+    },
+    {
+      "at": "2026-10-12T07:29:46.606Z",
+      "httpStatus": 200,
+      "status": "ok",
+      "source": "articles",
+      "processed": 5,
+      "changed": 5,
+      "nextRunAt": "2026-10-12T07:30:48.321Z"
+    }
+  ],
+  "totals": {
+    "alerts": 0,
+    "articles": 47,
+    "battles": 39,
+    "companies": 0,
+    "countries": 180,
+    "events": 0,
+    "military-units": 236,
+    "parties": 239,
+    "players": 130,
+    "regions": 242
+  },
+  "quota": {
+    "day": "2026-10-12",
+    "dailyBudget": 80000,
+    "reserved": 60617,
+    "remaining": 19383,
+    "tickCount": 439,
+    "estimate": true,
+    "method": "D1 measured writes plus settlement margin; legacy and failed reservations retained"
+  },
+  "coverage": {
+    "countries_started": 6,
+    "countries_completed": 0,
+    "profiles_observed": 48
+  },
+  "runs": [
+    {
+      "source_id": "articles",
+      "status": "ok",
+      "records_count": 5,
+      "rows_written": 43,
+      "reserved_writes": 240
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 80,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "articles",
+      "status": "ok",
+      "records_count": 3,
+      "rows_written": 19,
+      "reserved_writes": 240
+    },
+    {
+      "source_id": "articles",
+      "status": "ok",
+      "records_count": 3,
+      "rows_written": 33,
+      "reserved_writes": 240
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 80,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 80,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 80,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "markets",
+      "status": "ok",
+      "records_count": 3,
+      "rows_written": 24,
+      "reserved_writes": 170
+    },
+    {
+      "source_id": "battles",
+      "status": "ok",
+      "records_count": 10,
+      "rows_written": 12,
+      "reserved_writes": 240
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 79,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "players",
+      "status": "ok",
+      "records_count": 8,
+      "rows_written": 79,
+      "reserved_writes": 220
+    },
+    {
+      "source_id": "articles",
+      "status": "quota-paused",
+      "records_count": 0,
+      "rows_written": null,
+      "reserved_writes": null
+    },
+    {
+      "source_id": "markets",
+      "status": "quota-paused",
+      "records_count": 0,
+      "rows_written": null,
+      "reserved_writes": null
+    },
+    {
+      "source_id": "parties",
+      "status": "quota-paused",
+      "records_count": 0,
+      "rows_written": null,
+      "reserved_writes": null
+    },
+    {
+      "source_id": "battles",
+      "status": "quota-paused",
+      "records_count": 0,
+      "rows_written": null,
+      "reserved_writes": null
+    }
+  ]
+}

@@ -1,0 +1,650 @@
+{
+  "verifiedAt": "2026-10-12T07:14:42.616Z",
+  "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+  "homeStatus": 200,
+  "healthStatus": 200,
+  "totals": {
+    "countries": 180,
+    "players": 82,
+    "parties": 239,
+    "military-units": 236,
+    "battles": 39,
+    "articles": 47,
+    "companies": 0,
+    "alerts": 0
+  },
+  "sources": [
+    {
+      "id": "alerts",
+      "endpoint": "none",
+      "status": "derived-not-implemented",
+      "last_success": null,
+      "last_attempt": null,
+      "last_error": null,
+      "interval_seconds": 86400,
+      "enabled": 0,
+      "record_count": 0
+    },
+    {
+      "id": "articles",
+      "endpoint": "article.getArticlesPaginated",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:04:54.410Z",
+      "last_attempt": "2026-10-12T07:12:00.449Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 300,
+      "enabled": 1,
+      "record_count": 47
+    },
+    {
+      "id": "battles",
+      "endpoint": "battle.getBattles",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:06:18.109Z",
+      "last_attempt": "2026-10-12T07:12:53.933Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 120,
+      "enabled": 1,
+      "record_count": 39
+    },
+    {
+      "id": "companies",
+      "endpoint": "company.getCompanies",
+      "status": "unavailable-unverified",
+      "last_success": null,
+      "last_attempt": null,
+      "last_error": null,
+      "interval_seconds": 86400,
+      "enabled": 0,
+      "record_count": 0
+    },
+    {
+      "id": "countries",
+      "endpoint": "country.getAllCountries + country.getCountryById",
+      "status": "ok",
+      "last_success": "2026-10-12T04:37:54.241Z",
+      "last_attempt": "2026-10-12T04:37:53.938Z",
+      "last_error": null,
+      "interval_seconds": 86400,
+      "enabled": 1,
+      "record_count": 180
+    },
+    {
+      "id": "events",
+      "endpoint": "none",
+      "status": "derived-not-implemented",
+      "last_success": null,
+      "last_attempt": null,
+      "last_error": null,
+      "interval_seconds": 86400,
+      "enabled": 0,
+      "record_count": 0
+    },
+    {
+      "id": "markets",
+      "endpoint": "itemTrading.getPrices",
+      "status": "ok",
+      "last_success": "2026-10-12T07:07:54.509Z",
+      "last_attempt": "2026-10-12T07:07:54.230Z",
+      "last_error": null,
+      "interval_seconds": 600,
+      "enabled": 1,
+      "record_count": 24
+    },
+    {
+      "id": "military-units",
+      "endpoint": "mu.getManyPaginated",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:02:54.634Z",
+      "last_attempt": "2026-10-12T07:08:53.942Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 3600,
+      "enabled": 1,
+      "record_count": 236
+    },
+    {
+      "id": "parties",
+      "endpoint": "party.getManyPaginated",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:06:54.398Z",
+      "last_attempt": "2026-10-12T07:13:53.942Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 3600,
+      "enabled": 1,
+      "record_count": 239
+    },
+    {
+      "id": "players",
+      "endpoint": "user.getUsersByCountry + user.getUserLite",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:04:22.039Z",
+      "last_attempt": "2026-10-12T07:11:19.844Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 3600,
+      "enabled": 1,
+      "record_count": 82
+    },
+    {
+      "id": "regions",
+      "endpoint": "region.getRegionsObject + region.getById",
+      "status": "quota-paused",
+      "last_success": "2026-10-12T07:03:33.623Z",
+      "last_attempt": "2026-10-12T07:09:53.938Z",
+      "last_error": "Daily ingestion write reservation exhausted; resumes next UTC day",
+      "interval_seconds": 21600,
+      "enabled": 1,
+      "record_count": 242
+    }
+  ],
+  "quota": {
+    "day": "2026-10-12",
+    "dailyBudget": 60000,
+    "reserved": 59920,
+    "remaining": 80,
+    "tickCount": 428,
+    "estimate": true
+  },
+  "syncResults": [],
+  "runs": [
+    {
+      "id": "866c7bdc-ff1d-4f61-9821-4b99ea017a16",
+      "source_id": "parties",
+      "started_at": "2026-10-12T07:13:53.942Z",
+      "finished_at": "2026-10-12T07:13:54.149Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 207
+    },
+    {
+      "id": "1e16a4ac-6d00-491c-826d-ec6e63415334",
+      "source_id": "battles",
+      "started_at": "2026-10-12T07:12:53.933Z",
+      "finished_at": "2026-10-12T07:12:54.092Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 159
+    },
+    {
+      "id": "a4b90944-b1c1-409c-bdc7-978920a096b9",
+      "source_id": "articles",
+      "started_at": "2026-10-12T07:12:00.449Z",
+      "finished_at": "2026-10-12T07:12:00.611Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 162
+    },
+    {
+      "id": "f48c5648-5169-4a19-a9d9-8e8140e7bd94",
+      "source_id": "players",
+      "started_at": "2026-10-12T07:11:19.844Z",
+      "finished_at": "2026-10-12T07:11:20.035Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 191
+    },
+    {
+      "id": "8569149f-1850-4924-a84b-d985c65877c0",
+      "source_id": "regions",
+      "started_at": "2026-10-12T07:09:53.938Z",
+      "finished_at": "2026-10-12T07:09:54.112Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 174
+    },
+    {
+      "id": "1ba1dbda-878e-4fee-b7cb-819a85c6b073",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T07:08:53.942Z",
+      "finished_at": "2026-10-12T07:08:54.108Z",
+      "status": "quota-paused",
+      "records_count": 0,
+      "error": "Daily ingestion write reservation exhausted",
+      "duration_ms": 166
+    },
+    {
+      "id": "e7be103f-ceaf-42f6-94dc-22d6304c745e",
+      "source_id": "markets",
+      "started_at": "2026-10-12T07:07:54.230Z",
+      "finished_at": "2026-10-12T07:07:54.509Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 279
+    },
+    {
+      "id": "ddea86a4-20e5-4ae9-bccb-8bc95032a860",
+      "source_id": "parties",
+      "started_at": "2026-10-12T07:06:54.131Z",
+      "finished_at": "2026-10-12T07:06:54.398Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 267
+    },
+    {
+      "id": "557d9895-54cb-4ccb-aa4c-ae87fc4ba950",
+      "source_id": "battles",
+      "started_at": "2026-10-12T07:06:17.830Z",
+      "finished_at": "2026-10-12T07:06:18.109Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 279
+    },
+    {
+      "id": "2fda05c4-5ae5-4772-a8c3-7e3a5d5401c4",
+      "source_id": "articles",
+      "started_at": "2026-10-12T07:04:53.935Z",
+      "finished_at": "2026-10-12T07:04:54.410Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 475
+    },
+    {
+      "id": "30744e14-a760-4eee-beb7-e6b2fa7a5dde",
+      "source_id": "players",
+      "started_at": "2026-10-12T07:04:21.643Z",
+      "finished_at": "2026-10-12T07:04:22.039Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 396
+    },
+    {
+      "id": "bea59bc2-66a0-4792-af75-e02dde2b2eb7",
+      "source_id": "regions",
+      "started_at": "2026-10-12T07:03:33.225Z",
+      "finished_at": "2026-10-12T07:03:33.623Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 398
+    },
+    {
+      "id": "d3db0a78-9b77-4d18-be9a-92950ea6d11e",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T07:02:54.328Z",
+      "finished_at": "2026-10-12T07:02:54.634Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 306
+    },
+    {
+      "id": "1bed8958-bc6a-44db-8ee3-7efc2f2b8168",
+      "source_id": "markets",
+      "started_at": "2026-10-12T07:02:03.238Z",
+      "finished_at": "2026-10-12T07:02:03.575Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 337
+    },
+    {
+      "id": "a2056aee-b712-45c5-8568-913c917c5ef0",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:59:53.934Z",
+      "finished_at": "2026-10-12T06:59:54.207Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 273
+    },
+    {
+      "id": "025b1e3b-f386-4195-9d08-2e7b1315fa3a",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:58:53.937Z",
+      "finished_at": "2026-10-12T06:58:54.208Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 271
+    },
+    {
+      "id": "b2fa6e8d-515d-435f-b158-08543721076b",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:57:53.937Z",
+      "finished_at": "2026-10-12T06:57:54.298Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 361
+    },
+    {
+      "id": "6456a773-8548-4fd5-80f1-2f82070bf4ae",
+      "source_id": "players",
+      "started_at": "2026-10-12T06:56:53.937Z",
+      "finished_at": "2026-10-12T06:56:54.267Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 330
+    },
+    {
+      "id": "027e3b73-4327-4942-86d2-ae918e010597",
+      "source_id": "regions",
+      "started_at": "2026-10-12T06:56:03.030Z",
+      "finished_at": "2026-10-12T06:56:03.377Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 347
+    },
+    {
+      "id": "7679d18f-a2ae-40c9-ba3f-cca940b34c9f",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T06:54:53.937Z",
+      "finished_at": "2026-10-12T06:54:54.218Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 281
+    },
+    {
+      "id": "635c1e5f-cbd1-4961-94cd-a47c9658f797",
+      "source_id": "markets",
+      "started_at": "2026-10-12T06:53:53.937Z",
+      "finished_at": "2026-10-12T06:53:54.224Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 287
+    },
+    {
+      "id": "f342d33e-621f-48f1-9fb8-fc45d06cd644",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:52:54.135Z",
+      "finished_at": "2026-10-12T06:52:54.415Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 280
+    },
+    {
+      "id": "d93e3b3c-4320-483f-86df-2561302da9ee",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:51:53.936Z",
+      "finished_at": "2026-10-12T06:51:54.411Z",
+      "status": "ok",
+      "records_count": 2,
+      "error": null,
+      "duration_ms": 475
+    },
+    {
+      "id": "5b93d1d8-4a14-48a9-961e-63d3cc267660",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:51:16.142Z",
+      "finished_at": "2026-10-12T06:51:16.409Z",
+      "status": "ok",
+      "records_count": 2,
+      "error": null,
+      "duration_ms": 267
+    },
+    {
+      "id": "d9231ad9-1508-4c14-bd62-30d026893cdb",
+      "source_id": "players",
+      "started_at": "2026-10-12T06:49:53.936Z",
+      "finished_at": "2026-10-12T06:49:54.255Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 319
+    },
+    {
+      "id": "af0a96c3-aca5-44f5-8561-d80768d31887",
+      "source_id": "regions",
+      "started_at": "2026-10-12T06:48:53.941Z",
+      "finished_at": "2026-10-12T06:48:54.273Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 332
+    },
+    {
+      "id": "84c52bc2-3070-4d9a-82f1-97cea43e3963",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T06:47:53.937Z",
+      "finished_at": "2026-10-12T06:47:54.204Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 267
+    },
+    {
+      "id": "e07a2269-cd5f-4338-866e-faafd7a0db46",
+      "source_id": "markets",
+      "started_at": "2026-10-12T06:47:04.132Z",
+      "finished_at": "2026-10-12T06:47:04.431Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 299
+    },
+    {
+      "id": "dbc3e004-aef6-4fe7-bdb8-d38e32f2235d",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:46:09.343Z",
+      "finished_at": "2026-10-12T06:46:09.640Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 297
+    },
+    {
+      "id": "f370242c-78e7-4c50-b866-637cec83eba9",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:44:53.936Z",
+      "finished_at": "2026-10-12T06:44:54.401Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 465
+    },
+    {
+      "id": "16356346-b423-4f92-8183-c7bc3ab9e154",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:43:53.937Z",
+      "finished_at": "2026-10-12T06:43:54.173Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 236
+    },
+    {
+      "id": "7b15a0c6-574c-419c-9c6e-95ad9c3907a2",
+      "source_id": "players",
+      "started_at": "2026-10-12T06:42:53.936Z",
+      "finished_at": "2026-10-12T06:42:54.263Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 327
+    },
+    {
+      "id": "b4600e25-e65d-49f5-9405-fe9c21a0d22c",
+      "source_id": "regions",
+      "started_at": "2026-10-12T06:41:53.936Z",
+      "finished_at": "2026-10-12T06:41:54.273Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 337
+    },
+    {
+      "id": "36bfc5f7-e88f-4a81-9e21-91eef195a809",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T06:41:09.344Z",
+      "finished_at": "2026-10-12T06:41:09.647Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 303
+    },
+    {
+      "id": "bf8bff0f-a439-4554-beae-57e30a9d8989",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:39:53.935Z",
+      "finished_at": "2026-10-12T06:39:54.208Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 273
+    },
+    {
+      "id": "c9f26d99-4b37-4947-b0d9-fbf6a73d9850",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:38:53.933Z",
+      "finished_at": "2026-10-12T06:38:54.295Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 362
+    },
+    {
+      "id": "d09f0af8-a30e-4989-8a5c-d682614e7bcb",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:37:53.939Z",
+      "finished_at": "2026-10-12T06:37:54.178Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 239
+    },
+    {
+      "id": "5a7f7986-9062-4c4e-bffd-1dc8296778f2",
+      "source_id": "players",
+      "started_at": "2026-10-12T06:36:53.942Z",
+      "finished_at": "2026-10-12T06:36:54.301Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 359
+    },
+    {
+      "id": "1873872c-261a-4ffa-95b6-9d781b8b662c",
+      "source_id": "regions",
+      "started_at": "2026-10-12T06:36:02.431Z",
+      "finished_at": "2026-10-12T06:36:02.768Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 337
+    },
+    {
+      "id": "b1b99511-150e-4af3-a153-f8d9bdf5ab03",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T06:34:53.936Z",
+      "finished_at": "2026-10-12T06:34:54.272Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 336
+    },
+    {
+      "id": "65f50517-3379-4a65-8755-f7145c707350",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:33:53.941Z",
+      "finished_at": "2026-10-12T06:33:54.215Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 274
+    },
+    {
+      "id": "bd6786b7-a86e-4ef7-a07e-b1285479f95f",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:32:53.933Z",
+      "finished_at": "2026-10-12T06:32:54.226Z",
+      "status": "ok",
+      "records_count": 0,
+      "error": null,
+      "duration_ms": 293
+    },
+    {
+      "id": "e55e4e72-9223-43a7-8503-a7c86e347605",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:32:11.237Z",
+      "finished_at": "2026-10-12T06:32:11.499Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 262
+    },
+    {
+      "id": "6057a8ab-ea12-43fa-9e92-e4d144d2ce9a",
+      "source_id": "markets",
+      "started_at": "2026-10-12T06:31:39.446Z",
+      "finished_at": "2026-10-12T06:31:39.841Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 395
+    },
+    {
+      "id": "8864d592-fc71-439d-81cb-3966b5f75280",
+      "source_id": "players",
+      "started_at": "2026-10-12T06:29:53.935Z",
+      "finished_at": "2026-10-12T06:29:54.261Z",
+      "status": "ok",
+      "records_count": 1,
+      "error": null,
+      "duration_ms": 326
+    },
+    {
+      "id": "c5bdf14c-7b11-41d0-9ad3-5532c43eff35",
+      "source_id": "regions",
+      "started_at": "2026-10-12T06:28:53.935Z",
+      "finished_at": "2026-10-12T06:28:54.252Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 317
+    },
+    {
+      "id": "6ef30a35-847a-4da0-a147-b073561e8e93",
+      "source_id": "military-units",
+      "started_at": "2026-10-12T06:27:53.943Z",
+      "finished_at": "2026-10-12T06:27:54.210Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 267
+    },
+    {
+      "id": "c450fa3f-67e4-459d-baf2-fae57f16271c",
+      "source_id": "parties",
+      "started_at": "2026-10-12T06:26:53.938Z",
+      "finished_at": "2026-10-12T06:26:54.203Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 265
+    },
+    {
+      "id": "c4a2301e-c20b-46f9-b2a9-852805af2fb7",
+      "source_id": "articles",
+      "started_at": "2026-10-12T06:26:01.694Z",
+      "finished_at": "2026-10-12T06:26:05.771Z",
+      "status": "ok",
+      "records_count": 2,
+      "error": null,
+      "duration_ms": 4077
+    },
+    {
+      "id": "5869b06c-f3d2-40ab-b7fb-913268287db1",
+      "source_id": "battles",
+      "started_at": "2026-10-12T06:24:53.945Z",
+      "finished_at": "2026-10-12T06:24:54.182Z",
+      "status": "ok",
+      "records_count": 3,
+      "error": null,
+      "duration_ms": 237
+    }
+  ]
+}

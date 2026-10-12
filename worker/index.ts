@@ -1,4 +1,7 @@
 import { runSync } from './ingestion';
+import { analysisRoute } from './analysis';
+import { collectorRoute } from './collector';
+import { INGESTION_DAILY_BUDGET } from '../shared/ingestion-config';
 import { csrfValid, createSession, passwordMatches, sessionId, takeLimit } from './auth';
 import { resourceTables, type Env } from './types';
 import { parseImport, validateImport } from '../shared/import';
@@ -33,11 +36,12 @@ async function body(request:Request):Promise<Record<string,unknown>> {
 async function source(env:Env,id:string) {return env.DB.prepare('SELECT * FROM source_registry WHERE id=?').bind(id).first();}
 async function status(env:Env) {
   const sources = await env.DB.prepare('SELECT * FROM source_registry ORDER BY id').all();
-  const totals = await env.DB.prepare(`SELECT (SELECT COUNT(*) FROM countries) countries,(SELECT COUNT(*) FROM players) players,(SELECT COUNT(*) FROM parties) parties,(SELECT COUNT(*) FROM military_units) "military-units",(SELECT COUNT(*) FROM battles) battles,(SELECT COUNT(*) FROM articles) articles,(SELECT COUNT(*) FROM companies) companies,(SELECT COUNT(*) FROM alerts) alerts`).first<Record<string,number>>();
+  const totals=Object.fromEntries(sources.results.filter(row=>String(row.id) in resourceTables).map(row=>[String(row.id),Number(row.record_count ?? 0)]));
   const day = new Date().toISOString().slice(0,10);
   const budget=await env.DB.prepare('SELECT reserved_writes,tick_count FROM ingestion_budget WHERE day_key=?').bind(day).first<{reserved_writes:number;tick_count:number}>();
   const reserved=budget?.reserved_writes ?? 0;
-  return {sources:sources.results,totals:totals ?? {},quota:{day,dailyBudget:60000,reserved,remaining:Math.max(0,60000-reserved),tickCount:budget?.tick_count ?? 0,estimate:true},ai:{enabled:false,status:'disabled',reason:'Fase 3 pendiente. Los paneles funcionan sin inferencia.',dailyBudget:Number(env.AI_DAILY_BUDGET ?? 100)},timestamp:new Date().toISOString()};
+  const coverage=await env.DB.prepare(`SELECT COUNT(*) countries_started,SUM(completed_sweeps>0) countries_completed,SUM(records_observed) profiles_observed FROM player_census_state`).first();
+  return {sources:sources.results,totals:totals ?? {},coverage,quota:{day,dailyBudget:INGESTION_DAILY_BUDGET,reserved,remaining:Math.max(0,INGESTION_DAILY_BUDGET-reserved),tickCount:budget?.tick_count ?? 0,estimate:true,method:'D1 measured writes plus settlement margin; legacy and failed reservations retained'},ai:{enabled:false,status:'disabled',reason:'Fase 3 pendiente. Los paneles funcionan sin inferencia.',dailyBudget:Number(env.AI_DAILY_BUDGET ?? 100)},timestamp:new Date().toISOString()};
 }
 async function list(request:Request,env:Env,resource:keyof typeof resourceTables) {
   const params = new URL(request.url).searchParams;
@@ -57,7 +61,7 @@ async function list(request:Request,env:Env,resource:keyof typeof resourceTables
   const table=resourceTables[resource];
   const batch=await env.DB.batch([
     env.DB.prepare(`SELECT * FROM ${table}${where} ORDER BY ${sort} ${order},id LIMIT ? OFFSET ?`).bind(...values,limit,(page-1)*limit),
-    env.DB.prepare(`SELECT COUNT(*) total FROM ${table}${where}`).bind(...values),
+    where?env.DB.prepare(`SELECT COUNT(*) total FROM ${table}${where}`).bind(...values):env.DB.prepare('SELECT record_count total FROM source_registry WHERE id=?').bind(resource),
     env.DB.prepare('SELECT * FROM source_registry WHERE id=?').bind(resource)
   ]);
   return {items:batch[0].results.map(decodeRow),total:(batch[1].results[0] as {total:number}).total,page,limit,source:batch[2].results[0] ?? null};
@@ -134,8 +138,10 @@ async function admin(request:Request,env:Env,path:string) {
 }
 async function route(request:Request,env:Env):Promise<Response> {
   const url=new URL(request.url),path=url.pathname;
+  const collection=await collectorRoute(request,env);if(collection)return collection;
   if(path.startsWith('/api/admin/'))return admin(request,env,path.slice(11));
   if(request.method!=='GET' && request.method!=='HEAD')throw new HttpError(405,'La API pública es de solo lectura.');
+  const analysis=await analysisRoute(request,env);if(analysis)return analysis;
   if(path==='/api/health'){await env.DB.prepare('SELECT 1').first();return json({ok:true,service:'WINT',version:'0.1.0'});}
   if(path==='/api/status')return json(await status(env));
   if(path==='/api/dashboard/summary') {
@@ -183,7 +189,7 @@ function secure(response:Response) {
 export default {
   async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response> {
     if(!new URL(request.url).pathname.startsWith('/api/'))return secure(await env.ASSETS.fetch(request));
-    const isPublic=request.method==='GET' && !new URL(request.url).pathname.startsWith('/api/admin/');
+    const isPublic=request.method==='GET' && !new URL(request.url).pathname.startsWith('/api/admin/') && !new URL(request.url).pathname.startsWith('/api/collector/');
     if(isPublic && env.PUBLIC_RATE_LIMITER) {
       const actor=request.headers.get('CF-Connecting-IP') ?? 'local-preview';
       if(!(await env.PUBLIC_RATE_LIMITER.limit({key:`wint-public:${actor}`})).success)return secure(json({error:'Demasiadas consultas. Espera un minuto.'},429,{'Retry-After':'60',...privateHeaders}));

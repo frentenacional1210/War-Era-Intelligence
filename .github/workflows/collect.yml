@@ -1,0 +1,35 @@
+name: Collect public WarEra data
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      max_steps:
+        description: Maximum collector steps (1–80)
+        required: false
+        default: '80'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wint-public-collector
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx tsx scripts/collect.ts
+        env:
+          WINT_URL: https://warera-intelligence.warera-intelligence.workers.dev
+          COLLECTOR_SECRET: ${{ secrets.WINT_COLLECTOR_SECRET }}
+          MAX_STEPS: ${{ inputs.max_steps || '80' }}

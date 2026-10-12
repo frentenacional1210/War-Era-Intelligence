@@ -1653,6 +1653,116 @@
         }
       }
     },
+    "/api/analysis/compare": {
+      "get": {
+        "summary": "Comparar métricas públicas de 2–4 registros",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "players",
+                "parties",
+                "military-units"
+              ]
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 403
+            },
+            "description": "Entre 2 y 4 IDs distintos separados por coma"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Entidad no recopilada"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/analysis/history": {
+      "get": {
+        "summary": "Hasta 90 capturas reales y variaciones observadas",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "players",
+                "parties",
+                "military-units"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "description": "ID original"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Entidad no recopilada"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
     "/api/admin/login": {
       "post": {
         "tags": [

@@ -1,0 +1,25 @@
+-- One reconciliation during migration, then O(1) updates on insert/delete.
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM countries) WHERE id='countries';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM regions) WHERE id='regions';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM players) WHERE id='players';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM parties) WHERE id='parties';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM military_units) WHERE id='military-units';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM battles) WHERE id='battles';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM articles) WHERE id='articles';
+UPDATE source_registry SET record_count=(SELECT COUNT(*) FROM market_items) WHERE id='markets';
+CREATE TRIGGER count_countries_insert AFTER INSERT ON countries BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='countries'; END;
+CREATE TRIGGER count_countries_delete AFTER DELETE ON countries BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='countries'; END;
+CREATE TRIGGER count_regions_insert AFTER INSERT ON regions BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='regions'; END;
+CREATE TRIGGER count_regions_delete AFTER DELETE ON regions BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='regions'; END;
+CREATE TRIGGER count_players_insert AFTER INSERT ON players BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='players'; END;
+CREATE TRIGGER count_players_delete AFTER DELETE ON players BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='players'; END;
+CREATE TRIGGER count_parties_insert AFTER INSERT ON parties BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='parties'; END;
+CREATE TRIGGER count_parties_delete AFTER DELETE ON parties BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='parties'; END;
+CREATE TRIGGER count_units_insert AFTER INSERT ON military_units BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='military-units'; END;
+CREATE TRIGGER count_units_delete AFTER DELETE ON military_units BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='military-units'; END;
+CREATE TRIGGER count_battles_insert AFTER INSERT ON battles BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='battles'; END;
+CREATE TRIGGER count_battles_delete AFTER DELETE ON battles BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='battles'; END;
+CREATE TRIGGER count_articles_insert AFTER INSERT ON articles BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='articles'; END;
+CREATE TRIGGER count_articles_delete AFTER DELETE ON articles BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='articles'; END;
+CREATE TRIGGER count_markets_insert AFTER INSERT ON market_items BEGIN UPDATE source_registry SET record_count=record_count+1 WHERE id='markets'; END;
+CREATE TRIGGER count_markets_delete AFTER DELETE ON market_items BEGIN UPDATE source_registry SET record_count=MAX(0,record_count-1) WHERE id='markets'; END;

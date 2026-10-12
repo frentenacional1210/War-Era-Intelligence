@@ -1,5 +1,15 @@
 # Validación de entrega
 
+## Ampliación del 12 de octubre de 2026
+
+La Fase 1 sigue teniendo cobertura parcial. Al empezar esta revisión había 82 jugadores y 47 artículos; la reserva fija había consumido 59.920 de las 60.000 escrituras presupuestadas, aunque no representaba escrituras reales. Se conserva ese consumo previo y las capturas exitosas nuevas ajustan sus reservas usando `meta.rows_written` de D1. El nuevo presupuesto de recopilación es 80.000, compartido por ambos recolectores, con margen para otras operaciones de la cuenta; no equivale a una auditoría de facturación.
+
+Se eliminó el tope artificial del archivo de artículos, se separó la búsqueda de novedades de su cursor histórico y el censo rota entre países con puntos de continuación persistentes. El Cron obtiene cuatro perfiles por lote; el recolector compacto obtiene ocho y descarta campos no utilizados antes de llegar al Worker. Ambos usan las mismas exclusiones de artículos privados, bloqueos, controles de cursores y transacciones. GitHub Actions ejecuta el recolector cada quince minutos; su programación puede sufrir retrasos.
+
+Verificación local: 58 pruebas correctas, TypeScript correcto y compilación de producción correcta. En la web publicada pasaron ocho pruebas de navegador, con dos casos omitidos deliberadamente por corresponder al otro tamaño de pantalla. Se verificaron portada y salud HTTP 200, logout 200 y sesión revocada 401. Los siete directorios conservaron sus muestras reales y contadores tras el despliegue. La Fase 2 incorpora comparación de dos a cuatro jugadores, partidos o unidades, e históricos de hasta noventa capturas reales; una sola observación no produce cambios inventados.
+
+El Worker `bdd6baf2-3f52-42dc-ab19-1949356386f9` procesó ocho jugadores por petición compacta con 4–6 ms de CPU en las cinco peticiones observadas, y artículos con 3–6 ms. Un Cron de artículos registró 13 ms; siguen existiendo picos y esta evidencia no garantiza que toda ejecución respete el límite nominal de 10 ms. Las doce peticiones del ensayo local terminaron correctamente. Evidencias sin credenciales: `artifacts/validation/collector-final-cpu.json`, `throughput-before.json`, `live.json` y `persistence.json`. La validación de GitHub Actions se añade tras su ejecución remota.
+
 Fecha: 11 de octubre de 2026. URL comprobada: **https://warera-intelligence.warera-intelligence.workers.dev**.
 
 ## Evidencias reproducibles

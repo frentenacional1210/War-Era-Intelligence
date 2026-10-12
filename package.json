@@ -12,6 +12,7 @@
     "deploy": "npm run build && wrangler deploy",
     "sync": "node scripts/sync.mjs",
     "probe": "tsx scripts/probe.ts",
+    "collect": "tsx scripts/collect.ts",
     "import": "tsx scripts/import.ts",
     "docs:api": "node scripts/openapi.mjs"
   },

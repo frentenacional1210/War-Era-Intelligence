@@ -28,7 +28,7 @@ Las rutas administrativas no usan caché. Todas las mutaciones necesitan `X-WINT
 | --- | --- |
 | `POST /api/admin/login` | `{password}`; cinco intentos por IP cada 15 min |
 | `POST /api/admin/logout` | revoca sesión |
-| `GET /api/admin/status` | estado, cuota estimada y últimas 20 ejecuciones, solo autenticado |
+| `GET /api/admin/status` | estado, cuota estimada y últimas 50 ejecuciones, solo autenticado |
 | `POST /api/admin/sync` | `{source?}`; una unidad reanudable de trabajo, diez solicitudes cada diez min |
 | `PATCH /api/admin/sources/:id` | `{enabled:boolean,interval_seconds:number}` (120–86400) |
 | `POST /api/admin/import/preview` | multipart `file` y `resource`, o JSON `{resource,records}`; CSV/JSON/ZIP ≤1 MB |
@@ -37,3 +37,11 @@ Las rutas administrativas no usan caché. Todas las mutaciones necesitan `X-WINT
 Importación disponible para `players`, `parties`, `military-units`. Exige ID y nombre; informa duplicados conflictivos. Las filas existentes se omiten para conservar su procedencia. Los registros importados se atribuyen a `import:administrator`, nunca a una consulta verificada de WarEra. Las importaciones grandes se envían en lotes; pueden quedar parcialmente aplicadas si un lote posterior falla, y son reanudables al omitir los IDs ya insertados.
 
 No existen rutas de inferencia ni SQL libre. La IA, el motor de alertas, los resultados electorales y los mapas históricos pertenecen a fases posteriores descritas en [ROADMAP.md](ROADMAP.md).
+
+## Comparadores e históricos
+
+`GET /api/analysis/compare?resource=players&ids=id1,id2` compara entre dos y cuatro IDs distintos de `players`, `parties` o `military-units`. Devuelve métricas públicas de la última captura y su procedencia; no interpreta datos ausentes como cero. `GET /api/analysis/history?resource=players&id=id1` devuelve hasta noventa capturas reales en orden cronológico. Los cambios requieren dos valores observados y un valor inicial cero no produce un porcentaje.
+
+## Recopilador automático
+
+`POST /api/collector/plan` y `POST /api/collector/commit` son rutas privadas de máquina protegidas con `Authorization: Bearer COLLECTOR_SECRET`, con caché desactivada. No aceptan sesiones de visitantes ni la contraseña administrativa. El plan describe una página de jugadores o artículos; el commit valida sus campos públicos, tamaño, IDs y cursor, y aplica los mismos bloqueos y presupuesto de D1 que el Cron. Una página obsoleta produce HTTP 409 y debe volver a prepararse. No son rutas de escritura pública.

@@ -5,6 +5,7 @@ export interface Env {
   WARERA_API_KEY?: string;
   ADMIN_PASSWORD_HASH?: string;
   SESSION_SECRET?: string;
+  COLLECTOR_SECRET?:string;
   SYNC_ENABLED?: string;
   AI_ENABLED?: string;
   AI_DAILY_BUDGET?: string;

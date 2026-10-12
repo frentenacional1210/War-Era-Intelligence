@@ -15,11 +15,11 @@ createInterface({input:child.stdout}).on('line',line=>{
   if(line!=='}')return;
   let event;try{event=JSON.parse(buffer);}catch{return;}finally{buffer='';}
   const scheduled=Boolean(event.event?.cron || event.event?.type==='scheduled');
-  let sync=false;
-  if(process.env.WINT_TAIL_SYNC==='true' && event.event?.request?.url){try{sync=new URL(event.event.request.url).pathname==='/api/admin/sync';}catch{}}
-  if(!scheduled && !sync)return;
+  let sync=false,collector=false;
+  if(process.env.WINT_TAIL_SYNC==='true' && event.event?.request?.url){try{const path=new URL(event.event.request.url).pathname;sync=path==='/api/admin/sync';collector=path==='/api/collector/commit';}catch{}}
+  if(!scheduled && !sync && !collector)return;
   const summary=(event.logs ?? []).flatMap(log=>log.message ?? []).find(value=>value && typeof value==='object' && 'status' in value && 'source' in value);
-  const safe={observedAt:new Date().toISOString(),kind:scheduled?'cron':'manual-sync',cron:event.event.cron,outcome:event.outcome,cpuTimeMs:event.cpuTime,exceptionCount:event.exceptions?.length ?? 0,version:typeof event.scriptVersion?.id==='string'?event.scriptVersion.id:undefined,...(summary?{source:summary.source,status:summary.status,processed:summary.processed}:{})};
+  const safe={observedAt:new Date().toISOString(),kind:scheduled?'cron':collector?'collector':'manual-sync',cron:event.event.cron,outcome:event.outcome,cpuTimeMs:event.cpuTime,exceptionCount:event.exceptions?.length ?? 0,version:typeof event.scriptVersion?.id==='string'?event.scriptVersion.id:undefined,...(summary?{source:summary.source,status:summary.status,processed:summary.processed}:{})};
   records.push(safe);console.log(JSON.stringify(safe));
   writing=writing.then(()=>writeFile(target,JSON.stringify(records,null,2)+'\n'));
 });

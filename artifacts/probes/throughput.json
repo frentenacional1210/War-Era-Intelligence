@@ -1,0 +1,39 @@
+{
+  "probedAt": "2026-10-12T07:15:37Z",
+  "authentication": "anonymous",
+  "country": "Spain",
+  "calls": 10,
+  "observedRateLimit": { "limit": 100, "resetSecondsInitial": 60, "remainingAfterLastCall": 90 },
+  "players": {
+    "procedure": "user.getUsersByCountry",
+    "input": { "countryId": "string", "limit": "integer", "cursor": "optional string" },
+    "pageCounts": { "limit20": 20, "limit50": 50, "limit51": 51 },
+    "itemsHaveOnly": ["_id", "createdAt"],
+    "cursorPresent": true,
+    "first20EqualsFirst20Of50": true,
+    "second20EqualsItems21Through40Of50": true,
+    "adjacent20PageOverlap": 0
+  },
+  "articles": {
+    "procedure": "article.getArticlesPaginated",
+    "input": { "type": "last", "limit": "integer", "cursor": "optional string" },
+    "pageCounts": { "limit20": 20, "limit50": 50 },
+    "cursorPresent": true,
+    "first20EqualsFirst20Of50": true,
+    "second20EqualsItems21Through40Of50": true,
+    "adjacent20PageOverlap": 0,
+    "contentPresentInEveryItem": true,
+    "isPublicFalseCounts": { "first20": 7, "first50": 25, "second20": 11 },
+    "isPublishedFalseCounts": { "first20": 0, "first50": 0, "second20": 0 },
+    "isDeletedTrueCounts": { "first20": 0, "first50": 0, "second20": 0 }
+  },
+  "batch": {
+    "method": "POST",
+    "pathPattern": "/trpc/user.getUserLite,user.getUserLite?batch=1",
+    "bodyPattern": "{\"0\":{\"userId\":\"...\"},\"1\":{\"userId\":\"...\"}}",
+    "twoProcedures": { "status": 200, "results": 2, "ordered": true },
+    "fiftyProcedures": { "status": 200, "results": 50, "ordered": true },
+    "fiftyOneProcedures": { "status": 413 },
+    "rateLimitDebitPerBatchHttpRequest": 1
+  }
+}

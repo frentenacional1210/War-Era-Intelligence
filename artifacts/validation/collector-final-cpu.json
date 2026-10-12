@@ -1,0 +1,147 @@
+[
+  {
+    "observedAt": "2026-10-12T07:51:00.201Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 13,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 4
+  },
+  {
+    "observedAt": "2026-10-12T07:51:10.215Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 6,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 7
+  },
+  {
+    "observedAt": "2026-10-12T07:51:14.122Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 6,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:51:16.259Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 3,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 4
+  },
+  {
+    "observedAt": "2026-10-12T07:51:20.183Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 5,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:51:22.319Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 4,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 5
+  },
+  {
+    "observedAt": "2026-10-12T07:51:26.146Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 4,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:51:28.341Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 3,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 3
+  },
+  {
+    "observedAt": "2026-10-12T07:51:32.200Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 6,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:51:34.315Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 4,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 5
+  },
+  {
+    "observedAt": "2026-10-12T07:51:38.299Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 4,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "players",
+    "status": "ok",
+    "processed": 8
+  },
+  {
+    "observedAt": "2026-10-12T07:51:40.290Z",
+    "kind": "collector",
+    "outcome": "ok",
+    "cpuTimeMs": 4,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "articles",
+    "status": "ok",
+    "processed": 5
+  },
+  {
+    "observedAt": "2026-10-12T07:51:58.375Z",
+    "kind": "cron",
+    "cron": "* * * * *",
+    "outcome": "ok",
+    "cpuTimeMs": 5,
+    "exceptionCount": 0,
+    "version": "bdd6baf2-3f52-42dc-ab19-1949356386f9",
+    "source": "military-units",
+    "status": "ok",
+    "processed": 10
+  }
+]
