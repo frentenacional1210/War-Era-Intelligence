@@ -1,0 +1,583 @@
+{
+  "collector": {
+    "id": 38220279969,
+    "head_sha": "9b26d695fecc0de6ef302213aa8f94d029a7d965",
+    "html_url": "https://github.com/frentenacional1210/War-Era-Intelligence/actions/runs/38220279969",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-12T07:53:19Z",
+    "updated_at": "2026-10-12T07:57:44Z"
+  },
+  "ci": {
+    "id": 38220251877,
+    "head_sha": "9b26d695fecc0de6ef302213aa8f94d029a7d965",
+    "html_url": "https://github.com/frentenacional1210/War-Era-Intelligence/actions/runs/38220251877",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "steps": [
+    {
+      "at": "2026-10-12T07:53:41.357Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 1
+    },
+    {
+      "at": "2026-10-12T07:53:43.137Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 4,
+      "step": 2
+    },
+    {
+      "at": "2026-10-12T07:53:47.222Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 3
+    },
+    {
+      "at": "2026-10-12T07:53:49.162Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 2,
+      "step": 4
+    },
+    {
+      "at": "2026-10-12T07:53:53.224Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 5
+    },
+    {
+      "at": "2026-10-12T07:53:55.178Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 4,
+      "step": 6
+    },
+    {
+      "at": "2026-10-12T07:53:59.230Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 7
+    },
+    {
+      "at": "2026-10-12T07:54:01.263Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 8
+    },
+    {
+      "at": "2026-10-12T07:54:05.422Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 9
+    },
+    {
+      "at": "2026-10-12T07:54:07.209Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 8,
+      "step": 10
+    },
+    {
+      "at": "2026-10-12T07:54:11.269Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 11
+    },
+    {
+      "at": "2026-10-12T07:54:13.186Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 9,
+      "step": 12
+    },
+    {
+      "at": "2026-10-12T07:54:17.248Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 13
+    },
+    {
+      "at": "2026-10-12T07:54:19.239Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 14
+    },
+    {
+      "at": "2026-10-12T07:54:23.242Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 15
+    },
+    {
+      "at": "2026-10-12T07:54:25.313Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 16
+    },
+    {
+      "at": "2026-10-12T07:54:29.263Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 17
+    },
+    {
+      "at": "2026-10-12T07:54:31.266Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 2,
+      "step": 18
+    },
+    {
+      "at": "2026-10-12T07:54:35.341Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 19
+    },
+    {
+      "at": "2026-10-12T07:54:37.560Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 9,
+      "step": 20
+    },
+    {
+      "at": "2026-10-12T07:54:41.596Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 21
+    },
+    {
+      "at": "2026-10-12T07:54:43.629Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 22
+    },
+    {
+      "at": "2026-10-12T07:54:47.665Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 23
+    },
+    {
+      "at": "2026-10-12T07:54:49.574Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 24
+    },
+    {
+      "at": "2026-10-12T07:54:53.829Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 25
+    },
+    {
+      "at": "2026-10-12T07:54:55.894Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 8,
+      "step": 26
+    },
+    {
+      "at": "2026-10-12T07:54:58.946Z",
+      "source": "players",
+      "status": "busy",
+      "step": 27
+    },
+    {
+      "at": "2026-10-12T07:55:02.844Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 28
+    },
+    {
+      "at": "2026-10-12T07:55:06.858Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 29
+    },
+    {
+      "at": "2026-10-12T07:55:09.027Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 30
+    },
+    {
+      "at": "2026-10-12T07:55:13.054Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 31
+    },
+    {
+      "at": "2026-10-12T07:55:15.190Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 32
+    },
+    {
+      "at": "2026-10-12T07:55:19.228Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 33
+    },
+    {
+      "at": "2026-10-12T07:55:21.157Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 6,
+      "step": 34
+    },
+    {
+      "at": "2026-10-12T07:55:25.187Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 35
+    },
+    {
+      "at": "2026-10-12T07:55:27.146Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 36
+    },
+    {
+      "at": "2026-10-12T07:55:31.177Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 37
+    },
+    {
+      "at": "2026-10-12T07:55:33.141Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 38
+    },
+    {
+      "at": "2026-10-12T07:55:37.235Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 39
+    },
+    {
+      "at": "2026-10-12T07:55:39.170Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 40
+    },
+    {
+      "at": "2026-10-12T07:55:43.162Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 41
+    },
+    {
+      "at": "2026-10-12T07:55:45.543Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 42
+    },
+    {
+      "at": "2026-10-12T07:55:49.528Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 43
+    },
+    {
+      "at": "2026-10-12T07:55:51.467Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 6,
+      "step": 44
+    },
+    {
+      "at": "2026-10-12T07:55:55.617Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 45
+    },
+    {
+      "at": "2026-10-12T07:55:57.866Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 46
+    },
+    {
+      "at": "2026-10-12T07:56:01.836Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 47
+    },
+    {
+      "at": "2026-10-12T07:56:03.942Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 48
+    },
+    {
+      "at": "2026-10-12T07:56:07.945Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 49
+    },
+    {
+      "at": "2026-10-12T07:56:10.023Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 4,
+      "step": 50
+    },
+    {
+      "at": "2026-10-12T07:56:14.019Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 51
+    },
+    {
+      "at": "2026-10-12T07:56:16.203Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 7,
+      "step": 52
+    },
+    {
+      "at": "2026-10-12T07:56:20.281Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 53
+    },
+    {
+      "at": "2026-10-12T07:56:22.257Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 8,
+      "step": 54
+    },
+    {
+      "at": "2026-10-12T07:56:26.213Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 55
+    },
+    {
+      "at": "2026-10-12T07:56:28.371Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 4,
+      "step": 56
+    },
+    {
+      "at": "2026-10-12T07:56:32.371Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 57
+    },
+    {
+      "at": "2026-10-12T07:56:34.375Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 58
+    },
+    {
+      "at": "2026-10-12T07:56:38.377Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 59
+    },
+    {
+      "at": "2026-10-12T07:56:40.289Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 60
+    },
+    {
+      "at": "2026-10-12T07:56:44.358Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 61
+    },
+    {
+      "at": "2026-10-12T07:56:46.317Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 62
+    },
+    {
+      "at": "2026-10-12T07:56:50.361Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 63
+    },
+    {
+      "at": "2026-10-12T07:56:52.324Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 4,
+      "step": 64
+    },
+    {
+      "at": "2026-10-12T07:56:56.375Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 65
+    },
+    {
+      "at": "2026-10-12T07:56:58.472Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 66
+    },
+    {
+      "at": "2026-10-12T07:57:02.444Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 67
+    },
+    {
+      "at": "2026-10-12T07:57:04.503Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 3,
+      "step": 68
+    },
+    {
+      "at": "2026-10-12T07:57:08.503Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 69
+    },
+    {
+      "at": "2026-10-12T07:57:10.471Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 2,
+      "step": 70
+    },
+    {
+      "at": "2026-10-12T07:57:14.485Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 71
+    },
+    {
+      "at": "2026-10-12T07:57:16.425Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 72
+    },
+    {
+      "at": "2026-10-12T07:57:20.474Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 73
+    },
+    {
+      "at": "2026-10-12T07:57:22.579Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 2,
+      "step": 74
+    },
+    {
+      "at": "2026-10-12T07:57:26.546Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 75
+    },
+    {
+      "at": "2026-10-12T07:57:28.509Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 6,
+      "step": 76
+    },
+    {
+      "at": "2026-10-12T07:57:32.589Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 7,
+      "step": 77
+    },
+    {
+      "at": "2026-10-12T07:57:34.509Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 9,
+      "step": 78
+    },
+    {
+      "at": "2026-10-12T07:57:38.669Z",
+      "source": "players",
+      "status": "ok",
+      "processed": 8,
+      "step": 79
+    },
+    {
+      "at": "2026-10-12T07:57:40.574Z",
+      "source": "articles",
+      "status": "ok",
+      "processed": 5,
+      "step": 80
+    }
+  ],
+  "processedBySource": {
+    "players": 311,
+    "articles": 205
+  }
+}

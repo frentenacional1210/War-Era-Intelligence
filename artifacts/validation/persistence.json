@@ -22,25 +22,25 @@
     }
   },
   "after": {
-    "verifiedAt": "2026-10-12T07:51:06.040Z",
+    "verifiedAt": "2026-10-12T07:58:48.251Z",
     "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
     "counts": {
       "countries": 180,
-      "regions": 248,
-      "players": 178,
-      "parties": 259,
-      "military-units": 256,
+      "regions": 251,
+      "players": 541,
+      "parties": 269,
+      "military-units": 266,
       "battles": 39,
-      "articles": 67
+      "articles": 288
     },
     "samples": {
       "countries": "6813b6d546e731854c7ac8d7",
       "regions": "6813b7059403bc4170a5d7a1",
-      "players": "6a53afe7d0c0e9d2125225b0",
+      "players": "6acbe5ebacfb554e68449f44",
       "parties": "6a35c857a709e05473c97154",
       "military-units": "6aac73b8ea276de8201e0b6d",
       "battles": "6acb239ec649f370d9c1647c",
-      "articles": "6acba83bfc693dc0ee7739c6"
+      "articles": "6ac96ec2a959ed64e5883dbe"
     }
   },
   "retained": [

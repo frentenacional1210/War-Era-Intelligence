@@ -40,5 +40,5 @@ key = api("/repos/" + repo + "/actions/secrets/public-key")
 encrypted = SealedBox(PublicKey(base64.b64decode(key["key"]))).encrypt(secret.encode())
 api("/repos/" + repo + "/actions/secrets/WINT_COLLECTOR_SECRET", "PUT", {"key_id": key["key_id"], "encrypted_value": base64.b64encode(encrypted).decode()})
 evidence = {"configuredAt": datetime.now(timezone.utc).isoformat(), "publicRepository": True, "cloudflareSecretConfigured": True, "githubSecretConfigured": True, "secretValueExcluded": True}
-Path("artifacts/validation/collector-setup.json").write_text(json.dumps(evidence, indent=2) + "\n")
+Path("artifacts/validation/collector-setup.json").write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8", newline="\n")
 print(json.dumps(evidence))

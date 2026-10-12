@@ -8,6 +8,14 @@ try{
     const page=await browser.newPage({viewport:{width,height}});
     await Promise.all([page.waitForResponse(r=>r.url().includes('/api/dashboard/summary')),page.goto(base)]);
     await page.getByRole('heading',{name:'Centro de mando',exact:true}).waitFor();
-    await page.screenshot({path:`artifacts/dashboard-${name}.png`,fullPage:true});await page.close();
+    await page.screenshot({path:`artifacts/dashboard-${name}.png`,fullPage:true});
+    await page.goto(`${base}/analisis`);
+    await page.locator('.analysis-option').first().waitFor();
+    await page.locator('.analysis-option').nth(0).click();
+    await page.locator('.analysis-option').nth(1).click();
+    await page.getByRole('button',{name:'Comparar registros'}).click();
+    await page.locator('.analysis-history-summary').waitFor();
+    await page.screenshot({path:`artifacts/analysis-${name}.png`,fullPage:true});
+    await page.close();
   }
 }finally{await browser.close();}

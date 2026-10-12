@@ -1,0 +1,52 @@
+{
+  "verifiedAt": "2026-10-12T07:58:48.707Z",
+  "before": {
+    "verifiedAt": "2026-10-12T07:14:42.616Z",
+    "totals": {
+      "countries": 180,
+      "players": 82,
+      "parties": 239,
+      "military-units": 236,
+      "battles": 39,
+      "articles": 47,
+      "companies": 0,
+      "alerts": 0
+    },
+    "quota": {
+      "day": "2026-10-12",
+      "dailyBudget": 60000,
+      "reserved": 59920,
+      "remaining": 80,
+      "tickCount": 428,
+      "estimate": true
+    }
+  },
+  "after": {
+    "totals": {
+      "alerts": 0,
+      "articles": 288,
+      "battles": 39,
+      "companies": 0,
+      "countries": 180,
+      "events": 0,
+      "military-units": 266,
+      "parties": 269,
+      "players": 541,
+      "regions": 251
+    },
+    "coverage": {
+      "countries_started": 65,
+      "countries_completed": 1,
+      "profiles_observed": 463
+    },
+    "quota": {
+      "day": "2026-10-12",
+      "dailyBudget": 80000,
+      "reserved": 69536,
+      "remaining": 10464,
+      "tickCount": 569,
+      "estimate": true,
+      "method": "D1 measured writes plus settlement margin; legacy and failed reservations retained"
+    }
+  }
+}
