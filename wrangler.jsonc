@@ -3,10 +3,11 @@
   "name": "warera-intelligence", "main": "worker/index.ts", "compatibility_date": "2026-10-11",
   "account_id": "8b30e4c17bb34a8579fb59aa41b9c236",
   "workers_dev": true,
+  "ai": {"binding":"AI"},
   "assets": {"directory":"./dist","binding":"ASSETS","not_found_handling":"single-page-application","run_worker_first":["/api/*"]},
   "d1_databases": [{"binding":"DB","database_name":"wint-db","database_id":"0d95923c-7db5-4b4a-bf4a-fa58b6fa27c7","migrations_dir":"migrations"}],
   "triggers": {"crons":["* * * * *"]},
   "ratelimits": [{"name":"PUBLIC_RATE_LIMITER","namespace_id":"781341","simple":{"limit":120,"period":60}}],
-  "vars": {"WARERA_BASE_URL":"https://api2.warera.io/trpc/","SYNC_ENABLED":"true","AI_ENABLED":"false","AI_DAILY_BUDGET":"100","RETENTION_DAYS":"30"},
+  "vars": {"WARERA_BASE_URL":"https://api2.warera.io/trpc/","SYNC_ENABLED":"true","AI_ENABLED":"true","AI_DAILY_BUDGET":"100","RETENTION_DAYS":"30"},
   "observability": {"enabled":true,"head_sampling_rate":0.1}
 }

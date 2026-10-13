@@ -1,7 +1,18 @@
 import { runSync } from './ingestion';
 import { analysisRoute } from './analysis';
 import { collectorRoute } from './collector';
-import { INGESTION_DAILY_BUDGET } from '../shared/ingestion-config';
+import { coverageData, coverageRoute } from './coverage';
+import { searchRoute } from './search';
+import { historyRoute } from './history';
+import { intelligenceRoute } from './intelligence';
+import { alertsRoute } from './alerts';
+import { aiRoute, aiStatus, reserveInference } from './ai';
+import { runHistoryMaintenance } from './history-maintenance';
+import { strategyRoute } from './strategy';
+import { orderbookRoute } from './orderbook';
+import { pressRoute } from './press';
+import { AI_MODEL } from '../shared/ai';
+import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET } from '../shared/ingestion-config';
 import { csrfValid, createSession, passwordMatches, sessionId, takeLimit } from './auth';
 import { resourceTables, type Env } from './types';
 import { parseImport, validateImport } from '../shared/import';
@@ -38,16 +49,18 @@ async function status(env:Env) {
   const sources = await env.DB.prepare('SELECT * FROM source_registry ORDER BY id').all();
   const totals=Object.fromEntries(sources.results.filter(row=>String(row.id) in resourceTables).map(row=>[String(row.id),Number(row.record_count ?? 0)]));
   const day = new Date().toISOString().slice(0,10);
-  const budget=await env.DB.prepare('SELECT reserved_writes,tick_count FROM ingestion_budget WHERE day_key=?').bind(day).first<{reserved_writes:number;tick_count:number}>();
+  const budget=await env.DB.prepare('SELECT reserved_writes,tick_count,reserved_reads,measured_reads,measured_writes,database_bytes FROM ingestion_budget WHERE day_key=?').bind(day).first<{reserved_writes:number;tick_count:number;reserved_reads:number;measured_reads:number;measured_writes:number;database_bytes:number|null}>();
   const reserved=budget?.reserved_writes ?? 0;
   const coverage=await env.DB.prepare(`SELECT COUNT(*) countries_started,SUM(completed_sweeps>0) countries_completed,SUM(records_observed) profiles_observed FROM player_census_state`).first();
-  return {sources:sources.results,totals:totals ?? {},coverage,quota:{day,dailyBudget:INGESTION_DAILY_BUDGET,reserved,remaining:Math.max(0,INGESTION_DAILY_BUDGET-reserved),tickCount:budget?.tick_count ?? 0,estimate:true,method:'D1 measured writes plus settlement margin; legacy and failed reservations retained'},ai:{enabled:false,status:'disabled',reason:'Fase 3 pendiente. Los paneles funcionan sin inferencia.',dailyBudget:Number(env.AI_DAILY_BUDGET ?? 100)},timestamp:new Date().toISOString()};
+  return {sources:sources.results,totals:totals ?? {},coverage,quota:{day,dailyBudget:INGESTION_DAILY_BUDGET,reserved,remaining:Math.max(0,INGESTION_DAILY_BUDGET-reserved),tickCount:budget?.tick_count ?? 0,
+    dailyReadBudget:INGESTION_DAILY_READ_BUDGET,reservedReads:budget?.reserved_reads ?? 0,measuredReads:budget?.measured_reads ?? 0,measuredWrites:budget?.measured_writes ?? 0,databaseBytes:budget?.database_bytes ?? null,
+    estimate:true,method:'Measured ingestion batch metadata plus reserves; API visitors, discarded read envelopes, legacy writes and other applications are not fully metered'},ai:await aiStatus(env),timestamp:new Date().toISOString()};
 }
 async function list(request:Request,env:Env,resource:keyof typeof resourceTables) {
   const params = new URL(request.url).searchParams;
   const limit = integer(params.get('limit'),20,1,50),page=integer(params.get('page'),1,1,10000);
   const q=(params.get('q') ?? '').trim();
-  if(new TextEncoder().encode(q).length>40) throw new HttpError(400,'Búsqueda demasiado larga (máximo 40 bytes).');
+  if(new TextEncoder().encode(q).length>40 || new TextEncoder().encode(q.replace(/[\\%_]/g,'\\$&')).length>46) throw new HttpError(400,'Búsqueda demasiado larga (máximo 40 bytes).');
   const country=params.get('country');
   const allowed=['name','updated_at',...(resource==='players'?['level','experience']:[]),...(resource==='articles'?['published_at']:[])];
   const sort=params.get('sort') ?? (resource==='articles'?'published_at':'name');
@@ -57,6 +70,16 @@ async function list(request:Request,env:Env,resource:keyof typeof resourceTables
   const clauses:string[]=[],values:unknown[]=[];
   if(q){clauses.push("name LIKE ? ESCAPE '\\'");values.push(`%${q.replace(/[\\%_]/g,'\\$&')}%`);}
   if(country){if(country.length>100)throw new HttpError(400,'País no válido.');clauses.push('country_id=?');values.push(country);}
+  if(resource==='players') {
+    for(const [param,column] of [['party','party_id'],['unit','military_unit_id']] as const){const value=params.get(param);if(value){if(value.length>100)throw new HttpError(400,'Identificador no válido.');clauses.push(`${column}=?`);values.push(value);}}
+    if(params.has('minLevel')){clauses.push('level>=?');values.push(integer(params.get('minLevel'),0,0,10000));}
+    if(params.has('maxLevel')){clauses.push('level<=?');values.push(integer(params.get('maxLevel'),10000,0,10000));}
+    const activity=params.get('activity');if(activity){if(!['recent','inactive','unknown'].includes(activity))throw new HttpError(400,'Actividad no válida.');const cutoff=new Date(Date.now()-7*86400_000).toISOString();clauses.push(activity==='unknown'?'last_active_at IS NULL':`last_active_at IS NOT NULL AND last_active_at${activity==='recent'?'>=':'<'}?`);if(activity!=='unknown')values.push(cutoff);}
+  }
+  if(resource==='articles') {
+    for(const [param,column] of [['language','language'],['author','author_id'],['category','category']] as const){const value=params.get(param);if(value){if(value.length>100)throw new HttpError(400,'Filtro no válido.');clauses.push(`${column}=?`);values.push(value);}}
+    for(const [param,operator] of [['from','>='],['to','<=']] as const){const value=params.get(param);if(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value)))throw new HttpError(400,'Fecha no válida.');clauses.push(`published_at${operator}?`);values.push(`${value}T${param==='from'?'00:00:00.000':'23:59:59.999'}Z`);}}
+  }
   const where=clauses.length ? ' WHERE '+clauses.join(' AND ') : '';
   const table=resourceTables[resource];
   const batch=await env.DB.batch([
@@ -94,6 +117,27 @@ async function admin(request:Request,env:Env,path:string) {
   if(path==='status' && request.method==='GET') {
     const runs=await env.DB.prepare('SELECT * FROM ingestion_runs ORDER BY started_at DESC LIMIT 50').all();
     return json({...await status(env),runs:runs.results},200,privateHeaders);
+  }
+  if(path==='coverage' && request.method==='GET')return json(await coverageData(env),200,privateHeaders);
+  if(path==='maintenance' && request.method==='POST')return json(await runHistoryMaintenance(env),200,privateHeaders);
+  if(path==='ai/validate' && request.method==='POST') {
+    if(!env.AI)throw new HttpError(503,'Binding de IA no disponible.');
+    if(!await takeLimit(env,request,'ai-validate',3,3600))throw new HttpError(429,'Validación de IA limitada a tres por hora.');
+    if(!await reserveInference(env,new Date()))throw new HttpError(429,'Presupuesto diario de IA agotado.');
+    let output:unknown;
+    try {output=await env.AI.run(AI_MODEL,{messages:[{role:'user',content:'Return only this JSON object: {"tool":"census"}'}],max_tokens:32,temperature:0});}
+    catch(error){
+      const reason=error instanceof Error?error.message:'Provider unavailable';
+      const safeReason=reason.replace(/https?:\/\/\S+/g,'[provider URL]').replace(/Bearer\s+\S+/gi,'[redacted]').slice(0,240);
+      return json({available:false,model:AI_MODEL,providerError:safeReason,checkedAt:new Date().toISOString()},503,privateHeaders);
+    }
+    const value=output && typeof output==='object'?(output as Record<string,unknown>).response:null;
+    const text=typeof output==='string'?output:typeof value==='string'?value:value && typeof value==='object'?JSON.stringify(value):'';
+    return json({available:text.includes('census'),model:AI_MODEL,responseKind:typeof value,checkedAt:new Date().toISOString(),maximumOutputTokens:32},200,privateHeaders);
+  }
+  if(path==='diagnostics' && request.method==='GET') {
+    const migrationRows=await env.DB.prepare('SELECT name,applied_at FROM d1_migrations ORDER BY id DESC LIMIT 50').all();
+    return json({migrations:migrationRows.results,backup:{method:'private SQL export verified in isolated SQLite',productionRestorePerformed:false},timestamp:new Date().toISOString()},200,privateHeaders);
   }
   if(path==='sync' && request.method==='POST') {
     if(!await takeLimit(env,request,'sync',10,600))throw new HttpError(429,'Resincronizaciones limitadas a 10 cada 10 minutos.');
@@ -140,7 +184,14 @@ async function route(request:Request,env:Env):Promise<Response> {
   const url=new URL(request.url),path=url.pathname;
   const collection=await collectorRoute(request,env);if(collection)return collection;
   if(path.startsWith('/api/admin/'))return admin(request,env,path.slice(11));
+  if(path==='/api/ai/query' && request.method==='POST') {
+    if(!csrfValid(request))throw new HttpError(403,'La consulta requiere el mismo origen y cabecera CSRF.');
+    if(!(await aiStatus(env)).enabled)throw new HttpError(503,'La IA todavía está desactivada o no disponible.');
+    if(!await takeLimit(env,request,'ai-hour',5,3600) || !await takeLimit(env,request,'ai-day',30,86400))throw new HttpError(429,'Límite de consultas de IA por visitante alcanzado.');
+    return (await aiRoute(request,env))!;
+  }
   if(request.method!=='GET' && request.method!=='HEAD')throw new HttpError(405,'La API pública es de solo lectura.');
+  for(const handler of [coverageRoute,searchRoute,historyRoute,intelligenceRoute,alertsRoute,aiRoute,strategyRoute,orderbookRoute,pressRoute]){const response=await handler(request,env);if(response)return response;}
   const analysis=await analysisRoute(request,env);if(analysis)return analysis;
   if(path==='/api/health'){await env.DB.prepare('SELECT 1').first();return json({ok:true,service:'WINT',version:'0.1.0'});}
   if(path==='/api/status')return json(await status(env));
@@ -189,7 +240,7 @@ function secure(response:Response) {
 export default {
   async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response> {
     if(!new URL(request.url).pathname.startsWith('/api/'))return secure(await env.ASSETS.fetch(request));
-    const isPublic=request.method==='GET' && !new URL(request.url).pathname.startsWith('/api/admin/') && !new URL(request.url).pathname.startsWith('/api/collector/');
+    const isPublic=['GET','HEAD'].includes(request.method) && !new URL(request.url).pathname.startsWith('/api/admin/') && !new URL(request.url).pathname.startsWith('/api/collector/');
     if(isPublic && env.PUBLIC_RATE_LIMITER) {
       const actor=request.headers.get('CF-Connecting-IP') ?? 'local-preview';
       if(!(await env.PUBLIC_RATE_LIMITER.limit({key:`wint-public:${actor}`})).success)return secure(json({error:'Demasiadas consultas. Espera un minuto.'},429,{'Retry-After':'60',...privateHeaders}));
@@ -203,7 +254,10 @@ export default {
     if(isPublic && response.ok){response.headers.set('Cache-Control','public, max-age=60, s-maxage=90');ctx.waitUntil(edgeCache.put(key,response.clone()));}
     return secure(response);
   },
-  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext) {
-    if(env.SYNC_ENABLED!=='false')ctx.waitUntil(runSync(env).then(result=>{console.info('wint_scheduled_sync',{status:result.status,source:result.source,processed:result.processed});}));
+  async scheduled(event:ScheduledController,env:Env,ctx:ExecutionContext) {
+    if(env.SYNC_ENABLED!=='false') {
+      if(Math.floor(event.scheduledTime/60000)%10===0)ctx.waitUntil(runHistoryMaintenance(env).then(result=>{console.info('wint_history_maintenance',result);}));
+      else ctx.waitUntil(runSync(env).then(result=>{console.info('wint_scheduled_sync',{status:result.status,source:result.source,processed:result.processed});}));
+    }
   }
 } satisfies ExportedHandler<Env>;

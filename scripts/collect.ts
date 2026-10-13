@@ -1,6 +1,6 @@
 /** Scheduled public-data collector. Complete profiles and article bodies stay in this process only. */
 import { WarEraClient, WarEraError, pagedObjectsSchema, pagedPlayersSchema, playerSchema } from '../worker/warera';
-import { projectPlayer, projectPublicPage, type PublicSource } from '../shared/public-projection';
+import { projectPlayerBatch, projectPublicPage, type PublicSource } from '../shared/public-projection';
 import { PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
 
 type Plan = { status: string; source: PublicSource; cursorExpected?: string | null; procedure?: string; inputs?: Record<string, unknown> };
@@ -30,9 +30,11 @@ async function upstream<T>(call: () => Promise<T>): Promise<T> {
 }
 
 async function collectorRequest<T>(path: string, payload: Record<string, unknown>): Promise<T> {
+  const body = JSON.stringify(payload);
+  if (new TextEncoder().encode(body).byteLength > 32_768) throw new Error('Collector request exceeds Worker body limit');
   const response = await fetch(new URL(path, origin), {
     method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(payload), signal: AbortSignal.timeout(30_000),
+    body, signal: AbortSignal.timeout(30_000),
   });
   const value = await response.json() as T;
   if (response.status === 409) return { status: 'busy' } as T;
@@ -46,14 +48,18 @@ async function collect(source: PublicSource): Promise<Commit | Plan> {
   if (source === 'players') {
     const page = await upstream(() => warera.get(plan.procedure!, plan.inputs, pagedPlayersSchema));
     const projected = projectPublicPage(source, page, COLLECTOR_PLAYER_ROWS);
-    const profiles = await upstream(() => warera.getMany('user.getUserLite', projected.items.map(item => ({ userId: item._id })), playerSchema));
-    return collectorRequest<Commit>('/api/collector/commit', { source, cursorExpected: plan.cursorExpected ?? null, input: plan.inputs, page: projected, profiles: profiles.map(projectPlayer) });
+    const ids = projected.items.map(item => String(item._id));
+    const profiles = await upstream(async () => projectPlayerBatch(
+      await warera.getMany('user.getUserById', ids.map(userId => ({ userId })), playerSchema), ids, COLLECTOR_PLAYER_ROWS));
+    return collectorRequest<Commit>('/api/collector/commit', { source, cursorExpected: plan.cursorExpected ?? null, input: plan.inputs, page: projected, profiles });
   }
   const page = await upstream(() => warera.get(plan.procedure!, plan.inputs, pagedObjectsSchema));
   return collectorRequest<Commit>('/api/collector/commit', { source, cursorExpected: plan.cursorExpected ?? null, input: plan.inputs, page: projectPublicPage(source, page, PAGE_ROWS) });
 }
 
 async function main() {
+  const maintenance=await collectorRequest<{status:string}>('/api/collector/maintenance',{});
+  console.info(JSON.stringify({kind:'history-maintenance',status:maintenance.status,at:new Date().toISOString()}));
   for (let step = 0; step < stepLimit; step++) {
     const source: PublicSource = step % 2 === 0 ? 'players' : 'articles';
     const result = await collect(source);

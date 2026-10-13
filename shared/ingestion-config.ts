@@ -1,4 +1,6 @@
 export const INGESTION_DAILY_BUDGET = 80_000;
+export const INGESTION_DAILY_READ_BUDGET = 3_000_000;
+export const INGESTION_READ_RESERVATION = 10_000;
 export const PAGE_ROWS = 10;
 export const PLAYER_ROWS = 4;
 export const COLLECTOR_PLAYER_ROWS = 8;

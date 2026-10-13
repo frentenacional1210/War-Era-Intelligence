@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { normalizeWarEraEntity, runSync } from '../worker/ingestion';
 import { WarEraClient } from '../worker/warera';
 import type { Env } from '../worker/types';
+import { createTestDB } from './sqlite-d1';
 
 type Result = { meta: { changes: number } };
 class MemoryDb {
@@ -81,7 +82,7 @@ class MemoryDb {
             if (this.latestSnapshotHash.get(key) !== digest) { this.snapshots++; this.latestSnapshotHash.set(key, digest); return { meta: { changes: 1 } }; }
             return { meta: { changes: 0 } };
           }
-          if (sql.startsWith('DELETE FROM entity_snapshots') && this.failOnCleanup) throw new Error('simulated final batch failure');
+          if (sql.startsWith('DELETE FROM ingestion_runs') && this.failOnCleanup) throw new Error('simulated final batch failure');
           return { meta: { changes: 1 } };
         },
       });
@@ -331,5 +332,101 @@ describe('incremental ingestion', () => {
     const env = { DB: database as unknown as D1Database } as Env;
     expect(await runSync(env, { source: 'countries', force: true })).toMatchObject({ status: 'busy' });
     expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it('keeps long article continuation history below the collector cursor limit and detects legacy cycles', async () => {
+    const store = createTestDB();
+    const oldTokens = Array.from({length:30},(_,index)=>`${String(index).padStart(3,'0')}${'x'.repeat(497)}`);
+    const current = 'y'.repeat(500), next = 'z'.repeat(500);
+    const initial = JSON.stringify({ archiveToken:current,recentTokens:oldTokens,headNextAt:'2099-01-01T00:00:00.000Z' });
+    expect(initial.length).toBeLessThan(16_000);
+    store.sqlite.prepare("UPDATE ingestion_cursors SET cursor=? WHERE source_id='articles'").run(initial);
+    let nextCursor = next;
+    const fetcher = vi.fn(async () => Response.json({result:{data:{items:[{_id:'public-article',title:'Public report',isPublic:true,isPublished:true}],nextCursor}}})) as typeof fetch;
+    try {
+      const env = {DB:store.db} as Env;
+      expect(await runSync(env,{source:'articles',force:true,fetcher})).toMatchObject({status:'ok',processed:1});
+      const saved = String(store.sqlite.prepare("SELECT cursor FROM ingestion_cursors WHERE source_id='articles'").get()?.cursor);
+      expect(saved.length).toBeLessThan(16_000);
+      const parsed = JSON.parse(saved) as {recentTokens:string[]};
+      expect(parsed.recentTokens).toHaveLength(31);
+      expect(parsed.recentTokens.every(token => /^sha256:[0-9a-f]{24}$/.test(token))).toBe(true);
+      nextCursor = oldTokens[8];
+      expect(await runSync(env,{source:'articles',force:true,fetcher})).toMatchObject({status:'error'});
+      expect(store.sqlite.prepare("SELECT cursor FROM ingestion_cursors WHERE source_id='articles'").get()?.cursor).toBe(saved);
+    } finally {store.sqlite.close();}
+  });
+
+  it('refreshes the article head without treating its page token as an archive cycle', async () => {
+    const store = createTestDB();
+    store.sqlite.prepare("UPDATE ingestion_cursors SET cursor=? WHERE source_id='articles'")
+      .run(JSON.stringify({archiveToken:'archive-token',recentTokens:['older-token'],headNextAt:'1970-01-01T00:00:00.000Z'}));
+    const fetcher = vi.fn(async () => Response.json({result:{data:{items:[
+      {_id:'headline',title:'Latest headline',isPublic:true,isPublished:true}],nextCursor:'archive-token'}}})) as typeof fetch;
+    try {
+      expect(await runSync({DB:store.db} as Env,{source:'articles',force:true,fetcher})).toMatchObject({status:'ok',processed:1});
+      const cursor = JSON.parse(String(store.sqlite.prepare("SELECT cursor FROM ingestion_cursors WHERE source_id='articles'").get()?.cursor));
+      expect(cursor.archiveToken).toBe('archive-token');
+      expect(cursor.recentTokens).toHaveLength(1);
+      expect(cursor.recentTokens[0]).toMatch(/^sha256:[0-9a-f]{24}$/);
+    } finally {store.sqlite.close();}
+  });
+
+  it('compacts per-country player cursor history without changing the active continuation token', async () => {
+    const store = createTestDB();
+    const oldTokens = Array.from({length:30},(_,index)=>`${String(index).padStart(3,'0')}${'x'.repeat(497)}`);
+    const current = 'y'.repeat(500), next = 'z'.repeat(500);
+    store.sqlite.prepare(`INSERT INTO countries(id,name,code,source_url,updated_at,first_seen,hash,data_json)
+      VALUES('es','Spain','es','https://example.test','2026-01-01','2026-01-01','h','{}')`).run();
+    store.sqlite.prepare(`INSERT INTO player_census_state(country_id,cursor,next_run_at,last_scanned_at,recent_tokens)
+      VALUES('es',?,'1970-01-01T00:00:00.000Z','2026-01-01T00:00:00.000Z',?)`).run(current,JSON.stringify(oldTokens));
+    let nextCursor = next;
+    const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => init?.method === 'POST'
+      ? Response.json([{result:{data:{_id:'player-one',username:'Player One',country:'es'}}}])
+      : Response.json({result:{data:{items:[{_id:'player-one'}],nextCursor}}})) as typeof fetch;
+    try {
+      const env = {DB:store.db} as Env;
+      expect(await runSync(env,{source:'players',force:true,fetcher})).toMatchObject({status:'ok',processed:1});
+      const saved = store.sqlite.prepare("SELECT cursor,recent_tokens FROM player_census_state WHERE country_id='es'").get()!;
+      expect(saved.cursor).toBe(next);
+      expect(String(saved.recent_tokens).length).toBeLessThan(2_500);
+      expect((JSON.parse(String(saved.recent_tokens)) as string[]).every(token => /^sha256:[0-9a-f]{24}$/.test(token))).toBe(true);
+      nextCursor = oldTokens[8];
+      expect(await runSync(env,{source:'players',force:true,fetcher})).toMatchObject({status:'error'});
+      expect(store.sqlite.prepare("SELECT cursor FROM player_census_state WHERE country_id='es'").get()?.cursor).toBe(next);
+    } finally {store.sqlite.close();}
+  });
+
+  it('preserves known country and unit on omission, but clears explicit null without a false transition', async () => {
+    const store = createTestDB();
+    store.sqlite.prepare(`INSERT INTO countries(id,name,code,source_url,updated_at,first_seen,hash,data_json)
+      VALUES('es','Spain','es','https://example.test','2026-01-01','2026-01-01','h','{}')`).run();
+    const profiles = [
+      {_id:'player-one',username:'Player One',country:'es',mu:'unit-one',leveling:{level:3}},
+      {_id:'player-one',username:'Player One',leveling:{level:3}},
+      {_id:'player-one',username:'Player One',country:null,mu:null,leveling:{level:3}},
+    ];
+    let observation = 0;
+    const fetcher = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => init?.method === 'POST'
+      ? Response.json([{result:{data:profiles[observation++]}}])
+      : Response.json({result:{data:{items:[{_id:'player-one'}],nextCursor:`next-${observation+1}`}}})) as typeof fetch;
+    try {
+      const env = {DB:store.db} as Env;
+      expect(await runSync(env,{source:'players',force:true,fetcher})).toMatchObject({status:'ok',changed:1});
+      expect(await runSync(env,{source:'players',force:true,fetcher})).toMatchObject({status:'ok',changed:0});
+      const known = store.sqlite.prepare("SELECT country_id,military_unit_id,data_json FROM players WHERE id='player-one'").get()!;
+      expect(known.country_id).toBe('es');
+      expect(known.military_unit_id).toBe('unit-one');
+      expect(JSON.parse(String(known.data_json)).mu).toBe('unit-one');
+      expect(store.sqlite.prepare("SELECT COUNT(*) n FROM entity_snapshots WHERE entity_type='players' AND entity_id='player-one'").get()?.n).toBe(1);
+      expect(store.sqlite.prepare("SELECT COUNT(*) n FROM events WHERE event_type IN ('player-country','player-unit')").get()?.n).toBe(0);
+      expect(await runSync(env,{source:'players',force:true,fetcher})).toMatchObject({status:'ok',changed:1});
+      const cleared = store.sqlite.prepare("SELECT country_id,military_unit_id,data_json FROM players WHERE id='player-one'").get()!;
+      expect(cleared.country_id).toBeNull();
+      expect(cleared.military_unit_id).toBeNull();
+      expect(JSON.parse(String(cleared.data_json)).mu).toBeNull();
+      expect(store.sqlite.prepare("SELECT COUNT(*) n FROM entity_snapshots WHERE entity_type='players' AND entity_id='player-one'").get()?.n).toBe(2);
+      expect(store.sqlite.prepare("SELECT COUNT(*) n FROM events WHERE event_type IN ('player-country','player-unit')").get()?.n).toBe(0);
+    } finally {store.sqlite.close();}
   });
 });

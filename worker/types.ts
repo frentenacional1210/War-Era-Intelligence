@@ -8,8 +8,9 @@ export interface Env {
   COLLECTOR_SECRET?:string;
   SYNC_ENABLED?: string;
   AI_ENABLED?: string;
+  AI?: {run(model:string,input:Record<string,unknown>):Promise<unknown>};
   AI_DAILY_BUDGET?: string;
   RETENTION_DAYS?: string;
   PUBLIC_RATE_LIMITER?: { limit(options:{key:string}):Promise<{success:boolean}> };
 }
-export const resourceTables = {'countries':'countries','regions':'regions','players':'players','parties':'parties','military-units':'military_units','battles':'battles','articles':'articles','companies':'companies','events':'events','alerts':'alerts'} as const;
+export const resourceTables = {'countries':'countries','regions':'regions','players':'players','parties':'parties','military-units':'military_units','battles':'battles','articles':'articles','companies':'companies','events':'events','alerts':'alerts','elections':'elections','governments':'governments'} as const;

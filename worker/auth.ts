@@ -25,7 +25,8 @@ export async function takeLimit(env:Env, request:Request, scope:string, max:numb
   const bucket = `${scope}:${(await hmac(env.SESSION_SECRET,ip)).signature}`;
   const row = await env.DB.prepare(`INSERT INTO request_limits(bucket,hits,reset_at) VALUES(?,1,?)
     ON CONFLICT(bucket) DO UPDATE SET hits=CASE WHEN reset_at<=? THEN 1 ELSE hits+1 END,
-    reset_at=CASE WHEN reset_at<=? THEN excluded.reset_at ELSE reset_at END RETURNING hits`).bind(bucket,now+seconds,now,now).first<{hits:number}>();
+    reset_at=CASE WHEN reset_at<=? THEN excluded.reset_at ELSE reset_at END
+    WHERE request_limits.reset_at<=? OR request_limits.hits<? RETURNING hits`).bind(bucket,now+seconds,now,now,now,max).first<{hits:number}>();
   return !!row && row.hits <= max;
 }
 export function csrfValid(request:Request) {

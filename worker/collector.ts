@@ -1,7 +1,8 @@
 import type { Env } from './types';
 import { runSync } from './ingestion';
+import { runHistoryMaintenance } from './history-maintenance';
 import { WarEraError } from './warera';
-import { INGESTION_DAILY_BUDGET, PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
+import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
 import { projectPlayer, projectPublicPage, type PublicPage, type PublicSource } from '../shared/public-projection';
 
 type Plan = { status: 'ready'; source: PublicSource; cursorExpected: string | null; procedure: string; inputs: Record<string, unknown> };
@@ -38,8 +39,10 @@ async function authorized(request: Request, secret: string | undefined): Promise
 }
 async function bodyOf(request: Request): Promise<Record<string, unknown>> {
   if (Number(request.headers.get('Content-Length') ?? 0) > 32_768) throw new WarEraError('Collector body too large', 413);
-  const text = await request.text();
-  if (new TextEncoder().encode(text).length > 32_768) throw new WarEraError('Collector body too large', 413);
+  const reader=request.body?.getReader(),chunks:Uint8Array[]=[];let length=0;
+  if(reader)while(true){const part=await reader.read();if(part.done)break;length+=part.value.byteLength;if(length>32_768){await reader.cancel();throw new WarEraError('Collector body too large',413);}chunks.push(part.value);}
+  const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+  const text=new TextDecoder().decode(bytes);
   try {
     const value: unknown = JSON.parse(text);
     if (value && typeof value === 'object' && !Array.isArray(value)) return value as Record<string, unknown>;
@@ -54,9 +57,10 @@ async function plan(env: Env, source: PublicSource): Promise<Plan | { status: st
     JOIN source_registry r ON r.id=c.source_id WHERE c.source_id=?`).bind(source).first<State>();
   if (!state || !state.enabled) return { status: 'disabled', source };
   if (state.lease_until && state.lease_until > now) return { status: 'busy', source };
-  const reservation = 140 + (source === 'players' ? COLLECTOR_PLAYER_ROWS : PAGE_ROWS) * 10;
-  const budget = await env.DB.prepare('SELECT reserved_writes FROM ingestion_budget WHERE day_key=?').bind(now.slice(0, 10)).first<{ reserved_writes: number }>();
+  const reservation = 140 + (source === 'players' ? COLLECTOR_PLAYER_ROWS*70 : PAGE_ROWS*35);
+  const budget = await env.DB.prepare('SELECT reserved_writes,reserved_reads,database_bytes FROM ingestion_budget WHERE day_key=?').bind(now.slice(0, 10)).first<{ reserved_writes: number; reserved_reads:number;database_bytes:number|null }>();
   if (Number(budget?.reserved_writes ?? 0) + reservation > INGESTION_DAILY_BUDGET) return { status: 'quota-paused', source };
+  if (Number(budget?.reserved_reads ?? 0) + INGESTION_READ_RESERVATION > INGESTION_DAILY_READ_BUDGET || Number(budget?.database_bytes ?? 0)>450_000_000) return {status:'quota-paused',source};
   const cursor = parseCursor(state.cursor);
   if (source === 'articles') {
     const archiveToken = cursor.archiveToken ?? cursor.token;
@@ -103,9 +107,10 @@ function suppliedFetcher(planValue: Plan, page: PublicPage, profiles: Record<str
 /** Route authenticated collector traffic before the public API router. */
 export async function collectorRoute(request: Request, env: Env): Promise<Response | null> {
   const path = new URL(request.url).pathname;
-  if (path !== '/api/collector/plan' && path !== '/api/collector/commit') return null;
+  if (!['/api/collector/plan','/api/collector/commit','/api/collector/maintenance'].includes(path)) return null;
   if (request.method !== 'POST') return reply({ error: 'Method not allowed' }, 405);
   if (!await authorized(request, (env as Env & { COLLECTOR_SECRET?: string }).COLLECTOR_SECRET)) return reply({ error: 'Unauthorized' }, 401);
+  if(path.endsWith('/maintenance'))return reply(await runHistoryMaintenance(env));
   try {
     const body = await bodyOf(request);
     const source = sourceValue(body.source);
