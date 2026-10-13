@@ -1155,6 +1155,292 @@
         }
       }
     },
+    "/api/elections": {
+      "get": {
+        "summary": "Consultar elections",
+        "tags": [
+          "elections"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hasta 40 bytes UTF-8"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "name,updated_at; players:level,experience; articles:published_at; markets:price,captured_at"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/elections/{id}": {
+      "get": {
+        "summary": "Ficha elections",
+        "tags": [
+          "elections"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "$ref": "#/components/schemas/Entity"
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "source": {
+                      "$ref": "#/components/schemas/Source"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/governments": {
+      "get": {
+        "summary": "Consultar governments",
+        "tags": [
+          "governments"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Hasta 40 bytes UTF-8"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "name,updated_at; players:level,experience; articles:published_at; markets:price,captured_at"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/governments/{id}": {
+      "get": {
+        "summary": "Ficha governments",
+        "tags": [
+          "governments"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "$ref": "#/components/schemas/Entity"
+                    },
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "source": {
+                      "$ref": "#/components/schemas/Source"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
     "/api/events": {
       "get": {
         "summary": "Consultar events",
@@ -1653,6 +1939,133 @@
         }
       }
     },
+    "/api/markets/orderbook": {
+      "get": {
+        "summary": "Última muestra observada de hasta cinco órdenes públicas por lado para un producto del catálogo",
+        "parameters": [
+          {
+            "name": "item",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "item",
+                    "status",
+                    "coverage",
+                    "observedAt",
+                    "buyOrders",
+                    "sellOrders"
+                  ],
+                  "properties": {
+                    "item": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "ok"
+                      ]
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "const": "observed-top-five-per-side"
+                    },
+                    "observedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "sourceUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "buyOrders": {
+                      "type": "array",
+                      "maxItems": 5,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "price": {
+                            "type": "number"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "offeredAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    },
+                    "sellOrders": {
+                      "type": "array",
+                      "maxItems": 5,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "price": {
+                            "type": "number"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "offeredAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Producto no registrado en el catálogo"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
     "/api/analysis/compare": {
       "get": {
         "summary": "Comparar métricas públicas de 2–4 registros",
@@ -1753,6 +2166,849 @@
           },
           "404": {
             "description": "Entidad no recopilada"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/coverage": {
+      "get": {
+        "summary": "Cobertura parcial y avance del censo por país",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "summary": "Búsqueda transversal por nombre o ID público",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2
+            },
+            "description": "Hasta 40 bytes UTF-8"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 30,
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/press": {
+      "get": {
+        "summary": "Muestra reciente acotada de metadatos públicos de prensa; tendencias y relaciones inferidas de títulos",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,100}$"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z-]{2,16}$"
+            },
+            "description": "Se filtra dentro de la muestra reciente de país y fechas"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Fecha inicial UTC inclusive"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Fecha final UTC inclusive"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "trends",
+                    "sampled",
+                    "matched",
+                    "limit",
+                    "coverage",
+                    "isSample",
+                    "classification"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "maxItems": 100,
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "title",
+                          "countryId",
+                          "authorId",
+                          "publishedAt",
+                          "observedAt",
+                          "language",
+                          "sourceUrl",
+                          "topics",
+                          "related"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "countryId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "authorId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "publishedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "observedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "language": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sourceUrl": {
+                            "type": "string"
+                          },
+                          "topics": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "military",
+                                "politics",
+                                "economy",
+                                "community",
+                                "other"
+                              ]
+                            }
+                          },
+                          "related": {
+                            "type": "array",
+                            "maxItems": 6,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "sharedTopics": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "trends": {
+                      "type": "object",
+                      "properties": {
+                        "daily": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string",
+                                "format": "date"
+                              },
+                              "count": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        },
+                        "unknownDateCount": {
+                          "type": "integer"
+                        },
+                        "topics": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "topic": {
+                                "type": "string"
+                              },
+                              "count": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "sampled": {
+                      "type": "integer",
+                      "maximum": 100
+                    },
+                    "matched": {
+                      "type": "integer",
+                      "maximum": 100
+                    },
+                    "limit": {
+                      "type": "integer",
+                      "maximum": 100
+                    },
+                    "coverage": {
+                      "type": "string",
+                      "const": "latest-100-captured-metadata"
+                    },
+                    "isSample": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "classification": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/history": {
+      "get": {
+        "summary": "Histórico observado y agregados diarios/semanales/mensuales con huecos",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "players",
+                "parties",
+                "military-units",
+                "countries",
+                "regions",
+                "battles",
+                "markets",
+                "companies",
+                "elections",
+                "governments"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "7d",
+                "30d",
+                "90d",
+                "1y",
+                "2y"
+              ],
+              "default": "30d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/relations": {
+      "get": {
+        "summary": "Relaciones observadas de una entidad",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "players",
+                "parties",
+                "military-units",
+                "countries",
+                "companies",
+                "elections",
+                "governments"
+              ]
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/politics": {
+      "get": {
+        "summary": "Gobierno y elecciones públicos por país",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/strategy": {
+      "get": {
+        "summary": "Informe descriptivo de datos públicos capturados para un país",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/military": {
+      "get": {
+        "summary": "Unidad militar, miembros observados y batallas",
+        "parameters": [
+          {
+            "name": "unit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/alerts/feed": {
+      "get": {
+        "summary": "Alertas deterministas sobre cambios capturados",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "theme",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "military",
+                "territory",
+                "politics",
+                "economy",
+                "community",
+                "media",
+                "activity"
+              ]
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "info",
+                "notable",
+                "high"
+              ]
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/ai/tools": {
+      "get": {
+        "summary": "Herramientas IA disponibles y estado del interruptor",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        },
+        "description": "Catálogo de herramientas fijas de solo lectura, incluidos históricos de mercados, estrategia de hasta dos países y muestra de prensa de un país. El estado y la disponibilidad dependen del binding y de la puerta doble de activación."
+      }
+    },
+    "/api/ai/query": {
+      "post": {
+        "summary": "Consulta pública con herramientas deterministas y posible interpretación IA",
+        "parameters": [
+          {
+            "name": "X-WINT-CSRF",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "question"
+                ],
+                "properties": {
+                  "question": {
+                    "type": "string",
+                    "description": "1–1000 bytes UTF-8"
+                  },
+                  "scenarios": {
+                    "type": "object",
+                    "description": "Valores económicos explícitos: base y upgrade opcional",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "tool",
+                    "facts",
+                    "citations",
+                    "missing",
+                    "assumptions",
+                    "ai"
+                  ],
+                  "properties": {
+                    "tool": {
+                      "type": "string"
+                    },
+                    "facts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "citations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "observedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "assumptions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "interpretation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ai": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "403": {
+            "description": "Origen o CSRF rechazado"
           },
           "429": {
             "description": "Límite de peticiones alcanzado"
@@ -1894,6 +3150,194 @@
           }
         ],
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Sesión requerida"
+          },
+          "403": {
+            "description": "CSRF rechazado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/admin/coverage": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "/api/admin/coverage",
+        "security": [
+          {
+            "adminSession": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Sesión requerida"
+          },
+          "403": {
+            "description": "CSRF rechazado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/admin/diagnostics": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "/api/admin/diagnostics",
+        "security": [
+          {
+            "adminSession": []
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Sesión requerida"
+          },
+          "403": {
+            "description": "CSRF rechazado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/admin/maintenance": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "/api/admin/maintenance",
+        "security": [
+          {
+            "adminSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-WINT-CSRF",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Sesión requerida"
+          },
+          "403": {
+            "description": "CSRF rechazado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/admin/ai/validate": {
+      "post": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "/api/admin/ai/validate",
+        "security": [
+          {
+            "adminSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-WINT-CSRF",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Respuesta correcta",
@@ -2349,6 +3793,151 @@
           }
         }
       }
+    },
+    "/api/collector/plan": {
+      "post": {
+        "summary": "Recopilador privado: plan",
+        "tags": [
+          "collector"
+        ],
+        "security": [
+          {
+            "collectorBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Bearer inválido"
+          },
+          "409": {
+            "description": "Plan o cursor obsoleto"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/collector/commit": {
+      "post": {
+        "summary": "Recopilador privado: commit",
+        "tags": [
+          "collector"
+        ],
+        "security": [
+          {
+            "collectorBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Bearer inválido"
+          },
+          "409": {
+            "description": "Plan o cursor obsoleto"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/collector/maintenance": {
+      "post": {
+        "summary": "Recopilador privado: maintenance",
+        "tags": [
+          "collector"
+        ],
+        "security": [
+          {
+            "collectorBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "401": {
+            "description": "Bearer inválido"
+          },
+          "409": {
+            "description": "Plan o cursor obsoleto"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2473,6 +4062,10 @@
         "type": "apiKey",
         "in": "cookie",
         "name": "wint_session"
+      },
+      "collectorBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

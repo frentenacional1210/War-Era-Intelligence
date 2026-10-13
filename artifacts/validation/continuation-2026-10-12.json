@@ -1,0 +1,82 @@
+{
+  "verifiedAt": "2026-10-12T19:29:43.224Z",
+  "routes": [
+    {
+      "route": "/api/coverage",
+      "status": 200
+    },
+    {
+      "route": "/api/search",
+      "status": 200
+    },
+    {
+      "route": "/api/alerts/feed",
+      "status": 200
+    },
+    {
+      "route": "/api/ai/tools",
+      "status": 200
+    },
+    {
+      "route": "/api/admin/diagnostics",
+      "status": 200
+    },
+    {
+      "route": "/api/strategy",
+      "status": 200
+    },
+    {
+      "route": "/api/politics",
+      "status": 200
+    }
+  ],
+  "totals": {
+    "alerts": 0,
+    "articles": 482,
+    "battles": 42,
+    "companies": 0,
+    "countries": 180,
+    "elections": 0,
+    "events": 0,
+    "governments": 0,
+    "military-units": 336,
+    "parties": 329,
+    "players": 1006,
+    "regions": 269
+  },
+  "quota": {
+    "day": "2026-10-12",
+    "dailyBudget": 80000,
+    "reserved": 79869,
+    "remaining": 131,
+    "tickCount": 726,
+    "dailyReadBudget": 3000000,
+    "reservedReads": 0,
+    "measuredReads": 0,
+    "measuredWrites": 0,
+    "databaseBytes": null,
+    "estimate": true,
+    "method": "Measured ingestion batch metadata plus reserves; API visitors, discarded read envelopes, legacy writes and other applications are not fully metered"
+  },
+  "maintenance": {
+    "httpStatus": 200,
+    "status": "ok",
+    "archivedSnapshots": 0,
+    "archivedPrices": 0,
+    "moreExpiredSnapshots": false,
+    "moreExpiredPrices": false,
+    "pendingSnapshotsAtLeast": 0,
+    "pendingPricesAtLeast": 0,
+    "pendingCountCapped": false,
+    "rowsWritten": 4,
+    "rowsRead": 17
+  },
+  "aiValidation": {
+    "httpStatus": 200,
+    "available": true,
+    "model": "@cf/meta/llama-3.2-3b-instruct",
+    "responseKind": "object",
+    "checkedAt": "2026-10-12T19:29:44.964Z",
+    "maximumOutputTokens": 32
+  }
+}

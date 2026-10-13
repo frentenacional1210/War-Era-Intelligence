@@ -1,46 +1,46 @@
 {
   "before": {
-    "verifiedAt": "2026-10-11T21:54:26.053Z",
-    "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
-    "counts": {
-      "countries": 20,
-      "regions": 10,
-      "players": 10,
-      "parties": 10,
-      "military-units": 10,
-      "battles": 10,
-      "articles": 5
-    },
-    "samples": {
-      "countries": "683ddd2c24b5a2e114af15b9",
-      "regions": "6813b7039403bc4170a5d686",
-      "players": "6a870dee9d715a83e07033ce",
-      "parties": "6aca283f319dc164e97e98a9",
-      "military-units": "6aca9b0be99bf6735de2fd21",
-      "battles": "6acbd664ea7ebd0805fe9a1f",
-      "articles": "6acbfe13c9113f8a8b978602"
-    }
-  },
-  "after": {
-    "verifiedAt": "2026-10-12T07:58:48.251Z",
+    "verifiedAt": "2026-10-12T12:25:27.517Z",
     "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
     "counts": {
       "countries": 180,
-      "regions": 251,
-      "players": 541,
-      "parties": 269,
-      "military-units": 266,
-      "battles": 39,
-      "articles": 288
+      "regions": 269,
+      "players": 1006,
+      "parties": 329,
+      "military-units": 336,
+      "battles": 42,
+      "articles": 482
     },
     "samples": {
       "countries": "6813b6d546e731854c7ac8d7",
       "regions": "6813b7059403bc4170a5d7a1",
-      "players": "6acbe5ebacfb554e68449f44",
+      "players": "6ac923add0efbc3a56b9b78b",
       "parties": "6a35c857a709e05473c97154",
       "military-units": "6aac73b8ea276de8201e0b6d",
       "battles": "6acb239ec649f370d9c1647c",
-      "articles": "6ac96ec2a959ed64e5883dbe"
+      "articles": "6ac7ace9ea60583bab4add13"
+    }
+  },
+  "after": {
+    "verifiedAt": "2026-10-13T16:43:47.803Z",
+    "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+    "counts": {
+      "countries": 180,
+      "regions": 359,
+      "players": 3049,
+      "parties": 629,
+      "military-units": 646,
+      "battles": 71,
+      "articles": 1734
+    },
+    "samples": {
+      "countries": "6813b6d546e731854c7ac8d7",
+      "regions": "6813b7059403bc4170a5d7a1",
+      "players": "6a1d39f78a7ef15b7f816a4a",
+      "parties": "6a35c857a709e05473c97154",
+      "military-units": "6a204678a515845712375c98",
+      "battles": "6acb239ec649f370d9c1647c",
+      "articles": "6ac3becc13ecaa403cb957a2"
     }
   },
   "retained": [

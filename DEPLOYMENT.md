@@ -1,5 +1,13 @@
 # Despliegue en Cloudflare Free
 
+## Estado medido el 13 de octubre de 2026
+
+La instalación existente tiene migraciones remotas aplicadas hasta `0015_orderbooks.sql`. La versión `7147d878-9ab7-49b6-a8f0-d2d74c86df65`, publicada el 13 a las 16:40 UTC, incluye `/prensa`, `/api/press`, históricos de diez recursos, doce herramientas IA fijas y la recuperación acotada del ID para `strategy`, además de la protección de cursores/afiliaciones del recolector. A las 16:33 UTC se observaron 24 productos con muestra, 3.049 jugadores y 1.734 artículos. No se reinicializó D1. La copia SQL privada nueva (`release-2026-10-13.sql`) se restauró únicamente en SQLite aislado: integridad y claves foráneas correctas, 11.160.399 bytes y 7.112 capturas; evidencia sin datos sensibles en [backup.json](artifacts/validation/backup.json). No se ha restaurado en producción. Consulte [VALIDATION.md](VALIDATION.md) para distinguir hechos/citas de interpretaciones del modelo.
+
+El presupuesto interno diario de ingestión de 80.000 escrituras tenía 79.793 reservadas a las 16:33 UTC del día 13, sin margen para otro turno. No aumente, borre ni reinicie el contador para forzar capturas. La ventana se reinicia automáticamente a las 00:00 UTC del 14 de octubre (02:00 en Madrid). El mantenimiento histórico reserva por separado hasta 15.000 escrituras y un millón de lecturas al día, con techo conjunto de 95.000 escrituras con ingestión; el Cron lo ejecuta en una invocación distinta cada diez minutos. La cuota oficial de D1 es de cuenta e incluye índices y operaciones externas a estos contadores.
+
+La instalación activó `AI_ENABLED=true` y `ai_config.enabled=1` después de validar el modelo gratuito. La ruta administrativa de validación reserva 120 neuronas antes de cada prueba, admite hasta tres por hora y devuelve 503 si el proveedor rechaza el modelo. La consulta pública «censo» real devolvió 200 con hechos, cita, interpretación y `ai.available=true` a las 19:39:45 UTC; evidencia en `artifacts/validation/ai-live.json`. Se mantiene un techo interno de 5.000 neuronas/día y 120 reservadas por solicitud; no habilite facturación de pago para ampliar el techo. Los secretos de sesión, administrador y recolector permanecen fuera de Git.
+
 Despliegue existente comprobado por HTTPS: **https://warera-intelligence.warera-intelligence.workers.dev**. Worker: `warera-intelligence`; D1: `wint-db`. El UUID configurado corresponde a la base remota ya migrada. No recree la base ni rote los secretos al actualizar el código. No se ha activado facturación ni un servicio de pago durante el despliegue. La sesión OAuth no permite consultar suscripciones de la cuenta; el plan efectivo y las cuotas facturadas se revisan en el panel de Cloudflare.
 
 En esta instalación el acceso administrativo está guardado en `artifacts/private/ADMIN_ACCESS.txt`, excluido de Git y con permisos locales restringidos. Para actualizar basta `npm run deploy`; los datos permanecen en D1 y los secretos en Cloudflare. Las instrucciones siguientes permiten reproducir la instalación en otra cuenta.
@@ -42,7 +50,7 @@ En esta instalación el acceso administrativo está guardado en `artifacts/priva
    npx wrangler secret put SESSION_SECRET
    ```
 
-   Wrangler solicita cada valor por entrada segura. Guarde la contraseña administrativa en un gestor de contraseñas. `WARERA_API_KEY` solo se configura como secreto adicional si la API y la autorización lo requieren. La IA permanece desactivada.
+   Wrangler solicita cada valor por entrada segura. Guarde la contraseña administrativa en un gestor de contraseñas. `WARERA_API_KEY` solo se configura como secreto adicional si la API y la autorización lo requieren. En una instalación nueva, la IA empieza desactivada hasta validar el proveedor, configurar el binding y activar las dos puertas.
 
 5. Despliegue y pruebe:
 

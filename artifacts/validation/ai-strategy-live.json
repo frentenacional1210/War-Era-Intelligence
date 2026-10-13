@@ -1,0 +1,15 @@
+{
+  "verifiedAt": "2026-10-13T16:40:03.243Z",
+  "version": "7147d878-9ab7-49b6-a8f0-d2d74c86df65",
+  "httpStatus": 200,
+  "tool": "strategy",
+  "factsCount": 1,
+  "citationsCount": 1,
+  "observedAt": "2026-10-12T01:30:07.014Z",
+  "interpretationAvailable": false,
+  "ai": {
+    "available": false,
+    "model": null,
+    "reason": "invalid-interpretation"
+  }
+}

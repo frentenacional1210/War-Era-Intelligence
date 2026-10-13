@@ -1,12 +1,14 @@
 # Hoja de ruta
 
-| Fase | Alcance | Estado |
+Revisado el 13 de octubre de 2026 con recuentos remotos de las 16:33 UTC. La implementación de una vista no equivale a cobertura completa de su fuente.
+
+| Etapa | Entregado o implementado | Siguiente criterio verificable |
 | --- | --- | --- |
-| 1. MVP vertical | Recopilación pública verificada, D1, Cron, API, interfaz de consulta, estado y administración básica. | Publicado y operativo; cobertura todavía en expansión. Se corrigen la lentitud y la reserva excesiva y se añade recopilación complementaria. El censo sigue siendo parcial. |
-| 2. Históricos | Series temporales amplias, comparadores, alertas estadísticas, mejores importaciones y simulación económica enlazada a precios observados. | Parcial: comparador de 2–4 jugadores/partidos/unidades y gráficos de hasta 90 capturas reales, además del importador y simulador. Pendientes alertas, elecciones, análisis militares completos y simulación conectada a precios. |
-| 3. IA | Workers AI con presupuesto medido, consultas estructuradas, resúmenes con fuentes y degradación por cuota. | Pendiente; IA desactivada. |
-| 4. Inteligencia integrada | Grafos de relaciones verificadas, mapas históricos, análisis geopolítico e integraciones autorizadas. | Pendiente. |
+| 1. Base y censo | Worker/React/D1, API pública, administración, Cron y recolector GitHub; 3.049 jugadores y 180 países iniciados, 58 con una pasada completa a las 16:33 UTC. | Reanudar después del siguiente reinicio UTC (14-10, 00:00 UTC) y vigilar cobertura, CPU y `meta.rows_written` sin superar cuotas. No existe denominador global fiable. |
+| 2. Históricos y análisis | Comparadores, retención escalonada, huecos explícitos, cobertura, buscador, hemeroteca de muestra reciente, precios, simuladores y alertas deterministas. | Vigilar atraso del archivo y lecturas D1; confirmar que ninguna captura se borra antes del agregado. No presentar 24 meses previos inexistentes ni la muestra de prensa como corpus completo. |
+| 3. Política, militar e industria | Fuentes públicas de elecciones, gobiernos y empresas, relaciones observadas, batallas y escenarios descriptivos; 60 elecciones, 20 gobiernos y 57 empresas capturadas el día 13. | Medir cobertura y calidad de los campos públicos; programas internos y participación individual no tienen fuente verificada. |
+| 4. IA opcional | Backend y UI de herramientas de solo lectura activados; consulta pública real de «censo» respondió con 15 hechos, una cita e interpretación. Presupuesto interno de 5.000 neuronas/día y fallback determinista. | Ampliar pruebas reales de preguntas no canónicas y errores sin superar cuotas; medir coste efectivo. Una consulta exitosa no demuestra cobertura de todas las herramientas ni precisión de todas las interpretaciones. |
+| 5. Estrategia y mundo | Informe por país, comparación descriptiva y mapa esquemático de países/regiones; estrategia respondió HTTP 200 en producción. | Usar geometrías reales solo si se obtiene fuente verificada. Nunca presentar recuentos parciales como poder, causalidad o pronóstico. |
+| 6. Primeras órdenes públicas | Procedimiento verificado, migración 0015, ruta y UI publicados. Hay 24 productos con muestra a las 16:33 UTC; captura de hasta cinco órdenes por lado y producto, solo última muestra. | Verificar costes D1 y progreso del resto del catálogo tras el reinicio UTC. No inferir ventas ni liquidez total. |
 
-## Criterios para declarar una fuente operativa
-
-Una fuente necesita contrato observado, captura real validada, escritura en D1, lectura por API y UI, actualización posterior, registro de errores y prueba básica. Si alguno falta, la interfaz indica falta de datos o sincronización. Antes de ampliar a nuevos endpoints se revisarán autenticación, permisos, paginación y límites actuales de WarEra. Los chats y Discord solo se abordarán con acceso público permitido o autorización explícita. Ningún análisis inferirá identidad externa por coincidencia de nombres.
+Cada fuente se considera operativa solo tras observar su contrato sin credenciales, capturar una muestra real, conservar procedencia y errores, exponer una lectura, probar una segunda actualización y medir coste dentro de Free. Los datos de chat, Discord, cuerpos privados o afiliaciones externas requieren permiso o contrato específico; la coincidencia de nombres no crea una relación verificada.

@@ -1,0 +1,24 @@
+{
+  "verified_at": "2026-10-13T16:36:54Z",
+  "target": "https://warera-intelligence.warera-intelligence.workers.dev",
+  "deployment_version": "d6924703-0552-4739-a53c-3cedabb814ad",
+  "browser": "Microsoft Edge",
+  "projects": ["chromium", "mobile"],
+  "workers": 3,
+  "tests": { "total": 50, "passed": 43, "skipped_expected": 7, "failed": 0 },
+  "focused_ai_followup": {
+    "verified_at": "2026-10-13T16:41:02Z",
+    "deployment_version": "7147d878-9ab7-49b6-a8f0-d2d74c86df65",
+    "scope": "tests/e2e/ai.spec.ts --project=chromium --workers=1",
+    "passed": 2,
+    "failed": 0
+  },
+  "ai_census_ui": { "http_status": 200, "cached": true, "facts": 15, "citations": 1, "interpretation_present": true },
+  "screenshots": [
+    "qa-ai-census-citation-desktop.png",
+    "qa-press-top-mobile.png",
+    "qa-press-trends-mobile.png",
+    "qa-press-article-mobile.png",
+    "qa2-world-region-loaded-mobile.png"
+  ]
+}
