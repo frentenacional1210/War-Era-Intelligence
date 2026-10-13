@@ -14,7 +14,7 @@ try{
     await page.locator('.analysis-option').nth(0).click();
     await page.locator('.analysis-option').nth(1).click();
     await page.getByRole('button',{name:'Comparar registros'}).click();
-    await page.locator('.analysis-history-summary').waitFor();
+    await page.locator('.history-summary').waitFor();
     await page.screenshot({path:`artifacts/analysis-${name}.png`,fullPage:true});
     await page.close();
   }

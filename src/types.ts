@@ -45,6 +45,8 @@ export type Summary = Status & {
 };
 
 export const RESOURCES = {
+  elections: { endpoint: '/api/elections', title: 'Elecciones', singular: 'Elección', icon: 'Landmark', description: 'Candidaturas y resultados públicos capturados por país.' },
+  governments: { endpoint: '/api/governments', title: 'Gobiernos', singular: 'Gobierno', icon: 'Landmark', description: 'Cargos públicos capturados y fecha de observación.' },
   countries: { endpoint: '/api/countries', title: 'Países', singular: 'País', icon: 'Globe2', description: 'Censo territorial documentado por las fuentes activas.' },
   players: { endpoint: '/api/players', title: 'Jugadores', singular: 'Jugador', icon: 'UsersRound', description: 'Perfiles públicos capturados y normalizados.' },
   parties: { endpoint: '/api/parties', title: 'Partidos', singular: 'Partido', icon: 'Landmark', description: 'Directorio político basado en registros comprobables.' },

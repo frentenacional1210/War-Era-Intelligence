@@ -28,7 +28,7 @@ test('search real player and open provenance',async({page,request})=>{
   await expect(page.getByRole('link',{name:'Abrir fuente original',exact:false})).toBeVisible();
 });
 test('mobile and desktop fit viewport and simulator responds',async({page})=>{
-  await page.goto('/industria');await expect(page.getByRole('heading',{name:'Empresas e industria',exact:true})).toBeVisible();
+  await page.goto('/simulador');await expect(page.getByRole('heading',{name:'Empresas e industria',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+2)).toBeTruthy();
   const numeric=page.getByRole('spinbutton',{name:/Precio de venta por unidad/});await expect(numeric).toBeVisible();await numeric.fill('4');
   await expect(numeric).toHaveValue('4');

@@ -19,9 +19,10 @@ test('desktop compares two real players and opens their captured history', async
   await expect(page.locator('.analysis-table thead th').nth(1)).toContainText(players.items[0].name);
   await expect(page.locator('.analysis-table thead th').nth(2)).toContainText(players.items[1].name);
   await expect(page.getByRole('heading', { name: 'Evolución observada' })).toBeVisible();
-  await expect(page.locator('.analysis-history-summary')).toContainText('capturas registradas');
-  await page.locator('.analysis-history-controls select').first().selectOption(String(players.items[1].id));
-  await expect(page.locator('.analysis-history-controls select').first()).toHaveValue(String(players.items[1].id));
+  const explorer=page.locator('.history-explorer');
+  await expect(explorer.locator('.history-entity-note')).toHaveCount(2);
+  await explorer.getByLabel('Periodo').selectOption('1y');
+  await expect(explorer.locator('.history-summary')).toContainText('Resumen semanal');
 });
 
 test('mobile can select and compare two real players without horizontal page overflow', async ({ page, request }, testInfo) => {
