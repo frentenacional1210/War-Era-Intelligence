@@ -1,0 +1,83 @@
+{
+  "verifiedAt": "2026-10-13T17:20:56.642Z",
+  "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+  "workerVersion": "d7190daf-a901-4005-8e56-474e25677dcf",
+  "passed": true,
+  "authenticated": false,
+  "schemaVersion": "1.0",
+  "resources": [
+    "countries",
+    "regions",
+    "players",
+    "parties",
+    "military-units",
+    "battles",
+    "articles",
+    "companies",
+    "elections",
+    "governments",
+    "events",
+    "alerts",
+    "markets",
+    "orderbooks"
+  ],
+  "counts": {
+    "countries": 180,
+    "regions": 359,
+    "players": 3049,
+    "parties": 629,
+    "military-units": 646,
+    "battles": 71,
+    "articles": 1734,
+    "companies": 57,
+    "elections": 60,
+    "governments": 20,
+    "events": 133,
+    "alerts": 133,
+    "markets": 24,
+    "orderbooks": 24
+  },
+  "coverage": {
+    "countriesTotal": 180,
+    "countriesStarted": 180,
+    "countriesCompleted": 58,
+    "countriesPending": 122,
+    "completedSweeps": 61,
+    "worldPlayerTotal": null,
+    "activePlayerTotal": null
+  },
+  "cors": "*",
+  "playerTraversal": {
+    "pages": 62,
+    "uniqueRecords": 3049,
+    "duplicates": 0,
+    "completeAgainstCapturedCount": true
+  },
+  "checks": [
+    "JSON catalog",
+    "all resource pages",
+    "player traversal from catalog preview",
+    "HEAD then GET",
+    "OPTIONS",
+    "read-only POST",
+    "invalid resource",
+    "invalid limit",
+    "published OpenAPI"
+  ],
+  "publicApiRequests": 82,
+  "limitations": [
+    "Captured counts are not game-wide totals.",
+    "Traversal completeness was checked against this captured player count; live pages are not an atomic export."
+  ],
+  "browserCors": {
+    "browser": "Microsoft Edge",
+    "consumerOrigin": "https://example.com",
+    "credentials": "omit",
+    "status": 200,
+    "responseType": "cors",
+    "schemaVersion": "1.0",
+    "resourceCount": 14,
+    "capturedPlayers": 3049,
+    "passed": true
+  }
+}

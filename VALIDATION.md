@@ -1,5 +1,13 @@
 # Validación de entrega
 
+## Endpoint JSON público del 13 de octubre de 2026
+
+La petición «vale pues crea la url» se publicó en el Worker `d7190daf-a901-4005-8e56-474e25677dcf`: [entrada JSON pública](https://warera-intelligence.warera-intelligence.workers.dev/api/data), contrato `schemaVersion: "1.0"`. La respuesta reúne 14 categorías capturadas, fechas, cobertura, muestras y enlaces `nextUrl` para paginar; no requiere autenticación. Lee únicamente D1 y no realiza recolección ni inferencia. Las páginas contienen campos públicos seleccionados; los históricos e informes se descubren mediante enlaces. No hubo migraciones nuevas ni cambios de presupuesto.
+
+`npm run check`, `npm run build` y `npm test` pasaron: 131 pruebas en 21 archivos. Los cinco casos nuevos verifican proyección pública, consultas SQL con cursor indexado, paginación durante inserciones, precios globales, errores/CORS y que HEAD no sustituya el cuerpo de GET en caché. La [verificación remota](artifacts/validation/public-data.json), a las 17:20:56 UTC, leyó el catálogo y una página de cada categoría y recorrió los 3.049 jugadores en 62 páginas sin duplicados. También comprobó HEAD seguido de GET, OPTIONS, POST rechazado, filtros inválidos y OpenAPI publicado. Fueron 82 solicitudes públicas, sin sesión ni escritura de datos. En Edge, un `fetch` desde `https://example.com` con `credentials: "omit"` devolvió HTTP 200 y respuesta `cors` con las 14 categorías. Esto verifica la lectura entre orígenes desde un navegador real.
+
+El catálogo incluye hasta cinco fichas por categoría; un consumidor debe seguir las páginas para leer todos los registros. La coincidencia del recorrido de jugadores con el contador capturado se verificó durante la pausa de ingesta: las páginas vivas no constituyen una exportación atómica y sus cifras no representan todo WarEra. La actualización sigue los recopiladores existentes y sus presupuestos. Contrato y uso: [PUBLIC_DATA_API.md](PUBLIC_DATA_API.md).
+
 ## Medición remota del 13 de octubre de 2026
 
 La comprobación final del Worker `7147d878` confirmó salud y portada HTTP 200, cierre de sesión 200 y sesión revocada 401. Los siete directorios conservaron sus muestras y contadores; [live.json](artifacts/validation/live.json) y [persistence.json](artifacts/validation/persistence.json). A las 16:43:46 UTC, [continuation.json](artifacts/validation/continuation.json) confirmó las siete rutas de diagnóstico y una ejecución de mantenimiento correcta: ninguna captura estaba aún vencida. Dos pruebas enfocadas de IA pasaron también sobre este backend; la suite completa y la prueba enfocada están distinguidas en [e2e-final.json](artifacts/validation/e2e-final.json).

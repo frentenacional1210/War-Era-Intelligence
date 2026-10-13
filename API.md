@@ -5,6 +5,8 @@ La API pública lee únicamente D1. No inicia llamadas a WarEra por visita. El d
 | Ruta GET | Respuesta |
 | --- | --- |
 | `/api/health` | `ok`, servicio y versión; comprueba la conexión D1 |
+| `/api/data` | catálogo JSON central de los 14 recursos públicos capturados, con enlaces para recorrer sus páginas |
+| `/api/data?resource=players&limit=50` | página JSON de un recurso con cursor `after` y `nextUrl` para continuar |
 | `/api/status` | fuentes, errores, última captura, totales almacenados y estado IA |
 | `/api/dashboard/summary` | estado, artículos recientes, batallas activas y precios observados |
 | `/api/countries`, `/api/regions`, `/api/players`, `/api/parties`, `/api/military-units`, `/api/battles`, `/api/companies`, `/api/elections`, `/api/governments`, `/api/articles`, `/api/events`, `/api/alerts` | `{items,total,page,limit,source}` |
@@ -24,6 +26,8 @@ La API pública lee únicamente D1. No inicia llamadas a WarEra por visita. El d
 | `/api/ai/tools` | herramientas de consulta y estado de activación de IA |
 
 Las colecciones aceptan `q` (40 bytes UTF-8 máximo), `country` (ID original), `page` (1–10000), `limit` (1–50), `sort` y `order=asc|desc`. Ordenaciones comunes: `name` y `updated_at`; jugadores además `level` y `experience`; artículos además `published_at`. Los precios aceptan `name`, `price` o `captured_at`. Los textos de búsqueda se escapan y los valores SQL se parametrizan; los nombres de tabla y columna proceden de listas cerradas.
+
+`GET /api/data` es la entrada pública para clientes como Grok: responde sin autenticación ni inferencia, con CORS `*` y versión de esquema `1.0`. El sobre común contiene `schemaVersion`, `generatedAt`, `scope`, `mode`, `resource`, `datasets`, `coverage`, `links` y `limitations`. Sin `resource` devuelve `mode: "catalog"`, los catorce datasets y hasta cinco filas reales por dataset (`limit=1–10` en catálogo), más un resumen de cobertura observada. Con `resource` devuelve `mode: "dataset"`, `coverage: null` y solo `datasets[resource]`, que contiene `url`, `totalCaptured`, `lastSuccessfulCollectionAt`, `status`, `items` y `pagination`. La página tiene 1–50 filas (50 por defecto), ordenadas por ID; el cliente debe seguir `datasets[resource].pagination.nextUrl` mientras `hasMore=true`. `after` es un cursor ID opaco, no un número de página. `HEAD` y `OPTIONS` están disponibles; las respuestas de error incluyen CORS. `totalCaptured` es el contador almacenado de la fuente o `null` si no hay uno: no es una estimación del mundo del juego ni un recuento recalculado por solicitud. Los registros muestran solo campos públicos seleccionados. Véase [la guía de recorrido y límites](PUBLIC_DATA_API.md) y el esquema OpenAPI de `/api/data`.
 
 Cada registro conserva `id`, `name`, `country_id`, `source_url`, `updated_at`, `first_seen` y `data` con una selección de campos públicos. Los campos ausentes son `null`, no estadísticas estimadas. `history` es un historial de variaciones, no una serie de capturas a intervalos regulares. El censo inicial es parcial: `total` mide datos de WINT, nunca el universo completo del juego.
 

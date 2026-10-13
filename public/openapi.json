@@ -11,6 +11,226 @@
     }
   ],
   "paths": {
+    "/api/data": {
+      "get": {
+        "summary": "Punto de entrada JSON público para recorrer los datos capturados de WINT",
+        "tags": [
+          "public-data"
+        ],
+        "description": "Solo D1; no requiere sesión, clave, llamadas a WarEra ni inferencia IA. El catálogo ofrece una muestra y enlaces a los catorce datasets. Seguir nextUrl para recorrer cada dataset.",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "countries",
+                "regions",
+                "players",
+                "parties",
+                "military-units",
+                "battles",
+                "articles",
+                "companies",
+                "elections",
+                "governments",
+                "events",
+                "alerts",
+                "markets",
+                "orderbooks"
+              ]
+            },
+            "description": "Omitir para el catálogo; especificar para recorrer un dataset"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "description": "Catálogo: 1–10, por defecto 5; dataset: 1–50, por defecto 50"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor opaco devuelto por la página anterior de un dataset"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            },
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos o repetidos",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite temporal de peticiones",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "D1 no disponible",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "summary": "Cabeceras del punto de entrada de datos públicos",
+        "tags": [
+          "public-data"
+        ],
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "countries",
+                "regions",
+                "players",
+                "parties",
+                "military-units",
+                "battles",
+                "articles",
+                "companies",
+                "elections",
+                "governments",
+                "events",
+                "alerts",
+                "markets",
+                "orderbooks"
+              ]
+            },
+            "description": "Omitir para el catálogo; especificar para recorrer un dataset"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "description": "Catálogo: 1–10, por defecto 5; dataset: 1–50, por defecto 50"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor opaco devuelto por la página anterior de un dataset"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cabeceras de la respuesta JSON, sin cuerpo",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "D1 no disponible",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "summary": "Negociación CORS para lectura pública",
+        "tags": [
+          "public-data"
+        ],
+        "responses": {
+          "204": {
+            "description": "CORS público para GET, HEAD y OPTIONS",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string",
+                  "const": "*"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/countries": {
       "get": {
         "summary": "Consultar countries",
@@ -4055,6 +4275,557 @@
             "$ref": "#/components/schemas/Source"
           }
         }
+      },
+      "DataRecord": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "countryId",
+          "updatedAt",
+          "firstSeenAt",
+          "sourceUrl",
+          "detailUrl",
+          "historyUrl",
+          "data"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "countryId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "firstSeenAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "sourceUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "detailUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "historyUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Campos públicos seleccionados; no contiene cuerpos de artículos, secretos ni columnas internas"
+      },
+      "DataPagination": {
+        "type": "object",
+        "required": [
+          "limit",
+          "returned",
+          "hasMore",
+          "nextAfter",
+          "nextUrl"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "returned": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextAfter": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nextUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataDataset": {
+        "type": "object",
+        "required": [
+          "url",
+          "totalCaptured",
+          "lastSuccessfulCollectionAt",
+          "status",
+          "items",
+          "pagination"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "totalCaptured": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Solo registros capturados por WINT; null si no existe contador fiable"
+          },
+          "lastSuccessfulCollectionAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataRecord"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/DataPagination"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataCoverage": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "required": [
+          "countriesTotal",
+          "countriesStarted",
+          "countriesCompleted",
+          "countriesPending",
+          "completedSweeps",
+          "worldPlayerTotal",
+          "activePlayerTotal"
+        ],
+        "properties": {
+          "countriesTotal": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "countriesStarted": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "countriesCompleted": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "countriesPending": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "completedSweeps": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "worldPlayerTotal": {
+            "type": "null"
+          },
+          "activePlayerTotal": {
+            "type": "null"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Cobertura observada solo en modo catalog; null en modo dataset; sin denominador global de jugadores"
+      },
+      "DataLinks": {
+        "type": "object",
+        "required": [
+          "self",
+          "catalog",
+          "openapi",
+          "documentation",
+          "website",
+          "sourceCode",
+          "coverage",
+          "search",
+          "history",
+          "strategy",
+          "press",
+          "aiTools"
+        ],
+        "properties": {
+          "self": {
+            "type": "string"
+          },
+          "catalog": {
+            "type": "string"
+          },
+          "openapi": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "sourceCode": {
+            "type": "string"
+          },
+          "coverage": {
+            "type": "string"
+          },
+          "search": {
+            "type": "string"
+          },
+          "history": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string"
+          },
+          "press": {
+            "type": "string"
+          },
+          "aiTools": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataBase": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "generatedAt",
+          "mode",
+          "resource",
+          "scope",
+          "datasets",
+          "coverage",
+          "links",
+          "limitations"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "string",
+            "const": "1.0"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "catalog",
+              "dataset"
+            ]
+          },
+          "resource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              null,
+              "countries",
+              "regions",
+              "players",
+              "parties",
+              "military-units",
+              "battles",
+              "articles",
+              "companies",
+              "elections",
+              "governments",
+              "events",
+              "alerts",
+              "markets",
+              "orderbooks"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "const": "captured-public-data"
+          },
+          "datasets": {
+            "type": "object",
+            "properties": {
+              "countries": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "regions": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "players": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "parties": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "military-units": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "battles": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "articles": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "companies": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "elections": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "governments": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "events": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "alerts": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "markets": {
+                "$ref": "#/components/schemas/DataDataset"
+              },
+              "orderbooks": {
+                "$ref": "#/components/schemas/DataDataset"
+              }
+            },
+            "additionalProperties": false
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/DataCoverage"
+          },
+          "links": {
+            "$ref": "#/components/schemas/DataLinks"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DataCatalog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DataBase"
+          },
+          {
+            "type": "object",
+            "required": [
+              "datasets"
+            ],
+            "properties": {
+              "mode": {
+                "const": "catalog"
+              },
+              "resource": {
+                "type": "null"
+              },
+              "datasets": {
+                "type": "object",
+                "required": [
+                  "countries",
+                  "regions",
+                  "players",
+                  "parties",
+                  "military-units",
+                  "battles",
+                  "articles",
+                  "companies",
+                  "elections",
+                  "governments",
+                  "events",
+                  "alerts",
+                  "markets",
+                  "orderbooks"
+                ],
+                "properties": {
+                  "countries": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "regions": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "players": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "parties": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "military-units": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "battles": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "articles": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "companies": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "elections": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "governments": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "events": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "alerts": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "markets": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "orderbooks": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        ]
+      },
+      "DataPage": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/DataBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mode": {
+                "const": "dataset"
+              },
+              "resource": {
+                "type": "string",
+                "enum": [
+                  "countries",
+                  "regions",
+                  "players",
+                  "parties",
+                  "military-units",
+                  "battles",
+                  "articles",
+                  "companies",
+                  "elections",
+                  "governments",
+                  "events",
+                  "alerts",
+                  "markets",
+                  "orderbooks"
+                ]
+              },
+              "datasets": {
+                "type": "object",
+                "minProperties": 1,
+                "maxProperties": 1,
+                "properties": {
+                  "countries": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "regions": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "players": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "parties": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "military-units": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "battles": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "articles": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "companies": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "elections": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "governments": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "events": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "alerts": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "markets": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  },
+                  "orderbooks": {
+                    "$ref": "#/components/schemas/DataDataset"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "coverage": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      },
+      "DataResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DataCatalog"
+          },
+          {
+            "$ref": "#/components/schemas/DataPage"
+          }
+        ],
+        "description": "Catálogo o una página de un recurso; seguir pagination.nextUrl mientras hasMore sea true"
       }
     },
     "securitySchemes": {

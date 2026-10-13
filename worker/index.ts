@@ -11,6 +11,7 @@ import { runHistoryMaintenance } from './history-maintenance';
 import { strategyRoute } from './strategy';
 import { orderbookRoute } from './orderbook';
 import { pressRoute } from './press';
+import { dataRoute, dataCors } from './data';
 import { AI_MODEL } from '../shared/ai';
 import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET } from '../shared/ingestion-config';
 import { csrfValid, createSession, passwordMatches, sessionId, takeLimit } from './auth';
@@ -182,6 +183,7 @@ async function admin(request:Request,env:Env,path:string) {
 }
 async function route(request:Request,env:Env):Promise<Response> {
   const url=new URL(request.url),path=url.pathname;
+  if(path==='/api/data')return (await dataRoute(request,env))!;
   const collection=await collectorRoute(request,env);if(collection)return collection;
   if(path.startsWith('/api/admin/'))return admin(request,env,path.slice(11));
   if(path==='/api/ai/query' && request.method==='POST') {
@@ -240,19 +242,21 @@ function secure(response:Response) {
 export default {
   async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response> {
     if(!new URL(request.url).pathname.startsWith('/api/'))return secure(await env.ASSETS.fetch(request));
+    const isData=new URL(request.url).pathname==='/api/data';
+    const finish=(response:Response)=>secure(isData?dataCors(response):response);
     const isPublic=['GET','HEAD'].includes(request.method) && !new URL(request.url).pathname.startsWith('/api/admin/') && !new URL(request.url).pathname.startsWith('/api/collector/');
     if(isPublic && env.PUBLIC_RATE_LIMITER) {
       const actor=request.headers.get('CF-Connecting-IP') ?? 'local-preview';
-      if(!(await env.PUBLIC_RATE_LIMITER.limit({key:`wint-public:${actor}`})).success)return secure(json({error:'Demasiadas consultas. Espera un minuto.'},429,{'Retry-After':'60',...privateHeaders}));
+      if(!(await env.PUBLIC_RATE_LIMITER.limit({key:`wint-public:${actor}`})).success)return finish(json({error:'Demasiadas consultas. Espera un minuto.'},429,{'Retry-After':'60',...privateHeaders}));
     }
     const key=new Request(request.url,{method:'GET'});
     const edgeCache=await caches.open('wint-public');
-    if(isPublic){const cached=await edgeCache.match(key);if(cached)return secure(cached);}
+    if(isPublic){const cached=await edgeCache.match(key);if(cached)return finish(isData && request.method==='HEAD'?new Response(null,{status:cached.status,headers:cached.headers}):cached);}
     let response:Response;
     try {response=await route(request,env);}
     catch(error){const code=error instanceof HttpError?error.status:503;response=json({error:error instanceof HttpError?error.message:'Base de datos no disponible. Comprueba las migraciones y el panel de sincronización.'},code,privateHeaders);if(!(error instanceof HttpError)) console.error('wint_request_failed',{path:new URL(request.url).pathname,error:error instanceof Error?error.name:'unknown'});}
-    if(isPublic && response.ok){response.headers.set('Cache-Control','public, max-age=60, s-maxage=90');ctx.waitUntil(edgeCache.put(key,response.clone()));}
-    return secure(response);
+    if(isPublic && response.ok && !(isData && request.method==='HEAD')){response.headers.set('Cache-Control','public, max-age=60, s-maxage=90');ctx.waitUntil(edgeCache.put(key,response.clone()));}
+    return finish(response);
   },
   async scheduled(event:ScheduledController,env:Env,ctx:ExecutionContext) {
     if(env.SYNC_ENABLED!=='false') {
