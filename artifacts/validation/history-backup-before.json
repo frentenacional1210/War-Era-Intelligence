@@ -1,0 +1,22 @@
+{
+  "verifiedAt": "2026-10-14T17:35:08.570136+00:00",
+  "restoredInMemory": true,
+  "integrity": "ok",
+  "foreignKeys": "ok",
+  "bytes": 17853081,
+  "sha256": "a343579bf906ff893df6410f8bc8adfefae651fb3f59e436517538d43f9f04ec",
+  "counts": {
+    "countries": 180,
+    "regions": 386,
+    "players": 4770,
+    "parties": 739,
+    "military_units": 726,
+    "battles": 99,
+    "articles": 3164,
+    "entity_snapshots": 11406,
+    "market_prices": 345,
+    "ingestion_cursors": 15,
+    "player_census_state": 180
+  },
+  "productionUnchanged": true
+}

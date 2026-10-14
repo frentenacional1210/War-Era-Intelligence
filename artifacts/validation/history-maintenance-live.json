@@ -1,0 +1,74 @@
+{
+  "verifiedAt": "2026-10-14T17:51:19.712Z",
+  "routes": [
+    {
+      "route": "/api/coverage",
+      "status": 200
+    },
+    {
+      "route": "/api/search",
+      "status": 200
+    },
+    {
+      "route": "/api/alerts/feed",
+      "status": 200
+    },
+    {
+      "route": "/api/ai/tools",
+      "status": 200
+    },
+    {
+      "route": "/api/admin/diagnostics",
+      "status": 200
+    },
+    {
+      "route": "/api/strategy",
+      "status": 200
+    },
+    {
+      "route": "/api/politics",
+      "status": 200
+    }
+  ],
+  "totals": {
+    "alerts": 250,
+    "articles": 3164,
+    "battles": 99,
+    "companies": 84,
+    "countries": 180,
+    "elections": 90,
+    "events": 250,
+    "governments": 30,
+    "military-units": 726,
+    "parties": 739,
+    "players": 4770,
+    "regions": 386
+  },
+  "quota": {
+    "day": "2026-10-14",
+    "dailyBudget": 80000,
+    "reserved": 79812,
+    "remaining": 188,
+    "tickCount": 818,
+    "dailyReadBudget": 3000000,
+    "reservedReads": 545411,
+    "measuredReads": 79411,
+    "measuredWrites": 71006,
+    "databaseBytes": 21684224,
+    "estimate": true,
+    "method": "Measured ingestion batch metadata plus reserves; API visitors, discarded read envelopes, legacy writes and other applications are not fully metered"
+  },
+  "maintenance": {
+    "httpStatus": 200,
+    "status": "ok",
+    "archivedSnapshots": 0,
+    "archivedPrices": 0,
+    "moreExpiredSnapshots": false,
+    "moreExpiredPrices": false,
+    "pendingSnapshotsAtLeast": 0,
+    "pendingPricesAtLeast": 0,
+    "pendingCountCapped": false,
+    "rowsWritten": 4,
+    "rowsRead": 18
+  }
+}

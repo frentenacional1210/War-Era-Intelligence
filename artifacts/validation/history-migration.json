@@ -1,0 +1,44 @@
+{
+  "migration": "0016_history_ordering.sql",
+  "restoredActualBackup": true,
+  "productionRestored": false,
+  "unchangedCounts": {
+    "entity_snapshots": 11406,
+    "market_prices": 345,
+    "players": 4770,
+    "articles": 3164,
+    "history_rollups": 0,
+    "history_baselines": 0
+  },
+  "integrity": "ok",
+  "foreignKeys": "ok",
+  "columns": {
+    "history_rollups": [
+      "resource",
+      "entity_id",
+      "grain",
+      "bucket_start",
+      "first_at",
+      "last_at",
+      "first_metrics_json",
+      "last_metrics_json",
+      "observations",
+      "first_sort_id",
+      "last_sort_id"
+    ],
+    "history_baselines": [
+      "resource",
+      "entity_id",
+      "first_at",
+      "metrics_json",
+      "first_sort_id"
+    ],
+    "history_maintenance_lock": [
+      "id",
+      "owner",
+      "lease_until",
+      "snapshot_scan_at",
+      "snapshot_scan_id"
+    ]
+  }
+}

@@ -1,5 +1,9 @@
 # Despliegue en Cloudflare Free
 
+## Históricos publicados el 14 de octubre de 2026
+
+Worker `2248bbf2-4a0a-48d3-8fc0-02963bab47a1`, migraciones aplicadas hasta `0016_history_ordering.sql`. La migración añade orden de capturas y cursor de mantenimiento a las tablas existentes, conservando sus datos. La copia privada previa se restauró únicamente en SQLite aislado antes de aplicar el cambio. Consulte [HISTORY.md](HISTORY.md) y [VALIDATION.md](VALIDATION.md) para la interfaz `/historicos`, la API paginada y las comprobaciones de conservación.
+
 ## Estado medido el 13 de octubre de 2026
 
 La instalación existente tiene migraciones remotas aplicadas hasta `0015_orderbooks.sql`. La versión `7147d878-9ab7-49b6-a8f0-d2d74c86df65`, publicada el 13 a las 16:40 UTC, incluye `/prensa`, `/api/press`, históricos de diez recursos, doce herramientas IA fijas y la recuperación acotada del ID para `strategy`, además de la protección de cursores/afiliaciones del recolector. A las 16:33 UTC se observaron 24 productos con muestra, 3.049 jugadores y 1.734 artículos. No se reinicializó D1. La copia SQL privada nueva (`release-2026-10-13.sql`) se restauró únicamente en SQLite aislado: integridad y claves foráneas correctas, 11.160.399 bytes y 7.112 capturas; evidencia sin datos sensibles en [backup.json](artifacts/validation/backup.json). No se ha restaurado en producción. Consulte [VALIDATION.md](VALIDATION.md) para distinguir hechos/citas de interpretaciones del modelo.

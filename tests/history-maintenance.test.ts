@@ -63,4 +63,25 @@ describe('independent historical maintenance', () => {
       expect(store.sqlite.prepare('SELECT COUNT(*) n FROM history_maintenance_budget').get()?.n).toBe(0);
     } finally { store.sqlite.close(); }
   });
+
+  it('leaves raw data intact and keeps its reserve if another owner takes the lease before settlement', async () => {
+    const store = createTestDB();
+    try {
+      snapshot(store);
+      const db = {
+        ...store.db,
+        batch: async (statements: D1PreparedStatement[]) => {
+          store.sqlite.prepare("UPDATE history_maintenance_lock SET owner='replacement' WHERE id='global'").run();
+          return store.db.batch(statements);
+        },
+      } as D1Database;
+      const result = await runHistoryMaintenance({ DB: db } as Env, { now: NOW });
+      expect(result.status).toBe('error');
+      expect(store.sqlite.prepare('SELECT COUNT(*) n FROM entity_snapshots').get()?.n).toBe(1);
+      expect(store.sqlite.prepare('SELECT COUNT(*) n FROM history_rollups').get()?.n).toBe(0);
+      expect(store.sqlite.prepare('SELECT reserved_writes,last_status,archived_snapshots FROM history_maintenance_budget').get())
+        .toMatchObject({ reserved_writes: HISTORY_MAINTENANCE_LIMITS.reservedWritesPerRun, last_status: 'error', archived_snapshots: 0 });
+      expect(store.sqlite.prepare("SELECT owner FROM history_maintenance_lock WHERE id='global'").get()?.owner).toBe('replacement');
+    } finally { store.sqlite.close(); }
+  });
 });

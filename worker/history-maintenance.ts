@@ -1,5 +1,5 @@
 import type { Env } from './types';
-import { prepareHistoryMaintenance } from './history';
+import { prepareHistoryMaintenance } from './history-archive';
 
 export const HISTORY_MAINTENANCE_LIMITS = {
   writesPerDay: 15_000,
@@ -71,7 +71,7 @@ export async function runHistoryMaintenance(env: Env, options: { now?: Date; per
         day, HISTORY_MAINTENANCE_LIMITS.combinedWritesPerDay).run();
     if (!reserve.meta.changes) return { status: 'quota-paused', archivedSnapshots: 0, archivedPrices: 0 };
     reservationTaken = true;
-    const plan = await prepareHistoryMaintenance(env.DB, now, perSource);
+    const plan = await prepareHistoryMaintenance(env.DB, now, perSource, { owner });
     // 50 + (20+20)*16 is the plan's maximum; the remaining margin covers
     // the lock, reserve, completion and settlement writes.
     if (plan.reserveWrites + 30 > reservedWrites) throw new Error('History maintenance reservation is too small');
@@ -80,8 +80,8 @@ export async function runHistoryMaintenance(env: Env, options: { now?: Date; per
       env.DB.prepare(`UPDATE history_maintenance_budget SET
         archived_snapshots=archived_snapshots+?,archived_prices=archived_prices+?,
         last_status='ok',last_error=NULL,updated_at=? WHERE day_key=?
-        AND EXISTS(SELECT 1 FROM history_maintenance_lock WHERE id='global' AND owner=? AND lease_until>?)`)
-        .bind(plan.selectedSnapshots, plan.selectedPrices, now.toISOString(), day, owner, now.toISOString()),
+        AND EXISTS(SELECT 1 FROM history_maintenance_lock WHERE id='global' AND owner=?)`)
+        .bind(plan.selectedSnapshots, plan.selectedPrices, now.toISOString(), day, owner),
       env.DB.prepare("UPDATE history_maintenance_lock SET owner=NULL,lease_until=NULL WHERE id='global' AND owner=?").bind(owner),
     ]);
     ownLease = false;

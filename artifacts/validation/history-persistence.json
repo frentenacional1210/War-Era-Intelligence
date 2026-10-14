@@ -1,0 +1,16 @@
+{
+  "workerVersion": "2248bbf2-4a0a-48d3-8fc0-02963bab47a1",
+  "passed": true,
+  "beforeBackup": {
+    "rawSnapshots": 11406,
+    "rawPrices": 345
+  },
+  "after": {
+    "rawSnapshots": 11406,
+    "rawPrices": 345,
+    "rollups": 0,
+    "baselines": 0
+  },
+  "changedDatabase": false,
+  "productionRestored": false
+}

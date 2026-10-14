@@ -16,6 +16,7 @@ const StatusPage = lazy(() => import('./pages').then(module => ({ default: modul
 const AdminPage = lazy(() => import('./pages').then(module => ({ default: module.AdminPage })));
 const NotFound = lazy(() => import('./pages').then(module => ({ default: module.NotFound })));
 const AnalysisPage = lazy(() => import('./analysis').then(module => ({ default: module.AnalysisPage })));
+const HistoriesPage = lazy(() => import('./histories'));
 const CoveragePage = lazy(() => import('./coverage').then(module => ({ default: module.CoveragePage })));
 const GlobalSearchPage = lazy(() => import('./search').then(module => ({ default: module.GlobalSearchPage })));
 const WorldExplorerPage = lazy(() => import('./world').then(module => ({ default: module.WorldExplorerPage })));
@@ -43,6 +44,7 @@ const navigation = [
   { path: '/articulos', label: 'Prensa y artículos', icon: Newspaper },
   { path: '/prensa', label: 'Hemeroteca y temas', icon: Newspaper },
   { path: '/analisis', label: 'Comparadores e históricos', icon: Activity },
+  { path: '/historicos', label: 'Históricos', icon: ChartNoAxesCombined },
   { path: '/estrategia', label: 'Informe por país', icon: Activity },
   { path: '/cobertura', label: 'Cobertura del censo', icon: DatabaseZap },
   { path: '/buscar', label: 'Búsqueda global', icon: Search },
@@ -89,6 +91,7 @@ export default function App() {
     <Route path="/mercados" element={<MarketPage />} />
     <Route path="/mercados/ordenes" element={<OrderbookPage />} />
     <Route path="/analisis" element={<AnalysisPage />} />
+    <Route path="/historicos" element={<HistoriesPage />} />
     <Route path="/estrategia" element={<StrategyPage />} />
     <Route path="/cobertura" element={<CoveragePage />} /><Route path="/buscar" element={<GlobalSearchPage />} />
     <Route path="/regiones/:id" element={<DetailRoute resource="regions" />} />

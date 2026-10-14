@@ -1,0 +1,566 @@
+{
+  "verifiedAt": "2026-10-14T17:53:45.652Z",
+  "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+  "workerVersion": "2248bbf2-4a0a-48d3-8fc0-02963bab47a1",
+  "passed": true,
+  "authenticated": false,
+  "requests": 69,
+  "results": [
+    {
+      "resource": "players",
+      "id": "6813b751efecdf9bab194a8e",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-14T02:29:33.233Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-14T02:29:33.233Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-14T02:29:33.233Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-14T02:29:33.233Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-14T02:29:33.233Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "parties",
+      "id": "698cfc8c842d2f3f58663199",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-14T04:07:59.915Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-14T04:07:59.915Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-14T04:07:59.915Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-14T04:07:59.915Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-14T04:07:59.915Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "military-units",
+      "id": "6a0295e26fd9a308334ef2de",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-14T03:47:55.511Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-14T03:47:55.511Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-14T03:47:55.511Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-14T03:47:55.511Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-14T03:47:55.511Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "countries",
+      "id": "6813b6d446e731854c7ac79a",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-12T01:21:53.936Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-12T01:21:53.936Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-12T01:21:53.936Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-12T01:21:53.936Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-12T01:21:53.936Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "regions",
+      "id": "6813b7039403bc4170a5d671",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-11T21:47:46.293Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-11T21:47:46.293Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-11T21:47:46.293Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-11T21:47:46.293Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-11T21:47:46.293Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "battles",
+      "id": "6acb239ec649f370d9c1647c",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 2,
+          "gaps": 6,
+          "baseline": "2026-10-11T22:21:53.933Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 2,
+          "gaps": 29,
+          "baseline": "2026-10-11T22:21:53.933Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 2,
+          "gaps": 89,
+          "baseline": "2026-10-11T22:21:53.933Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 2,
+          "gaps": 51,
+          "baseline": "2026-10-11T22:21:53.933Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-11T22:21:53.933Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 2,
+      "rawPointsChecked": 2,
+      "traversalComplete": true
+    },
+    {
+      "resource": "markets",
+      "id": "ammo",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 15,
+          "gaps": 4,
+          "baseline": "2026-10-11T21:47:43.770Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 4,
+          "gaps": 27,
+          "baseline": "2026-10-11T21:47:43.770Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 4,
+          "gaps": 87,
+          "baseline": "2026-10-11T21:47:43.770Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 2,
+          "gaps": 51,
+          "baseline": "2026-10-11T21:47:43.770Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-11T21:47:43.770Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 4,
+      "rawPointsChecked": 4,
+      "traversalComplete": false
+    },
+    {
+      "resource": "companies",
+      "id": "6900d75545f82cb7ae1b09eb",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-13T03:13:36.290Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-13T03:13:36.290Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-13T03:13:36.290Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-13T03:13:36.290Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-13T03:13:36.290Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "elections",
+      "id": "6a9b5b8166fc799360655687",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-13T01:08:36.286Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-13T01:08:36.286Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-13T01:08:36.286Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-13T01:08:36.286Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-13T01:08:36.286Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    },
+    {
+      "resource": "governments",
+      "id": "6813b6e73e57e0601e792aa3",
+      "observations": [
+        {
+          "period": "7d",
+          "grain": "raw",
+          "points": 1,
+          "gaps": 7,
+          "baseline": "2026-10-13T00:15:47.069Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "30d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 30,
+          "baseline": "2026-10-13T00:15:47.069Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "90d",
+          "grain": "day",
+          "points": 1,
+          "gaps": 90,
+          "baseline": "2026-10-13T00:15:47.069Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "1y",
+          "grain": "week",
+          "points": 1,
+          "gaps": 52,
+          "baseline": "2026-10-13T00:15:47.069Z",
+          "archivePending": false,
+          "truncated": false
+        },
+        {
+          "period": "2y",
+          "grain": "month",
+          "points": 1,
+          "gaps": 24,
+          "baseline": "2026-10-13T00:15:47.069Z",
+          "archivePending": false,
+          "truncated": false
+        }
+      ],
+      "rawPagesChecked": 1,
+      "rawPointsChecked": 1,
+      "traversalComplete": true
+    }
+  ],
+  "checks": [
+    "ten real resource types",
+    "five historical periods",
+    "chronological raw pages",
+    "explicit gaps and baseline",
+    "custom date range",
+    "invalid limit",
+    "invalid cursor",
+    "HEAD then GET",
+    "OPTIONS",
+    "public CORS"
+  ],
+  "limitations": [
+    "These are captures since WINT started collecting, not invented earlier history.",
+    "Archive aging is verified in isolated SQLite tests; no production timestamp is backdated."
+  ]
+}

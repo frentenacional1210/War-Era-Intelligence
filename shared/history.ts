@@ -7,16 +7,21 @@ export type HistoryMetric = number | string | boolean | null;
 export type HistoryMetrics = Record<string, HistoryMetric>;
 export type HistoryPoint = {
   observed_at: string;
+  first_observed_at: string;
   bucket_start: string;
   grain: HistoryGrain;
   metrics: HistoryMetrics;
   observations: number;
   method: 'observed-change' | 'bucket-last' | 'earliest-available';
+  source: 'raw' | 'rollup' | 'mixed' | 'baseline';
 };
-export type HistoryGap = { from: string; to: string; reason: 'no-observation' | 'before-first-capture' | 'archive-pending' };
+export type HistoryGap = { from: string; to: string; reason: 'no-observation' | 'before-first-capture' | 'archive-pending' | 'raw-retention' | 'resolution-retention' };
 export type HistorySeries = {
   resource: HistoryResource;
   id: string;
+  entityName: string | null;
+  sourceUrl: string | null;
+  sourceMeaning: 'current-entity-source' | null;
   period: HistoryPeriod;
   grain: Exclude<HistoryGrain, 'baseline'>;
   from: string;
@@ -26,7 +31,12 @@ export type HistorySeries = {
   baseline: HistoryPoint | null;
   truncated: boolean;
   archive_pending: boolean;
+  boundaryLimited: boolean;
   methodology: string;
+  methodologyVersion: '2';
+  retention: { rawDays: 30; dayDays: 90; weekDays: 366; monthMonths: 24; baseline: 'lifetime' };
+  nextCursor: string | null;
+  nextUrl: string | null;
 };
 
 export const HISTORY_FIELDS: Record<HistoryResource, readonly string[]> = {

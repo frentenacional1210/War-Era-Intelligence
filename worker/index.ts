@@ -184,6 +184,7 @@ async function admin(request:Request,env:Env,path:string) {
 async function route(request:Request,env:Env):Promise<Response> {
   const url=new URL(request.url),path=url.pathname;
   if(path==='/api/data')return (await dataRoute(request,env))!;
+  if(path==='/api/history')return (await historyRoute(request,env))!;
   const collection=await collectorRoute(request,env);if(collection)return collection;
   if(path.startsWith('/api/admin/'))return admin(request,env,path.slice(11));
   if(path==='/api/ai/query' && request.method==='POST') {
@@ -242,8 +243,8 @@ function secure(response:Response) {
 export default {
   async fetch(request:Request,env:Env,ctx:ExecutionContext):Promise<Response> {
     if(!new URL(request.url).pathname.startsWith('/api/'))return secure(await env.ASSETS.fetch(request));
-    const isData=new URL(request.url).pathname==='/api/data';
-    const finish=(response:Response)=>secure(isData?dataCors(response):response);
+    const isPublicJson=['/api/data','/api/history'].includes(new URL(request.url).pathname);
+    const finish=(response:Response)=>secure(isPublicJson?dataCors(response):response);
     const isPublic=['GET','HEAD'].includes(request.method) && !new URL(request.url).pathname.startsWith('/api/admin/') && !new URL(request.url).pathname.startsWith('/api/collector/');
     if(isPublic && env.PUBLIC_RATE_LIMITER) {
       const actor=request.headers.get('CF-Connecting-IP') ?? 'local-preview';
@@ -251,11 +252,11 @@ export default {
     }
     const key=new Request(request.url,{method:'GET'});
     const edgeCache=await caches.open('wint-public');
-    if(isPublic){const cached=await edgeCache.match(key);if(cached)return finish(isData && request.method==='HEAD'?new Response(null,{status:cached.status,headers:cached.headers}):cached);}
+    if(isPublic){const cached=await edgeCache.match(key);if(cached)return finish(isPublicJson && request.method==='HEAD'?new Response(null,{status:cached.status,headers:cached.headers}):cached);}
     let response:Response;
     try {response=await route(request,env);}
     catch(error){const code=error instanceof HttpError?error.status:503;response=json({error:error instanceof HttpError?error.message:'Base de datos no disponible. Comprueba las migraciones y el panel de sincronización.'},code,privateHeaders);if(!(error instanceof HttpError)) console.error('wint_request_failed',{path:new URL(request.url).pathname,error:error instanceof Error?error.name:'unknown'});}
-    if(isPublic && response.ok && !(isData && request.method==='HEAD')){response.headers.set('Cache-Control','public, max-age=60, s-maxage=90');ctx.waitUntil(edgeCache.put(key,response.clone()));}
+    if(isPublic && response.ok && !(isPublicJson && request.method==='HEAD')){response.headers.set('Cache-Control','public, max-age=60, s-maxage=90');ctx.waitUntil(edgeCache.put(key,response.clone()));}
     return finish(response);
   },
   async scheduled(event:ScheduledController,env:Env,ctx:ExecutionContext) {

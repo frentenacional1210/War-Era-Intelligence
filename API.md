@@ -66,6 +66,8 @@ Importación disponible para `players`, `parties`, `military-units`. Exige ID y 
 
 ## Comparadores e históricos
 
+La vista `/historicos` reúne los diez recursos históricos y permite comparar hasta cuatro entidades, escoger fechas/resolución y exportar las páginas cargadas. `GET /api/history` añade `grain`, `from`, `to`, `limit` y `cursor`; responde en orden cronológico con `nextUrl`, metodología versión `2`, procedencia y retención. Los filtros desconocidos o repetidos se rechazan. CORS permite lectura pública entre orígenes; HEAD no altera la caché de GET. Las capturas antiguas pendientes de resumen siguen visibles. El contrato, los límites de los intervalos archivados y las garantías del mantenimiento están en [HISTORY.md](HISTORY.md).
+
 `GET /api/analysis/compare?resource=players&ids=id1,id2` compara entre dos y cuatro IDs distintos de `players`, `parties` o `military-units`. Devuelve métricas públicas de la última captura y su procedencia; no interpreta datos ausentes como cero. `GET /api/analysis/history?resource=players&id=id1` devuelve hasta noventa capturas reales en orden cronológico. Los cambios requieren dos valores observados y un valor inicial cero no produce un porcentaje.
 
 ## Recopilador automático

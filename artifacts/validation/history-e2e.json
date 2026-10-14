@@ -1,0 +1,213 @@
+{
+  "workerVersion": "2248bbf2-4a0a-48d3-8fc0-02963bab47a1",
+  "origin": "https://warera-intelligence.warera-intelligence.workers.dev",
+  "browser": "Microsoft Edge",
+  "stats": {
+    "startTime": "2026-10-14T17:51:20.038Z",
+    "duration": 23942.683,
+    "expected": 14,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "name": "two captured countries can be compared and exported with actual historical metadata",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4156
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "a foreign website can read captured historical JSON without credentials",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 719
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "two captured countries can be compared and exported with actual historical metadata",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 2216
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "a foreign website can read captured historical JSON without credentials",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 377
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "player detail shows real historical periods, first capture and methodology",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1989
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "comparison can show two real player histories without filling missing periods",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1796
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "extended public record shows only its saved historical fields",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1263
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "public historical explorer compares two countries and exports displayed observations",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1312
+        }
+      ],
+      "data": "controlled-public-fixture"
+    },
+    {
+      "name": "categorical region history shows observed labels and date-range validation",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 912
+        }
+      ],
+      "data": "controlled-public-fixture"
+    },
+    {
+      "name": "history loads the next bounded page and exports all displayed points",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1125
+        }
+      ],
+      "data": "controlled-public-fixture"
+    },
+    {
+      "name": "player detail shows real historical periods, first capture and methodology",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1072
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "comparison can show two real player histories without filling missing periods",
+      "project": "mobile",
+      "status": "skipped",
+      "results": [
+        {
+          "status": "skipped",
+          "durationMs": 162
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "extended public record shows only its saved historical fields",
+      "project": "mobile",
+      "status": "skipped",
+      "results": [
+        {
+          "status": "skipped",
+          "durationMs": 162
+        }
+      ],
+      "data": "live-WINT-api"
+    },
+    {
+      "name": "public historical explorer compares two countries and exports displayed observations",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1252
+        }
+      ],
+      "data": "controlled-public-fixture"
+    },
+    {
+      "name": "categorical region history shows observed labels and date-range validation",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 897
+        }
+      ],
+      "data": "controlled-public-fixture"
+    },
+    {
+      "name": "history loads the next bounded page and exports all displayed points",
+      "project": "mobile",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1026
+        }
+      ],
+      "data": "controlled-public-fixture"
+    }
+  ],
+  "crossOriginConsumer": "https://wint-consumer.example (local document fixture, live historical API)",
+  "screenshots": [
+    "history-chromium.png",
+    "history-mobile.png"
+  ],
+  "passed": true
+}
