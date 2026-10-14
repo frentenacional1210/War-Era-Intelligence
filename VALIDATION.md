@@ -1,5 +1,13 @@
 # Validación de entrega
 
+## Recopilación de jugadores activos del 14 de octubre de 2026
+
+El Worker `7f9ea9d4-d26c-4d16-846f-f4940c35ee56` publica la política `active-only`: Cron y commits del recolector guardan o actualizan perfiles solo cuando la marca pública de WarEra es exactamente `isActive: true`. Los candidatos falsos, nulos o sin marca se omiten antes de cualquier escritura de jugador, histórico o alerta; sus páginas avanzan igualmente. El recolector de GitHub consulta primero las fichas ligeras y pide fichas completas solo para activos. Los datos ya guardados se conservan y no representan el total actual de activos.
+
+Pasaron 155 pruebas en 26 archivos, TypeScript y build. Se prueban selección estricta sin heurística de fecha, páginas sin activos, reactivación en un recorrido posterior, conservación de histórico al quedar inactivo, filtrado independiente del commit y solicitudes completas únicamente para activos. En producción, [active-only-live.json](artifacts/validation/active-only-live.json) confirma la política pública y los 4.770 perfiles previos conservados. Las cuatro pruebas de navegador de cobertura y búsqueda pasaron en escritorio/móvil. El plan remoto informó `quota-paused`; no se forzó una ingesta ni se reinició el presupuesto. La política se aplicará en los siguientes lotes programados cuando haya cuota, desde el próximo reinicio UTC (15 de octubre a las 00:00 UTC, 02:00 Madrid).
+
+La sonda anónima y el contrato oficial confirman que `user.getUsersByCountry` no admite un filtro de actividad y que `user.getUserLite` devuelve la marca. Es necesario volver a comprobar los candidatos para descubrir reactivaciones; no se promete una detección instantánea. La estimación del usuario de aproximadamente 3.000 activos no se convierte en un límite artificial ni en un total verificado.
+
 ## Históricos completados el 14 de octubre de 2026
 
 La vista [/historicos](https://warera-intelligence.warera-intelligence.workers.dev/historicos) está publicada en el Worker `2248bbf2-4a0a-48d3-8fc0-02963bab47a1`. Reúne los diez tipos de entidades históricas, comparación de hasta cuatro registros, medidas numéricas y categóricas, periodos/fechas/resoluciones, paginación y exportación de las páginas cargadas a CSV/JSON con su procedencia y metodología. El detalle del contrato y conservación está en [HISTORY.md](HISTORY.md).

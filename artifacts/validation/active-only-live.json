@@ -1,0 +1,19 @@
+{
+  "verifiedAt": "2026-10-14T18:12:46.655Z",
+  "workerVersion": "7f9ea9d4-d26c-4d16-846f-f4940c35ee56",
+  "passed": true,
+  "playerCollectionPolicy": {
+    "mode": "active-only",
+    "activeField": "isActive",
+    "activeValue": true,
+    "unknownActivity": "skip",
+    "rediscovery": "country-sweeps",
+    "existingRecords": "preserved"
+  },
+  "retainedPlayerCount": 4770,
+  "collectorStatus": "quota-paused",
+  "serverSideActivityFilter": false,
+  "upstreamContract": "https://api2.warera.io/docs/swagger-ui-init.js",
+  "limitsRespected": true,
+  "realIngestionForced": false
+}

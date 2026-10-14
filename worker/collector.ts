@@ -2,10 +2,10 @@ import type { Env } from './types';
 import { runSync } from './ingestion';
 import { runHistoryMaintenance } from './history-maintenance';
 import { WarEraError } from './warera';
-import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
+import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, PAGE_ROWS, COLLECTOR_PLAYER_ROWS, PLAYER_COLLECTION_POLICY } from '../shared/ingestion-config';
 import { projectPlayer, projectPublicPage, type PublicPage, type PublicSource } from '../shared/public-projection';
 
-type Plan = { status: 'ready'; source: PublicSource; cursorExpected: string | null; procedure: string; inputs: Record<string, unknown> };
+type Plan = { status: 'ready'; source: PublicSource; cursorExpected: string | null; procedure: string; inputs: Record<string, unknown>; playerPolicy?: typeof PLAYER_COLLECTION_POLICY };
 type State = { cursor: string | null; next_run_at: string; lease_until: string | null; enabled: number };
 type Cursor = { token?: string; countryId?: string; rotation?: boolean; archiveToken?: string; archiveComplete?: boolean; headNextAt?: string };
 const headers = { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8' };
@@ -77,6 +77,7 @@ async function plan(env: Env, source: PublicSource): Promise<Plan | { status: st
   if (!country) return { status: 'idle', source };
   const token = cursor.countryId && !cursor.rotation ? cursor.token : country.token;
   return { status: 'ready', source, cursorExpected: state.cursor, procedure: 'user.getUsersByCountry',
+    playerPolicy: PLAYER_COLLECTION_POLICY,
     inputs: { countryId: country.id, limit: COLLECTOR_PLAYER_ROWS, ...(token ? { cursor: token } : {}) } };
 }
 
@@ -129,7 +130,8 @@ export async function collectorRoute(request: Request, env: Env): Promise<Respon
       if (profiles.some((profile, index) => profile._id !== page.items[index]._id)) return reply({ error: 'Player profile order mismatch' }, 400);
     } else if (body.profiles !== undefined) return reply({ error: 'Unexpected profiles' }, 400);
     const result = await runSync(env, { source, force: true, expectedCursor: expected.cursorExpected, fetcher: suppliedFetcher(expected, page, profiles) });
-    console.info('wint_collector_sync', { status: result.status, source: result.source, processed: result.processed });
+    console.info('wint_collector_sync', { status: result.status, source: result.source, processed: result.processed,
+      checkedPlayers: result.checkedPlayers, skippedInactive: result.skippedInactive, skippedUnknownActivity: result.skippedUnknownActivity });
     return reply(result, result.status === 'busy' ? 409 : 200);
   } catch (error) {
     if (error instanceof WarEraError && error.status === 409) return reply({ error: 'Stale collector plan' }, 409);

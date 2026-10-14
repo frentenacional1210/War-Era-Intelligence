@@ -140,6 +140,7 @@ export async function dataRoute(request: Request, env: Env): Promise<Response | 
       search: `${url.origin}/api/search?q={query}`, history: `${url.origin}/api/history?resource={resource}&id={id}&period={period}`,
       strategy: `${url.origin}/api/strategy?country={id}`, press: `${url.origin}/api/press`, aiTools: `${url.origin}/api/ai/tools` },
     limitations: ['Counts describe captured WINT records, not the whole game or active-player population.',
+      'Player collection now stores only profiles with WarEra isActive=true. Previously captured players and history are preserved; inactive candidates are rechecked in later country sweeps.',
       'Follow every pagination.nextUrl to read more records. Pages are a live view, not an atomic export; repeat collection to discover later inserts and updates.',
       'Article bodies, private data and credentials are excluded. Orderbooks contain up to five offers per side; prices are global.',
       'generatedAt is response generation time; updatedAt is the stored record update time. lastSuccessfulCollectionAt describes the collector.',

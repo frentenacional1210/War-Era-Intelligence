@@ -1,6 +1,7 @@
 /** Scheduled public-data collector. Complete profiles and article bodies stay in this process only. */
-import { WarEraClient, WarEraError, pagedObjectsSchema, pagedPlayersSchema, playerSchema } from '../worker/warera';
-import { projectPlayerBatch, projectPublicPage, type PublicSource } from '../shared/public-projection';
+import { WarEraClient, WarEraError, pagedObjectsSchema, pagedPlayersSchema } from '../worker/warera';
+import { projectPublicPage, type PublicSource } from '../shared/public-projection';
+import { collectPlayerProfiles } from '../shared/active-player-collection';
 import { PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
 
 type Plan = { status: string; source: PublicSource; cursorExpected?: string | null; procedure?: string; inputs?: Record<string, unknown> };
@@ -49,8 +50,7 @@ async function collect(source: PublicSource): Promise<Commit | Plan> {
     const page = await upstream(() => warera.get(plan.procedure!, plan.inputs, pagedPlayersSchema));
     const projected = projectPublicPage(source, page, COLLECTOR_PLAYER_ROWS);
     const ids = projected.items.map(item => String(item._id));
-    const profiles = await upstream(async () => projectPlayerBatch(
-      await warera.getMany('user.getUserById', ids.map(userId => ({ userId })), playerSchema), ids, COLLECTOR_PLAYER_ROWS));
+    const profiles = await collectPlayerProfiles(warera, ids, upstream, COLLECTOR_PLAYER_ROWS);
     return collectorRequest<Commit>('/api/collector/commit', { source, cursorExpected: plan.cursorExpected ?? null, input: plan.inputs, page: projected, profiles });
   }
   const page = await upstream(() => warera.get(plan.procedure!, plan.inputs, pagedObjectsSchema));

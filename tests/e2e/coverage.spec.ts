@@ -8,6 +8,7 @@ test('coverage displays observed counts and country progress on desktop and mobi
   await expect(page.getByRole('heading', { name: 'Cobertura de datos' })).toBeVisible();
   await expect(page.getByTestId('coverage-players')).toContainText(new Intl.NumberFormat('es-ES').format(coverage.summary.players_registered));
   await expect(page.getByText('El número de perfiles corresponde a registros capturados', { exact: false })).toBeVisible();
+  await expect(page.getByText('Se guardan y actualizan solo perfiles que WarEra marca como activos.', { exact: false })).toBeVisible();
   if (coverage.summary.player_total === null) await expect(page.getByText('Población total de jugadores:', { exact: false })).toContainText('Desconocida');
   if (coverage.countries.length) await expect(page.locator('.coverage-table tbody tr').first()).toContainText(coverage.countries[0].name);
   if (coverage.total > 30) {

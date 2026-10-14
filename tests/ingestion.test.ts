@@ -382,7 +382,7 @@ describe('incremental ingestion', () => {
       VALUES('es',?,'1970-01-01T00:00:00.000Z','2026-01-01T00:00:00.000Z',?)`).run(current,JSON.stringify(oldTokens));
     let nextCursor = next;
     const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => init?.method === 'POST'
-      ? Response.json([{result:{data:{_id:'player-one',username:'Player One',country:'es'}}}])
+      ? Response.json([{result:{data:{_id:'player-one',username:'Player One',country:'es',isActive:true}}}])
       : Response.json({result:{data:{items:[{_id:'player-one'}],nextCursor}}})) as typeof fetch;
     try {
       const env = {DB:store.db} as Env;
@@ -402,9 +402,9 @@ describe('incremental ingestion', () => {
     store.sqlite.prepare(`INSERT INTO countries(id,name,code,source_url,updated_at,first_seen,hash,data_json)
       VALUES('es','Spain','es','https://example.test','2026-01-01','2026-01-01','h','{}')`).run();
     const profiles = [
-      {_id:'player-one',username:'Player One',country:'es',mu:'unit-one',leveling:{level:3}},
-      {_id:'player-one',username:'Player One',leveling:{level:3}},
-      {_id:'player-one',username:'Player One',country:null,mu:null,leveling:{level:3}},
+      {_id:'player-one',username:'Player One',country:'es',mu:'unit-one',leveling:{level:3},isActive:true},
+      {_id:'player-one',username:'Player One',leveling:{level:3},isActive:true},
+      {_id:'player-one',username:'Player One',country:null,mu:null,leveling:{level:3},isActive:true},
     ];
     let observation = 0;
     const fetcher = vi.fn(async (_input: RequestInfo | URL, init?: RequestInit) => init?.method === 'POST'

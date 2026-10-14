@@ -22,7 +22,7 @@ describe('throughput with real SQLite migrations and cursor transactions',()=>{
     try{
       const plan=await (await call('plan',{source:'players'}))!.json() as {cursorExpected:string|null;inputs:Record<string,unknown>};
       const refs=Array.from({length:PLAYER_ROWS},(_,i)=>({_id:`user-${i}`}));
-      const response=await call('commit',{source:'players',cursorExpected:plan.cursorExpected,input:plan.inputs,page:{items:refs,nextCursor:'next'},profiles:refs.map(ref=>({...ref,username:ref._id,country:'es',leveling:{level:1},secret:'omit'}))});
+      const response=await call('commit',{source:'players',cursorExpected:plan.cursorExpected,input:plan.inputs,page:{items:refs,nextCursor:'next'},profiles:refs.map(ref=>({...ref,username:ref._id,country:'es',leveling:{level:1},isActive:true,secret:'omit'}))});
       expect(await response!.json()).toMatchObject({status:'ok',processed:PLAYER_ROWS,changed:PLAYER_ROWS});
       const articlePlan=await (await call('plan',{source:'articles'}))!.json() as {cursorExpected:string|null;inputs:Record<string,unknown>};
       const articleResponse=await call('commit',{source:'articles',cursorExpected:articlePlan.cursorExpected,input:articlePlan.inputs,page:{items:[{_id:'public',title:'Public',isPublic:true,isPublished:true,content:'omit body'},{_id:'private',isPublic:false}],nextCursor:'older'}});
@@ -41,7 +41,7 @@ describe('throughput with real SQLite migrations and cursor transactions',()=>{
       if(init?.method==='POST'){
         expect(url.searchParams.get('batch')).toBe('1');
         const batch=JSON.parse(String(init.body)) as Record<string,{userId:string}>;
-        return Response.json(Object.values(batch).map(({userId})=>({result:{data:{_id:userId,username:userId,country:userId.split('-')[0],leveling:{level:5,totalXp:100}}}})));
+        return Response.json(Object.values(batch).map(({userId})=>({result:{data:{_id:userId,username:userId,country:userId.split('-')[0],leveling:{level:5,totalXp:100},isActive:true}}})));
       }
       const query=JSON.parse(url.searchParams.get('input')!);
       calls.push({procedure,country:query.countryId,cursor:query.cursor});

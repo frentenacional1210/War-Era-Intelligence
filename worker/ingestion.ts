@@ -17,7 +17,7 @@ type Row = Record<string, unknown>;
 type SourceRow = { id: string; endpoint: string; interval_seconds: number; cursor: string | null; next_run_at: string; lease_until: string | null };
 type Cursor = { offset?: number; ids?: string[]; token?: string; recentTokens?: string[]; pages?: number; countryId?: string; lastCountryId?:string;lastItemId?:string;tokens?:Record<string,string>;rotation?: boolean; archiveToken?: string; archiveComplete?: boolean; headNextAt?: string };
 type Normalized = { table: string; id: string; name: string; country_id: string | null; source_url: string; updated_at: string; data_json: string; extra: Record<string, string | number | null> };
-export type SyncResult = { status: 'ok' | 'error' | 'busy' | 'idle' | 'quota-paused' | 'unknown-source'; source?: string; processed?: number; changed?: number; nextRunAt?: string; error?: string };
+export type SyncResult = { status: 'ok' | 'error' | 'busy' | 'idle' | 'quota-paused' | 'unknown-source'; source?: string; processed?: number; changed?: number; nextRunAt?: string; error?: string; checkedPlayers?: number; skippedInactive?: number; skippedUnknownActivity?: number };
 
 const MAX_ROWS = DETAIL_ROWS;
 const MAX_PLAYER_ROWS = PLAYER_ROWS;
@@ -195,7 +195,7 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
   return {changed:results.reduce((count, result, index) => count + (index % 2 === 0 && result.meta.changes ? 1 : 0), 0),results:[...readResults,...results]};
 }
 
-type Batch = { records: unknown[]; next: Cursor | null; sourceUrl?: string; checkpoint?: D1PreparedStatement; delay?: number };
+type Batch = { records: unknown[]; next: Cursor | null; sourceUrl?: string; checkpoint?: D1PreparedStatement; delay?: number; checkedPlayers?: number; skippedInactive?: number; skippedUnknownActivity?: number };
 const checkedIds = (values: unknown, allowEmpty = false): string[] => {
   if (!Array.isArray(values) || (!allowEmpty && !values.length) || values.length > 5000) throw new Error('Invalid discovery cursor IDs');
   const unique = new Set<string>();
@@ -262,13 +262,18 @@ async function getBatch(env: Env, client: WarEraClient, source: SourceId, cursor
     const nextToken = continuation(page.nextCursor);
     if (page.items.length > playerLimit) throw new Error('Player page exceeds requested limit');
     const ids = checkedIds(page.items.map(reference => reference._id), true);
-    const records = await client.getMany('user.getUserLite', ids.map(userId => ({userId})), playerSchema);
-    records.forEach((record,index)=>{if(record._id!==ids[index])throw new Error('Player batch returned a mismatched ID');});
+    const profiles = await client.getMany('user.getUserLite', ids.map(userId => ({userId})), playerSchema);
+    profiles.forEach((record,index)=>{if(record._id!==ids[index])throw new Error('Player batch returned a mismatched ID');});
+    // WarEra's country feed has no activity filter. Check its public boolean,
+    // then retain only confirmed active profiles; dates are not a substitute.
+    const records = profiles.filter(profile => profile.isActive === true);
     const recentTokens = await tokenHistory(JSON.parse('recent_tokens' in country && typeof country.recent_tokens==='string'?country.recent_tokens:'[]'));
     if (nextToken && (nextToken===token || recentTokens.includes(await tokenFingerprint(nextToken)))) throw new Error('Player cursor did not advance');
     if (nextToken && !page.items.length) throw new Error('Empty player page has a continuation cursor');
     const continuing = Boolean(nextToken && page.items.length);
-    return { records, next: {rotation:true}, checkpoint: env.DB.prepare(`INSERT INTO player_census_state(country_id,cursor,next_run_at,last_scanned_at,records_observed,completed_sweeps,recent_tokens)
+    return { records, checkedPlayers: profiles.length, skippedInactive: profiles.filter(profile => profile.isActive === false).length,
+      skippedUnknownActivity: profiles.filter(profile => profile.isActive !== true && profile.isActive !== false).length,
+      next: {rotation:true}, checkpoint: env.DB.prepare(`INSERT INTO player_census_state(country_id,cursor,next_run_at,last_scanned_at,records_observed,completed_sweeps,recent_tokens)
       SELECT ?,?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>strftime('%Y-%m-%dT%H:%M:%fZ','now'))
       ON CONFLICT(country_id) DO UPDATE SET cursor=excluded.cursor,next_run_at=excluded.next_run_at,
       last_scanned_at=excluded.last_scanned_at,records_observed=records_observed+excluded.records_observed,completed_sweeps=completed_sweeps+excluded.completed_sweeps,recent_tokens=excluded.recent_tokens`)
@@ -426,7 +431,7 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
         .bind(batch.next ? json(batch.next) : null, nextRunAt, source, leaseUntil,runId,doneAt.toISOString()),
       env.DB.prepare(`UPDATE source_registry SET status=?,last_success=?,last_attempt=?,last_error=NULL WHERE id=?
         AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>?)`)
-        .bind(batch.records.length ? 'ok' : 'empty', doneAt.toISOString(), now, source,runId,doneAt.toISOString()),
+        .bind(batch.records.length || batch.checkedPlayers ? 'ok' : 'empty', doneAt.toISOString(), now, source,runId,doneAt.toISOString()),
       env.DB.prepare(`UPDATE ingestion_runs SET finished_at=?,status=?,records_count=?,duration_ms=? WHERE id=?
         AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=? AND lease_until>?)`)
         .bind(doneAt.toISOString(), 'ok', batch.records.length, doneAt.valueOf() - started.valueOf(), runId,runId,doneAt.toISOString()),
@@ -453,7 +458,9 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
       // a failed refund cannot turn a successful capture into a false retry.
       console.warn('wint_budget_settlement_deferred',{source});
     }
-    return { status: 'ok', source, processed: batch.records.length, changed:saved.changed, nextRunAt };
+    return { status: 'ok', source, processed: batch.records.length, changed:saved.changed, nextRunAt,
+      ...(source === 'players' ? { checkedPlayers: batch.checkedPlayers ?? 0, skippedInactive: batch.skippedInactive ?? 0,
+        skippedUnknownActivity: batch.skippedUnknownActivity ?? 0 } : {}) };
   } catch (error) {
     const doneAt = new Date();
     if(error instanceof WarEraError && error.status===409){

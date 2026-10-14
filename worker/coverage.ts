@@ -1,4 +1,5 @@
 import type { Env } from './types';
+import { PLAYER_COLLECTION_POLICY } from '../shared/ingestion-config';
 
 const number = (value: unknown) => Number(value ?? 0);
 const param = (value: string | null, fallback: number, max: number) => {
@@ -30,6 +31,7 @@ export async function coverageData(env: Env, page = 1, limit = 30) {
     rows_new_today:number(stats?.new_rows),rows_updated_today:number(stats?.updated_rows),profiles_per_hour:number(rate.processed),
     eta:null,player_total:null,active_player_total:null,methodology_since:results[5].results[0]?.value ?? null,
     coverage_denominator:'countries stored from verified discovery',errors_last_hour:number(rate.errors)},
+    playerCollectionPolicy:PLAYER_COLLECTION_POLICY,
     countries:results[1].results,page,total:number(totals.countries_total),limit,sources,timestamp:now.toISOString()};
 }
 export async function coverageRoute(request: Request, env: Env): Promise<Response | null> {

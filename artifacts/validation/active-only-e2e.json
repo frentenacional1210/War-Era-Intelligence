@@ -1,0 +1,17 @@
+{
+  "workerVersion": "7f9ea9d4-d26c-4d16-846f-f4940c35ee56",
+  "browser": "Microsoft Edge",
+  "projects": [
+    "chromium",
+    "mobile"
+  ],
+  "stats": {
+    "startTime": "2026-10-14T18:12:46.925Z",
+    "duration": 10031.207999999999,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "passed": true
+}

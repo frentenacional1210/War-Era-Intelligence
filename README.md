@@ -10,6 +10,8 @@ Hay directorios, búsqueda, cobertura por país, fichas, relaciones observadas, 
 
 La recopilación programada se reparte entre Cron y GitHub Actions. Un mantenimiento separado archiva observaciones antiguas antes de retirar detalle: detalle reciente durante 30 días, agregados diarios durante 90, semanales durante un año y mensuales durante al menos dos años, más la primera línea base disponible. El archivo no recupera datos borrados anteriormente. Las fuentes y métodos están en [DATA_SOURCES.md](DATA_SOURCES.md).
 
+La recopilación automática de jugadores guarda y actualiza únicamente perfiles con `isActive === true`, según WarEra. Los perfiles inactivos o sin marca verificable se omiten y vuelven a comprobarse en recorridos posteriores. El recolector de GitHub pide la ficha completa solo después de verificar actividad con el perfil ligero. Los registros e históricos anteriores permanecen disponibles; sus cifras no son el total actual de jugadores activos.
+
 La medición remota del 13 de octubre de 2026 a las 16:33 UTC registró 3.049 jugadores, 1.734 artículos, 180 países y 24 productos con muestra de primeras órdenes. El censo había empezado en los 180 países; 58 tenían al menos una pasada completa y 122 seguían en curso. Son **registros capturados**, no el universo del juego. El presupuesto interno diario de recopilación tenía 79.793 de 80.000 escrituras reservadas, insuficientes para otro turno; el siguiente reinicio es el 14 de octubre a las 00:00 UTC (02:00 en Madrid). No se reinician reservas manualmente. La cuota real de D1 también incluye otras operaciones de la cuenta. La copia privada del día 12 verificó cifras anteriores, sin restaurar producción; [VALIDATION.md](VALIDATION.md) separa ambas evidencias.
 
 ## Desarrollo local

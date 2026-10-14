@@ -13,9 +13,9 @@ describe('player affiliation observations', () => {
     store.sqlite.exec(`INSERT INTO countries(id,name,code,source_url,updated_at,first_seen,hash,data_json)
       VALUES('es','Spain','es','https://example.test','2026-01-01','2026-01-01','country','{}')`);
     const profiles = [
-      projectPlayer({ _id: 'player-one', username: 'Player One', country: 'es', party: 'party-one', leveling: { level: 3 } }),
-      { _id: 'player-one', username: 'Player One', country: 'es', leveling: { level: 3 } },
-      { _id: 'player-one', username: 'Player One', country: 'es', party: null, leveling: { level: 3 } },
+      projectPlayer({ _id: 'player-one', username: 'Player One', country: 'es', party: 'party-one', leveling: { level: 3 }, isActive: true }),
+      { _id: 'player-one', username: 'Player One', country: 'es', leveling: { level: 3 }, isActive: true },
+      { _id: 'player-one', username: 'Player One', country: 'es', party: null, leveling: { level: 3 }, isActive: true },
     ];
     let observation = 0;
     const fetcher = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {

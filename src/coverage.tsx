@@ -34,7 +34,7 @@ type CountryCoverage = {
   last_profile_at: string | null;
   status: string;
 };
-type Coverage = { summary: CoverageSummary; countries: CountryCoverage[]; page: number; total: number; limit: number; sources: Source[]; timestamp: string };
+type Coverage = { summary: CoverageSummary; countries: CountryCoverage[]; page: number; total: number; limit: number; sources: Source[]; timestamp: string; playerCollectionPolicy?: { mode: string } };
 
 function countryState(status: string) {
   if (['completed', 'complete', 'done'].includes(status)) return { label: 'Recorrido completo', tone: 'good' as const };
@@ -83,6 +83,7 @@ export function CoveragePanel() {
         <Metric label="Fin estimado del recorrido" value={etaLabel(summary.eta)} />
       </div>
       <p className="coverage-population">Población total de jugadores: <strong>{summary.player_total === null ? 'Desconocida' : number(summary.player_total)}</strong> · Jugadores activos: <strong>{summary.active_player_total === null ? 'Desconocidos' : number(summary.active_player_total)}</strong></p>
+      {data.playerCollectionPolicy?.mode === 'active-only' && <p className="coverage-context">Se guardan y actualizan solo perfiles que WarEra marca como activos. Los candidatos inactivos o sin marca verificable se comprueban en recorridos posteriores para detectar reactivaciones. Los registros anteriores y sus históricos se conservan.</p>}
       <Panel title="Progreso por país">
         {data.countries.length ? <><div className="coverage-table-wrap"><table className="coverage-table"><thead><tr><th scope="col">País</th><th scope="col">Estado</th><th scope="col">Jugadores registrados</th><th scope="col">Registros observados</th><th scope="col">Recorridos completos</th><th scope="col">Último recorrido</th><th scope="col">Último perfil</th><th scope="col">Próximo intento</th></tr></thead><tbody>{data.countries.map(country => { const state = countryState(country.status); return <tr key={country.id}><th scope="row"><Link to={`/paises/${encodeURIComponent(country.id)}`}>{country.name}</Link>{country.code && <small>{country.code}</small>}</th><td><Badge tone={state.tone}>{state.label}</Badge></td><td>{number(country.players_registered)}</td><td>{number(country.records_observed)}</td><td>{number(country.completed_sweeps)}</td><td>{country.last_scanned_at ? <><time dateTime={country.last_scanned_at}>{date(country.last_scanned_at)}</time><small>{age(country.last_scanned_at)}</small></> : 'Sin recorrido'}</td><td>{country.last_profile_at ? <><time dateTime={country.last_profile_at}>{date(country.last_profile_at)}</time><small>{age(country.last_profile_at)}</small></> : 'Sin captura'}</td><td>{country.next_run_at ? date(country.next_run_at) : 'Sin fecha'}</td></tr>; })}</tbody></table></div><Pagination page={data.page} total={data.total} limit={data.limit} onPage={setPage} /></> : <Empty title="Sin países registrados" detail="El directorio de países aún no dispone de registros." />}
       </Panel>
