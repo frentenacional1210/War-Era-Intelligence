@@ -132,6 +132,24 @@ export function normalizeWarEraEntity(source: Exclude<SourceId, 'markets'>, inpu
   return { ...base, name: label(raw.title), country_id: id(raw.country), data_json: json(data), extra: { title: label(raw.title), author_id: id(raw.author), published_at: isoOptional(raw.publishedAt), language: string(raw.language), category: string(raw.category) } };
 }
 
+// Fields that change on almost every observation. They still refresh the
+// current row, but alone they add at most one history snapshot per UTC day;
+// any other field change is captured immediately. Battles keep every change:
+// their damage progression within a short battle is the history itself.
+const VOLATILE_SNAPSHOT_PATHS: Partial<Record<SourceId, string[]>> = {
+  players: ['$.experience', '$.lastConnectionAt', '$.last_active_at', '$.damagesCount'],
+  articles: ['$.stats'],
+};
+/** SQL guard that skips a snapshot differing from the latest one only in volatile fields on the same UTC day. */
+function volatileSnapshotGuard(source: SourceId, idSql: string, nowSql: string, snapshotSql: string): string {
+  const paths = VOLATILE_SNAPSHOT_PATHS[source];
+  if (!paths) return '';
+  // CASE keeps json_remove from ever evaluating a malformed legacy snapshot.
+  const material = (expr: string) => `CASE WHEN json_valid(${expr}) THEN json_remove(${expr},${paths.map(path => `'${path}'`).join(',')}) END`;
+  return ` AND NOT EXISTS(SELECT 1 FROM (SELECT data_json,captured_at FROM entity_snapshots WHERE entity_type=? AND entity_id=${idSql} ORDER BY id DESC LIMIT 1) p
+    WHERE substr(p.captured_at,1,10)=substr(${nowSql},1,10) AND ${material('p.data_json')}=${material(snapshotSql)})`;
+}
+
 async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, items: unknown[], client: WarEraClient, now: string): Promise<{changed:number;results:D1Result[]}> {
   if(source==='battle-reconciliation')return saveEntities(env,'battles',items,client,now);
   if (!items.length) return {changed:0,results:[]};
@@ -168,7 +186,8 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
   const upsert = env.DB.prepare(`INSERT INTO ${first.table}(${columns.join(',')}) VALUES(${columns.map(() => '?').join(',')}) ON CONFLICT(id) DO UPDATE SET ${updates} WHERE ${first.table}.hash<>excluded.hash`);
   const snapshot = env.DB.prepare(`INSERT INTO entity_snapshots(entity_type,entity_id,captured_at,hash,data_json)
     SELECT ?,?,?,?,? WHERE EXISTS(SELECT 1 FROM ${first.table} WHERE id=? AND hash=?)
-    AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=? ORDER BY id DESC LIMIT 1),'')<>?`);
+    AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=? ORDER BY id DESC LIMIT 1),'')<>?${volatileSnapshotGuard(source, '?', '?', '?')}`);
+  const sampled = Boolean(VOLATILE_SNAPSHOT_PATHS[source]);
   const statements: D1PreparedStatement[] = [];
   if(rows.length>3){
     // Transfer one compact page instead of two D1 result envelopes per entity.
@@ -180,15 +199,15 @@ async function saveEntities(env: Env, source: Exclude<SourceId, 'markets'>, item
     const history=env.DB.prepare(`INSERT INTO entity_snapshots(entity_type,entity_id,captured_at,hash,data_json)
       SELECT ?,json_extract(value,'$.id'),?,json_extract(value,'$.hash'),json_extract(value,'$.snapshot_json') FROM json_each(?)
       WHERE EXISTS(SELECT 1 FROM ${first.table} WHERE id=json_extract(value,'$.id') AND hash=json_extract(value,'$.hash'))
-      AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=json_extract(value,'$.id') ORDER BY id DESC LIMIT 1),'')<>json_extract(value,'$.hash')`)
-      .bind(source,now,encoded,source);
+      AND COALESCE((SELECT hash FROM entity_snapshots WHERE entity_type=? AND entity_id=json_extract(value,'$.id') ORDER BY id DESC LIMIT 1),'')<>json_extract(value,'$.hash')${volatileSnapshotGuard(source, "json_extract(value,'$.id')", '?', "json_extract(value,'$.snapshot_json')")}`)
+      .bind(source,now,encoded,source,...(sampled?[source,now]:[]));
     const results=await env.DB.batch([bulk,history]);
     return {changed:results[0].results.length,results:[...readResults,...results]};
   }
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i], digest = digests[i];
     statements.push(upsert.bind(row.id, row.name, row.country_id, row.source_url, row.updated_at, now, digest, row.data_json, ...Object.values(row.extra)));
-    statements.push(snapshot.bind(source, row.id, now, digest, snapshots[i], row.id, digest, source, row.id, digest));
+    statements.push(snapshot.bind(source, row.id, now, digest, snapshots[i], row.id, digest, source, row.id, digest, ...(sampled ? [source, row.id, now, snapshots[i], snapshots[i]] : [])));
   }
   // The whole page is one D1 transaction, preserving every entity/snapshot pair atomically.
   const results = await env.DB.batch(statements);

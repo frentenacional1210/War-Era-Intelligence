@@ -1,6 +1,21 @@
 # Validación de entrega
 
-## Aviso de frescura de datos del 17 de octubre de 2026
+## Capturas solo en cambios relevantes del 17 de octubre de 2026
+
+Aprobado por el usuario. En jugadores y artículos, un cambio que solo afecta a campos volátiles (`experience`, `lastConnectionAt`/`last_active_at`, `damagesCount`; `stats` de artículos) actualiza la ficha, pero no crea captura si ya hay una del mismo día UTC. Cualquier otro cambio, la primera observación y la primera del día sí la crean. Las batallas quedan fuera.
+
+Implementación:
+- `VOLATILE_SNAPSHOT_PATHS` y `volatileSnapshotGuard` en `worker/ingestion.ts`. La comparación usa `json_remove` dentro de `CASE WHEN json_valid(...)`, para no evaluar JSON heredado malformado.
+- Sin migración y sin cambiar el hash ni el contrato de la API.
+
+Pruebas: `tests/snapshot-sampling.test.ts` cubre jugadores (ruta masiva), artículos (ruta de pocas filas) y batallas. Total 166/166 en 29 archivos.
+
+Simulación sobre la copia del 14 Oct (capturas del 12 al 14):
+- Artículos: se habrían evitado 343 de 372 capturas repetidas, el 92 %.
+- Jugadores: ninguna de 678, porque las revisitas eran de días distintos.
+
+El ahorro inmediato es pequeño. Crecerá cuando los países completen el censo y se revisen cada 6 horas.
+
 
 El Worker `b750d76c-649d-4a71-a4e7-5f2c766dcf24` muestra un aviso en todas las páginas cuando la información no está al día, a partir de `/api/status` y `ingestionFreshness` en `src/utils.ts`:
 - **Pausa por cuota:** si al menos la mitad de las fuentes externas están en `quota-paused`, el aviso indica la última captura y cuánto falta para las 00:00 UTC.

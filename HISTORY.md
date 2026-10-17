@@ -26,6 +26,15 @@ Cada punto comunica fecha observada, primera fecha del intervalo, principio del 
 
 Un resumen usa el último valor observado y cuenta las capturas conservadas, sin promediar ni sumar métricas. Los recuentos de un intervalo archivado pueden incluir observaciones anteriores a un `from` personalizado. Si su última observación está después de `to`, se omite ese resumen y se señala `boundaryLimited`: no puede reconstruirse el valor exacto de ese límite a partir de un resumen. Las capturas individuales pendientes de archivo permanecen consultables y se combinan con los resúmenes sin duplicar su recuento. La selección `raw` muestra el detalle aún conservado; para cambios ya compactados deben usarse los resúmenes.
 
+## Cuándo se crea una captura
+
+Desde el 17 de octubre de 2026, la ficha actual se actualiza en cada observación, pero la creación de una captura histórica depende del tipo de cambio:
+- **Cambios relevantes:** se capturan siempre al momento. Por ejemplo, nivel, país, partido, unidad, estado de actividad, título o categoría.
+- **Campos volátiles:** sus cambios aislados generan como mucho una captura por día UTC, la primera observación del día. Son la experiencia, el daño acumulado y la última conexión de los jugadores, y las visitas, likes y comentarios de los artículos.
+- **Batallas:** conservan cada cambio de daño o ronda.
+
+Antes de esa fecha cada variación creaba captura; esos datos se conservan intactos. En una serie de experiencia o visitas, un intervalo menor de un día puede mostrar el primer valor observado del día y no el último. La ficha actual siempre refleja el último. Las alertas no cambian: solo usan campos relevantes.
+
 ## Conservación y seguridad del archivo
 
 | Resolución | Conservación prevista |

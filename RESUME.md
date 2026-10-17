@@ -1,5 +1,7 @@
 # Punto de continuidad
 
+**17 Oct, tarde:** capturas solo en cambios relevantes para jugadores y artículos (aprobado por el usuario), publicado en el Worker `ff7ac0cf-ce72-4f93-b0b3-c99cd4e4cd3f`. Detalle en `HISTORY.md` y `VALIDATION.md`. Desde el 18 Oct, comprobar en producción que las capturas de jugadores y artículos crecen menos que sus actualizaciones (`/api/admin/status` → `writeUsage`, y recuento de `entity_snapshots` por día).
+
 **17 Oct, después:**
 - Aviso global de frescura publicado (Worker `b750d76c-649d-4a71-a4e7-5f2c766dcf24`).
 - Hoja de mejoras priorizada:
