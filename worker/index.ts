@@ -12,6 +12,7 @@ import { strategyRoute } from './strategy';
 import { orderbookRoute } from './orderbook';
 import { pressRoute } from './press';
 import { todayRoute } from './today';
+import { activityRoute } from './activity';
 import { operationsHealth } from '../shared/operations';
 import { dataRoute, dataCors } from './data';
 import { AI_MODEL } from '../shared/ai';
@@ -210,7 +211,7 @@ async function route(request:Request,env:Env):Promise<Response> {
     return (await aiRoute(request,env))!;
   }
   if(request.method!=='GET' && request.method!=='HEAD')throw new HttpError(405,'La API pública es de solo lectura.');
-  for(const handler of [coverageRoute,searchRoute,historyRoute,intelligenceRoute,alertsRoute,aiRoute,strategyRoute,orderbookRoute,pressRoute,todayRoute]){const response=await handler(request,env);if(response)return response;}
+  for(const handler of [coverageRoute,searchRoute,historyRoute,intelligenceRoute,alertsRoute,aiRoute,strategyRoute,orderbookRoute,pressRoute,todayRoute,activityRoute]){const response=await handler(request,env);if(response)return response;}
   const analysis=await analysisRoute(request,env);if(analysis)return analysis;
   if(path==='/api/health'){await env.DB.prepare('SELECT 1').first();return json({ok:true,service:'WINT',version:'0.1.0'});}
   if(path==='/api/status')return json(await status(env));

@@ -5,6 +5,7 @@ import { request } from './api';
 import { useRemote } from './hooks';
 import { age, date, number } from './utils';
 import type { Source } from './types';
+import { ActivityPanel } from './activity';
 
 type CoverageSummary = {
   players_registered: number;
@@ -93,5 +94,5 @@ export function CoveragePanel() {
 }
 
 export function CoveragePage() {
-  return <><SectionTitle eyebrow="CENSO" title="Cobertura de datos" description="Avance verificable de la recopilación pública por país y antigüedad de las capturas." /><CoveragePanel /></>;
+  return <><SectionTitle eyebrow="CENSO" title="Cobertura de datos" description="Avance verificable de la recopilación pública por país y antigüedad de las capturas." /><CoveragePanel /><div className="section-gap"><ActivityPanel title="Actividad semanal observada · todos los países" /></div></>;
 }

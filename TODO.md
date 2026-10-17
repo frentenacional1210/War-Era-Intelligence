@@ -17,12 +17,12 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Auditoría axe WCAG 2.1 A/AA en 11 páginas (escritorio y móvil) sin infracciones graves; contraste corregido.
 - [x] Resumen diario «Hoy en WarEra» (`/hoy` y `/api/today`).
 - [x] Alerta operativa en administración (recolector sin commits, tasa de errores), sin culpar las pausas de cuota.
+- [x] Actividad semanal observada (`/api/activity`) global en cobertura y por país en su ficha; tablas desplazables accesibles con teclado.
 
 ## Pendiente
 ### Experiencia de usuario
 
 ### Análisis
-- [ ] Tendencias semanales de actividad observada por país.
 
 ### Operación
 - [ ] Procedimiento de copia periódica documentado y comprobado.
