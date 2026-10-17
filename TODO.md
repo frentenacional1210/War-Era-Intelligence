@@ -10,11 +10,11 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Copia nueva restaurada en SQLite y migración 0017 aplicada.
 - [x] Recolector con 24 jugadores por commit y lotes de 8 hacia WarEra, sondeado en real.
 - [x] IA: resolución por nombre, respuesta en español con reintento y banco de 22 preguntas de regresión.
+- [x] Títulos de acontecimientos y alertas en español en toda la interfaz.
+- [x] Ficha de país conectada con diez bloques enlazados e informe estratégico.
 
 ## Pendiente
 ### Experiencia de usuario
-- [ ] Títulos de acontecimientos y alertas en español.
-- [ ] Ficha de país conectada: jugadores, partidos, gobierno, elecciones, batallas, empresas y prensa.
 - [ ] Panel de seguimiento de favoritos con sus cambios desde la última visita.
 - [ ] Carga diferida de la librería de gráficos.
 - [ ] Revisión de accesibilidad automatizada en las páginas principales.
