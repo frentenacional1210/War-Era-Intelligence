@@ -35,7 +35,24 @@ export function safeUrl(value: unknown): string | null {
   try { const url = new URL(value); return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null; }
   catch { return null; }
 }
-export function displayName(row: Row): string { return text(row.name ?? row.title ?? row.item_id ?? row.id, 'Sin nombre'); }
+// Titles written in English by the database event rules; stored data stays unchanged.
+const EVENT_TITLES: Record<string, string> = {
+  'Election finished in public record': 'Elección finalizada según el registro público',
+  'Observed government leadership change': 'Cambio observado en la dirección del gobierno',
+  'Observed membership growth': 'Crecimiento observado de miembros',
+  'Observed player country change': 'Cambio de país observado en un jugador',
+  'Observed player party change': 'Cambio de partido observado en un jugador',
+  'Observed player unit change': 'Cambio de unidad observado en un jugador',
+  'Observed market price change over 20%': 'Cambio de precio de mercado superior al 20 %',
+  'Observed region control change': 'Cambio observado en el control de una región',
+  'Article title matched a monitored topic': 'Titular que coincide con un tema vigilado',
+  'Battle confirmed inactive': 'Batalla confirmada como inactiva',
+  'Active battle observed': 'Batalla activa observada',
+};
+export function localizedTitle(value: string): string {
+  return EVENT_TITLES[value] ?? value.replace(/^Battle ([0-9a-f]{8})$/i, 'Batalla $1');
+}
+export function displayName(row: Row): string { return localizedTitle(text(row.name ?? row.title ?? row.item_id ?? row.id, 'Sin nombre')); }
 export function normalizedData(row: Row): Record<string, unknown> {
   if (!row.data) return {};
   if (typeof row.data === 'object' && !Array.isArray(row.data)) return row.data;
