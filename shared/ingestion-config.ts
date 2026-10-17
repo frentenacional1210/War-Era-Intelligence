@@ -3,7 +3,10 @@ export const INGESTION_DAILY_READ_BUDGET = 3_000_000;
 export const INGESTION_READ_RESERVATION = 10_000;
 export const PAGE_ROWS = 10;
 export const PLAYER_ROWS = 4;
-export const COLLECTOR_PLAYER_ROWS = 8;
+export const COLLECTOR_PLAYER_ROWS = 24;
+// Worst-case compact commit for 24 maximum-length projected profiles; real
+// pages measured ~11 KB on 2026-10-17.
+export const COLLECTOR_BODY_BYTES = 65_536;
 export const DETAIL_ROWS = 3;
 // While the GitHub collector committed a players/articles page this recently,
 // scheduled ticks leave that source to it: compact pages cost fewer writes per

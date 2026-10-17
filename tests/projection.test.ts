@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
+import { COLLECTOR_BODY_BYTES, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
 import { MAX_PROJECTED_PROFILE_BYTES, projectPlayerBatch, projectPublicPage } from '../shared/public-projection';
 import { WarEraClient, playerSchema } from '../worker/warera';
 
@@ -30,7 +30,7 @@ describe('anonymous full-profile collection contract', () => {
     expect(JSON.stringify(projected)).not.toMatch(/private@example\.test|password|preferences|wealth|privateDate/);
   });
 
-  it('keeps eight projected profiles and the full commit below the Worker body limit', () => {
+  it('keeps a full collector page of projected profiles and the commit below the Worker body limit', () => {
     const ids = Array.from({ length: COLLECTOR_PLAYER_ROWS }, (_, index) => `u${index}`);
     const full = ids.map((_id, index) => ({ _id, username: 'N'.repeat(300), country: 'c'.repeat(100),
       party: 'p'.repeat(100), mu: 'm'.repeat(100), updatedAt: '2026-10-12T00:00:00.000Z',
@@ -43,7 +43,7 @@ describe('anonymous full-profile collection contract', () => {
     const commitBytes = new TextEncoder().encode(JSON.stringify({ source: 'players', cursorExpected: null,
       input: { countryId: 'es', limit: COLLECTOR_PLAYER_ROWS }, page, profiles: projected })).byteLength;
     expect(profileBytes).toBeLessThanOrEqual(MAX_PROJECTED_PROFILE_BYTES);
-    expect(commitBytes).toBeLessThanOrEqual(32_768);
+    expect(commitBytes).toBeLessThanOrEqual(COLLECTOR_BODY_BYTES);
     expect(JSON.stringify(projected)).not.toContain('do-not-persist');
     expect(JSON.stringify(projected)).not.toContain('private0@example.test');
   });

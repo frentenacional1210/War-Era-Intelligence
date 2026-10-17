@@ -28,7 +28,7 @@ const page = z.object({ items: z.array(z.unknown()), nextCursor: z.string().min(
 
 export type PublicSource = 'players' | 'articles';
 export type PublicPage = { items: Record<string, unknown>[]; nextCursor: string | null };
-export const MAX_PROJECTED_PROFILE_BYTES = 16_384;
+export const MAX_PROJECTED_PROFILE_BYTES = 49_152;
 
 /** Strip all upstream fields except those the existing normalizer reads. */
 export function projectPlayerRef(input: unknown): Record<string, unknown> { return playerRef.parse(input); }

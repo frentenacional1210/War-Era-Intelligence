@@ -2,7 +2,7 @@
 import { WarEraClient, WarEraError, pagedObjectsSchema, pagedPlayersSchema } from '../worker/warera';
 import { projectPublicPage, type PublicSource } from '../shared/public-projection';
 import { collectPlayerProfiles } from '../shared/active-player-collection';
-import { PAGE_ROWS, COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
+import { PAGE_ROWS, COLLECTOR_PLAYER_ROWS, COLLECTOR_BODY_BYTES } from '../shared/ingestion-config';
 
 type Plan = { status: string; source: PublicSource; cursorExpected?: string | null; procedure?: string; inputs?: Record<string, unknown> };
 type Commit = { status: string; source?: string; processed?: number; changed?: number; nextRunAt?: string };
@@ -32,7 +32,7 @@ async function upstream<T>(call: () => Promise<T>): Promise<T> {
 
 async function collectorRequest<T>(path: string, payload: Record<string, unknown>): Promise<T> {
   const body = JSON.stringify(payload);
-  if (new TextEncoder().encode(body).byteLength > 32_768) throw new Error('Collector request exceeds Worker body limit');
+  if (new TextEncoder().encode(body).byteLength > COLLECTOR_BODY_BYTES) throw new Error('Collector request exceeds Worker body limit');
   const response = await fetch(new URL(path, origin), {
     method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json', Accept: 'application/json' },
     body, signal: AbortSignal.timeout(30_000),

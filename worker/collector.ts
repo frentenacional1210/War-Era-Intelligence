@@ -2,7 +2,7 @@ import type { Env } from './types';
 import { runSync } from './ingestion';
 import { runHistoryMaintenance } from './history-maintenance';
 import { WarEraError } from './warera';
-import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, PAGE_ROWS, COLLECTOR_PLAYER_ROWS, PLAYER_COLLECTION_POLICY } from '../shared/ingestion-config';
+import { COLLECTOR_BODY_BYTES, INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, PAGE_ROWS, COLLECTOR_PLAYER_ROWS, PLAYER_COLLECTION_POLICY } from '../shared/ingestion-config';
 import { projectPlayer, projectPublicPage, type PublicPage, type PublicSource } from '../shared/public-projection';
 
 type Plan = { status: 'ready'; source: PublicSource; cursorExpected: string | null; procedure: string; inputs: Record<string, unknown>; playerPolicy?: typeof PLAYER_COLLECTION_POLICY };
@@ -38,9 +38,9 @@ async function authorized(request: Request, secret: string | undefined): Promise
   return difference === 0;
 }
 async function bodyOf(request: Request): Promise<Record<string, unknown>> {
-  if (Number(request.headers.get('Content-Length') ?? 0) > 32_768) throw new WarEraError('Collector body too large', 413);
+  if (Number(request.headers.get('Content-Length') ?? 0) > COLLECTOR_BODY_BYTES) throw new WarEraError('Collector body too large', 413);
   const reader=request.body?.getReader(),chunks:Uint8Array[]=[];let length=0;
-  if(reader)while(true){const part=await reader.read();if(part.done)break;length+=part.value.byteLength;if(length>32_768){await reader.cancel();throw new WarEraError('Collector body too large',413);}chunks.push(part.value);}
+  if(reader)while(true){const part=await reader.read();if(part.done)break;length+=part.value.byteLength;if(length>COLLECTOR_BODY_BYTES){await reader.cancel();throw new WarEraError('Collector body too large',413);}chunks.push(part.value);}
   const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
   const text=new TextDecoder().decode(bytes);
   try {

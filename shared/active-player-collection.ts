@@ -5,6 +5,18 @@ import { MAX_PROJECTED_PROFILE_BYTES, projectPlayerBatch } from './public-projec
 
 type Upstream = <T>(call: () => Promise<T>) => Promise<T>;
 const activityPlayerSchema = playerSchema.extend({ isActive: z.boolean().nullable().optional() });
+// Upstream tRPC batches keep the eight-procedure size proven in production;
+// larger collector pages are split into sequential, rate-spaced batches.
+export const WARERA_PROFILE_BATCH = 8;
+
+async function profilesById(client: Pick<WarEraClient, 'getMany'>, procedure: string, ids: string[], upstream: Upstream) {
+  const rows: z.infer<typeof activityPlayerSchema>[] = [];
+  for (let start = 0; start < ids.length; start += WARERA_PROFILE_BATCH) {
+    const part = ids.slice(start, start + WARERA_PROFILE_BATCH);
+    rows.push(...await upstream(() => client.getMany(procedure, part.map(userId => ({ userId })), activityPlayerSchema)));
+  }
+  return rows;
+}
 
 /** Keep one compact result per candidate so the collector commit remains positionally verifiable. */
 export async function collectPlayerProfiles(
@@ -16,14 +28,12 @@ export async function collectPlayerProfiles(
   if (ids.length > maximum || new Set(ids).size !== ids.length) throw new Error('Collector player IDs exceed limit or repeat');
   if (!ids.length) return [];
 
-  const lite = await upstream(() => client.getMany('user.getUserLite', ids.map(userId => ({ userId })), activityPlayerSchema));
+  const lite = await profilesById(client, 'user.getUserLite', ids, upstream);
   if (lite.length !== ids.length || lite.some((row, index) => row._id !== ids[index])) throw new Error('Collector lite profile order mismatch');
   const liteProjected = projectPlayerBatch(lite, ids, maximum);
 
   const activeIds = ids.filter((_, index) => lite[index].isActive === true);
-  const full = activeIds.length
-    ? await upstream(() => client.getMany('user.getUserById', activeIds.map(userId => ({ userId })), activityPlayerSchema))
-    : [];
+  const full = activeIds.length ? await profilesById(client, 'user.getUserById', activeIds, upstream) : [];
   if (full.length !== activeIds.length || full.some((row, index) => row._id !== activeIds[index])) throw new Error('Collector full profile order mismatch');
 
   const fullProjected = projectPlayerBatch(full, activeIds, maximum);

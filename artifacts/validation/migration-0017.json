@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-17T21:40:00Z",
+  "backup": { "file": "artifacts/private/backups/pre-0017-2026-10-17.sql (private, not in Git)", "bytes": 36958055, "sha256": "67ccab1a027fc1b6d82eddbe272cd8ea02648959e62fd1c2a5d97f3bfcf97ae8" },
+  "isolatedRestore": { "engine": "node:sqlite in memory", "integrity_check": "ok", "foreign_key_violations": 0,
+    "counts": { "players": 7842, "articles": 7681, "entity_snapshots": 24610, "market_prices": 438, "history_rollups": 0 },
+    "after0017": { "indexDropped": true, "countsUnchanged": true, "entityHistoryPlan": "SEARCH entity_snapshots USING INDEX sqlite_autoindex_entity_snapshots_1 (entity_type=? AND entity_id=?)" } },
+  "production": { "migration": "0017_drop_redundant_snapshot_index.sql applied", "indexPresent": false, "entity_snapshots": 24610 }
+}

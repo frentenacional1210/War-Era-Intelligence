@@ -1,6 +1,23 @@
 # Validación de entrega
 
-## Capturas solo en cambios relevantes del 17 de octubre de 2026
+## Migración 0017 y recolector de 24 jugadores del 17 de octubre de 2026
+
+**Copia previa y migración 0017**
+- Copia privada `pre-0017-2026-10-17.sql`: 36.958.055 bytes, SHA-256 `67ccab1a…97ae8`.
+- Restaurada en SQLite en memoria: integridad `ok` y ninguna violación de claves foráneas. Recuentos: 7.842 jugadores, 7.681 artículos y 24.610 capturas.
+- En el ensayo, la 0017 conservó los recuentos y el histórico por entidad usa el índice UNIQUE.
+- Aplicada en producción: el índice ya no existe y se conservan las 24.610 capturas. Evidencia: [migration-0017.json](artifacts/validation/migration-0017.json).
+
+**Recolector de 24 jugadores**
+- `COLLECTOR_PLAYER_ROWS` pasa de 8 a 24. Las llamadas a WarEra se reparten en lotes de 8, el tamaño ya probado (`WARERA_PROFILE_BATCH`), espaciados 2 s.
+- Sondeo real anónimo:
+  - `user.getUsersByCountry` admite `limit: 24`;
+  - un cursor de una página de 8 continúa exactamente en el elemento 9 con `limit: 24`;
+  - tres países: unos 7,9 KB de perfiles y 9,7–11,2 KB por envío, con 7 llamadas y unos 14,5 s por paso.
+- El límite de cuerpo pasa a 64 KB (`COLLECTOR_BODY_BYTES`) y el de perfiles proyectados a 48 KB, para cubrir el peor caso artificial de 24 perfiles con campos de longitud máxima.
+- El coste fijo por envío (unas 21 escrituras) se reparte ahora entre tres veces más jugadores.
+- Pruebas: 167/167.
+
 
 Aprobado por el usuario. En jugadores y artículos, un cambio que solo afecta a campos volátiles (`experience`, `lastConnectionAt`/`last_active_at`, `damagesCount`; `stats` de artículos) actualiza la ficha, pero no crea captura si ya hay una del mismo día UTC. Cualquier otro cambio, la primera observación y la primera del día sí la crean. Las batallas quedan fuera.
 

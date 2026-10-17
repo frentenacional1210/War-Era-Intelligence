@@ -6,7 +6,7 @@ WINT consulta la API pública tRPC de WarEra en `https://api2.warera.io/trpc/`. 
 | --- | --- | --- |
 | Países | `country.getAllCountries` y `country.getCountryById` | Descubrimiento de IDs y fichas; tres detalles por tick. La copia verificada conservaba 180 países. |
 | Regiones | `region.getRegionsObject` y `region.getById` | Descubrimiento y detalles; tres por tick. No incluye geometrías cartográficas verificadas. |
-| Jugadores | `user.getUsersByCountry` y lote tRPC de `user.getUserLite` | Cursores por país; cuatro perfiles por Cron directo u ocho por recolector compacto. Cobertura parcial y campos que puede omitir el perfil lite. |
+| Jugadores | `user.getUsersByCountry` y lote tRPC de `user.getUserLite` | Cursores por país; cuatro perfiles por Cron directo o 24 por recolector compacto (lotes de 8 hacia WarEra). Cobertura parcial y campos que puede omitir el perfil lite. |
 | Partidos | `party.getManyPaginated` | Diez objetos candidatos por página; dirigentes y miembros solo cuando el objeto público los ofrece. Sin programas internos verificados. |
 | Unidades militares | `mu.getManyPaginated` | Diez objetos por página; pertenencia observada, sin participación individual en batallas. |
 | Batallas | `battle.getBattles({isActive:true})` y reconciliación acotada con `battle.getById` | Feed activo y verificación de fichas conocidas. La desaparición del feed se mantiene como estado desconocido hasta confirmación. |

@@ -3,6 +3,7 @@ import { runSync } from '../worker/ingestion';
 import { collectorRoute } from '../worker/collector';
 import { createTestDB } from './sqlite-d1';
 import type { Env } from '../worker/types';
+import { COLLECTOR_PLAYER_ROWS } from '../shared/ingestion-config';
 
 afterEach(() => vi.unstubAllGlobals());
 function setup() {
@@ -64,7 +65,7 @@ describe('active-only automatic player collection', () => {
     try {
       const response = await collectorRoute(new Request('https://wint.test/api/collector/commit', {
         method: 'POST', headers: { Authorization: `Bearer ${secret}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ source: 'players', cursorExpected: null, input: { countryId: 'es', limit: 8 },
+        body: JSON.stringify({ source: 'players', cursorExpected: null, input: { countryId: 'es', limit: COLLECTOR_PLAYER_ROWS },
           page: { items: profiles.map(row => ({ _id: row._id })), nextCursor: 'next' }, profiles }),
       }), store.env);
       expect(response?.status).toBe(200);

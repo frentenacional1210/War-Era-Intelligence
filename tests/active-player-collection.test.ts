@@ -6,6 +6,16 @@ const direct = <T>(call: () => Promise<T>) => call();
 const clientOf = (getMany: ReturnType<typeof vi.fn>) => ({ getMany }) as unknown as Pick<WarEraClient, 'getMany'>;
 
 describe('active player collection', () => {
+  it('splits a 24-candidate collector page into upstream batches of eight and keeps positions', async () => {
+    const ids = Array.from({ length: 24 }, (_, index) => `u${index}`);
+    const getMany = vi.fn(async (_procedure: string, inputs: { userId: string }[]) =>
+      inputs.map(({ userId }) => ({ _id: userId, username: userId, isActive: Number(userId.slice(1)) % 2 === 0 })));
+    const rows = await collectPlayerProfiles(clientOf(getMany), ids, direct, 24);
+    expect(getMany.mock.calls.map(call => [call[0], call[1].length])).toEqual([
+      ['user.getUserLite', 8], ['user.getUserLite', 8], ['user.getUserLite', 8], ['user.getUserById', 8], ['user.getUserById', 4]]);
+    expect(rows.map(row => row._id)).toEqual(ids);
+    expect(rows.filter(row => row.isActive === true)).toHaveLength(12);
+  });
   it('fetches full profiles only for active lite IDs and preserves candidate positions', async () => {
     const getMany = vi.fn(async (procedure: string, inputs: { userId: string }[]) => procedure === 'user.getUserLite'
       ? inputs.map(({ userId }) => ({ _id: userId, username: userId.toUpperCase(), isActive: userId !== 'b' }))
