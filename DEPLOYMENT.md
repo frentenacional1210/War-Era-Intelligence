@@ -91,3 +91,27 @@ El remoto GitHub de esta entrega es `https://github.com/frentenacional1210/War-E
 El secreto independiente `COLLECTOR_SECRET` está configurado en Cloudflare y como `WINT_COLLECTOR_SECRET` en GitHub. El archivo local `artifacts/private/COLLECTOR_SECRET.txt` está excluido de Git y restringido a la cuenta de entrega. No se usa la contraseña administrativa ni se publica ese archivo. Para reproducir la configuración en esta misma cuenta: autentique Wrangler y Git como propietario del repositorio, instale `python -m pip install PyNaCl` y ejecute `python scripts/setup-collector.py`. El script exige un repositorio público administrado por ese propietario, cifra el secreto para GitHub y no imprime su valor.
 
 Una prueba local del mismo recopilador se ejecuta con `WINT_URL`, `COLLECTOR_SECRET` y `MAX_STEPS` (1–80) como variables de entorno, mediante `npm run collect`. Para ejecución remota use **Actions → Collect public WarEra data → Run workflow**. El workflow agrupa todas sus ejecuciones para evitar solapamientos y tiene un límite de catorce minutos. Los logs contienen estados y contadores, no identificadores, páginas, perfiles ni credenciales. Con `WINT_TAIL_SYNC=true`, `watch-cron.mjs` también conserva resúmenes de CPU de los commits del recopilador.
+
+## Copias de seguridad de D1
+
+`npm run backup` (`scripts/backup.mjs`) realiza una copia privada comprobada sin tocar los datos de producción:
+1. Exporta `wint-db` con Wrangler y reintenta una vez ante fallos transitorios (renovación de OAuth o descarga). Si la exportación existe pero falla la descarga, la obtiene del registro privado.
+2. Calcula el SHA-256 y restaura el SQL en SQLite en memoria.
+3. Comprueba `integrity_check`, las claves foráneas, los recuentos de las tablas principales y la última migración.
+4. Escribe `wint-<fecha>.sql`, `wint-<fecha>.json` (informe) y un registro en `artifacts/private/backups/`, carpeta excluida de Git. Los enlaces firmados y el SQL nunca se imprimen.
+
+Termina con código 1 si no hay copia y con código 2 si la restauración aislada no supera las comprobaciones.
+
+**Cuándo ejecutarlo.** Antes de cualquier migración o cambio de riesgo, y al menos una vez por semana. Las copias no deben subirse a GitHub ni a servicios externos sin autorización: contienen todos los datos capturados. Conviene conservar como mínimo las cuatro últimas semanales y la previa a cada migración.
+
+**Programación semanal opcional en Windows** (no está activada; requiere decisión del propietario):
+
+```powershell
+$action = New-ScheduledTaskAction -Execute 'npm.cmd' -Argument 'run backup' -WorkingDirectory 'C:\Users\Fer37\Desktop\CODEX\warera-intelligence'
+$trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At 3am
+Register-ScheduledTask -TaskName 'WINT backup' -Action $action -Trigger $trigger
+```
+
+Requiere sesión de Wrangler válida (`npx wrangler whoami`). Si la red bloquea `*.r2.cloudflarestorage.com`, la exportación se crea, pero la descarga falla: se reintenta más tarde con el mismo comando.
+
+**Verificación del 17 Oct 2026** (22:15 UTC): 36.958.085 bytes, integridad `ok` y ninguna violación de claves foráneas. Recuentos: 7.842 jugadores, 7.681 artículos, 24.610 capturas y 674 eventos. Última migración: `0017_drop_redundant_snapshot_index.sql`.

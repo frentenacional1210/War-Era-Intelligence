@@ -1,5 +1,7 @@
 # Punto de continuidad
 
+**17–18 Oct, noche:** completada la lista de `TODO.md`. Publicados el recolector de 24 jugadores, la migración 0017 (copia previa verificada), la IA en español por nombres, títulos en español, la ficha de país conectada, el seguimiento, la carga diferida de gráficos, la auditoría de accesibilidad, `/hoy`, la actividad semanal, la alerta operativa y `npm run backup`. Pendiente principal: verificar el recolector y el presupuesto tras la reanudación del 18 Oct a las 00:00 UTC (ver `TODO.md`).
+
 **17 Oct, tarde:** capturas solo en cambios relevantes para jugadores y artículos (aprobado por el usuario), publicado en el Worker `ff7ac0cf-ce72-4f93-b0b3-c99cd4e4cd3f`. Detalle en `HISTORY.md` y `VALIDATION.md`. Desde el 18 Oct, comprobar en producción que las capturas de jugadores y artículos crecen menos que sus actualizaciones (`/api/admin/status` → `writeUsage`, y recuento de `entity_snapshots` por día).
 
 **17 Oct, después:**

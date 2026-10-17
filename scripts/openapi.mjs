@@ -58,6 +58,8 @@ paths['/api/history'].head={summary:'Verificar parámetros y existencia del regi
 paths['/api/history'].options={summary:'CORS para lectura pública de históricos',responses:{'204':{description:'GET, HEAD y OPTIONS entre orígenes',headers:corsHeaders}}};
 simpleGet('/api/relations','Relaciones observadas de una entidad',[{name:'resource',in:'query',required:true,schema:{type:'string',enum:['players','parties','military-units','countries','companies','elections','governments']}},{name:'id',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/politics','Gobierno y elecciones públicos por país',[{name:'country',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
+simpleGet('/api/today','Resumen determinista de lo observado por WINT en las últimas 24 horas (eventos por tema, altas de jugadores activos y artículos)',[]);
+simpleGet('/api/activity','Actividad semanal observable: altas en el censo de WINT y última conexión observada, global o por país',[{name:'country',in:'query',required:false,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/strategy','Informe descriptivo de datos públicos capturados para un país',[{name:'country',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/military','Unidad militar, miembros observados y batallas',[{name:'unit',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/alerts/feed','Alertas deterministas sobre cambios capturados',[

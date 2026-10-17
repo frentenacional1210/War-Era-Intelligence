@@ -3433,6 +3433,78 @@
         }
       }
     },
+    "/api/today": {
+      "get": {
+        "summary": "Resumen determinista de lo observado por WINT en las últimas 24 horas (eventos por tema, altas de jugadores activos y artículos)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/activity": {
+      "get": {
+        "summary": "Actividad semanal observable: altas en el censo de WINT y última conexión observada, global o por país",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
     "/api/strategy": {
       "get": {
         "summary": "Informe descriptivo de datos públicos capturados para un país",

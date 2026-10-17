@@ -17,12 +17,10 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Auditoría axe WCAG 2.1 A/AA en 11 páginas (escritorio y móvil) sin infracciones graves; contraste corregido.
 - [x] Resumen diario «Hoy en WarEra» (`/hoy` y `/api/today`).
 - [x] Alerta operativa en administración (recolector sin commits, tasa de errores), sin culpar las pausas de cuota.
+- [x] Copia comprobada con `npm run backup` (exporta, restaura en SQLite y verifica) y procedimiento semanal documentado.
 - [x] Actividad semanal observada (`/api/activity`) global en cobertura y por país en su ficha; tablas desplazables accesibles con teclado.
 
 ## Pendiente
-### Experiencia de usuario
-
-### Análisis
-
-### Operación
-- [ ] Procedimiento de copia periódica documentado y comprobado.
+- [ ] Verificar en producción tras la reanudación del 18 Oct (00:00 UTC): commits de 24 jugadores, hora de agotamiento del presupuesto, escrituras por registro y capturas evitadas, comparándolos con `artifacts/validation/write-budget-2026-10-17.json`.
+- [ ] Traducir las explicaciones de eventos (`data_json.explanation`), que siguen en inglés en la vista detallada de alertas.
+- [ ] Mejorar la interpretación de la IA, que es genérica con el modelo gratuito de 3B; valorar otro modelo de Workers AI dentro del presupuesto gratuito.

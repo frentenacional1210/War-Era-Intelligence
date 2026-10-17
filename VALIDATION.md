@@ -1,6 +1,21 @@
 # Validación de entrega
 
-## IA en español y por nombres del 17 de octubre de 2026
+## Interfaz, análisis y operación del 17 y 18 de octubre de 2026
+
+Publicado entre los Workers `d4e93da3…` y el final de la sesión. Cada punto se verificó en producción con Edge, salvo que se indique otra cosa.
+
+- **Títulos de eventos en español:** `localizedTitle` traduce en pantalla los títulos que los triggers guardan en inglés; los datos no cambian. En la portada y en `/alertas` no queda ningún título en inglés. Las explicaciones de la vista detallada siguen en inglés (pendiente).
+- **Ficha de país conectada:** diez bloques (jugadores, partidos, unidades, gobiernos, elecciones, batallas, empresas, regiones, artículos y acontecimientos) con totales, cinco registros y enlace al directorio filtrado, más el informe estratégico. Para España: 96 jugadores, 10 partidos y 13 unidades.
+- **Seguimiento** (`/seguimiento`): hasta 20 registros en el almacenamiento local. Se probó seguir España, simular un valor anterior, ver el cambio campo a campo y marcarlo como visto.
+- **Carga diferida de gráficos:** la portada deja de descargar el chunk de `recharts` (339 KB); su JavaScript pasa de unos 712 KB a unos 365 KB.
+- **Accesibilidad:** `tests/e2e/accessibility.spec.ts` (axe, WCAG 2.1 A/AA) recorre 11 páginas en escritorio y móvil: 22/22 sin infracciones graves. Se corrigió el contraste de 23 colores de texto (mínimo 5,1:1) y las tablas desplazables pasaron a ser enfocables. La ficha de España tampoco tiene infracciones.
+- **Hoy en WarEra** (`/hoy`, `/api/today`): en producción, 26 batallas nuevas, 29 elecciones finalizadas, 30 cambios de unidad y 53 titulares vigilados en 24 h.
+- **Actividad semanal** (`/api/activity`): semana del 12 Oct, 7.816 altas y 6.906 jugadores con última conexión. Las bajas no son observables con la política de solo activos.
+- **Alerta operativa:** `operations` en `/api/admin/status` y aviso en el panel. Se verificó que la pausa de cuota no se confunde con un recolector caído.
+- **Copias:** `npm run backup` exportó y restauró en SQLite 36.958.085 bytes, con integridad `ok` y 17 migraciones.
+
+Pruebas: 205/205 unitarias en 35 archivos. La suite E2E sufrió el limitador público (120 peticiones por minuto e IP) al lanzarse varias veces seguidas; las pruebas afectadas pasaron al repetirse con pausa.
+
 
 `worker/ai-resolve.ts` entiende sin coste de IA las preguntas en español o inglés:
 - **Palabras clave:** «compara», «elecciones», «gobierna», «presidencia», «estrategia», «ejército», «jugador», «unidad», «histórico», «prensa», «precios», «eventos» y «censo».
