@@ -117,7 +117,15 @@ async function admin(request:Request,env:Env,path:string) {
   }
   if(path==='status' && request.method==='GET') {
     const runs=await env.DB.prepare('SELECT * FROM ingestion_runs ORDER BY started_at DESC LIMIT 50').all();
-    return json({...await status(env),runs:runs.results},200,privateHeaders);
+    // Today's write cost per source and runner, from the per-run settlement
+    // columns; unsettled runs keep their whole reservation in the daily ledger.
+    const writeUsage=await env.DB.prepare(`SELECT source_id,CASE WHEN status='quota-paused' THEN 'paused' ELSE COALESCE(collector_mode,'unsettled') END mode,COUNT(*) runs,
+      SUM(status='ok') ok_runs,SUM(status IN ('error','busy')) failed_runs,COALESCE(SUM(records_count),0) records,
+      SUM(rows_written) measured_writes,SUM(reserved_writes) reserved_writes,
+      ROUND(1.0*SUM(rows_written)/NULLIF(SUM(CASE WHEN rows_written IS NOT NULL THEN records_count END),0),1) writes_per_record
+      FROM ingestion_runs WHERE started_at>=? GROUP BY source_id,mode ORDER BY measured_writes DESC`)
+      .bind(new Date().toISOString().slice(0,10)).all();
+    return json({...await status(env),runs:runs.results,writeUsage:{day:new Date().toISOString().slice(0,10),bySource:writeUsage.results}},200,privateHeaders);
   }
   if(path==='coverage' && request.method==='GET')return json(await coverageData(env),200,privateHeaders);
   if(path==='maintenance' && request.method==='POST')return json(await runHistoryMaintenance(env),200,privateHeaders);

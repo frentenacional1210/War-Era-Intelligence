@@ -1,5 +1,11 @@
 # Punto de continuidad
 
+**Actualización del 17 Oct 2026.**
+- Medición: 7.842 jugadores y 138/42 países completados/pendientes. El presupuesto interno de 80.000 escrituras se agota hacia las 04:30 UTC y la ingesta queda pausada el resto del día.
+- Workers `8ff4d750-a987-425d-a28b-65defa8c1758` publicados con tres cambios: liquidación de reservas en ejecuciones fallidas antes de escribir datos, cesión de `players`/`articles` al recolector durante 30 minutos y `writeUsage` por fuente en `/api/admin/status`. Detalle en `VALIDATION.md`.
+- Medir el efecto desde el 18 Oct.
+- Pendiente: migración 0017 (eliminar el índice redundante `idx_snapshots_entity_time`). Está verificada en SQLite pero sin aplicar, porque falta descargar una copia nueva: R2 era inaccesible desde este equipo. El archivo no está en el repositorio. Su contenido es `DROP INDEX IF EXISTS idx_snapshots_entity_time;`.
+
 Estado verificado el 14 de octubre de 2026. Tras completar los históricos, el usuario pidió recopilar solo jugadores marcados activos. La política automática `isActive === true` está implementada, publicada y comprobada. `/historicos` y `/api/data` permanecen operativos.
 
 - Proyecto y rama: `warera-intelligence`, `main`, repositorio https://github.com/frentenacional1210/War-Era-Intelligence ; licencia AGPL-3.0 conservada. Consultar Git y Actions al retomar para comprobar la última revisión.

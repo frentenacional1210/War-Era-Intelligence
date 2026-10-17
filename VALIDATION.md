@@ -1,5 +1,31 @@
 # Validación de entrega
 
+## Rendimiento del presupuesto de escrituras del 17 de octubre de 2026
+
+Medición en producción del 17 Oct, 14:50–15:20 UTC:
+- 7.842 jugadores, 180 países iniciados, 138 con primera pasada completada, 42 pendientes y 417 recorridos completos.
+- Desde las 04:3x UTC, 13 fuentes estaban en `quota-paused` con 79.765/80.000 escrituras reservadas y 71.480 medidas. La ingesta funcionó unas 4,5 horas del día UTC.
+- Desglose por fuente (evidencia [write-budget-2026-10-17.json](artifacts/validation/write-budget-2026-10-17.json)):
+  - jugadores del recolector: 15,8 escrituras por registro;
+  - jugadores del cron: 17,5 escrituras por registro;
+  - cinco ejecuciones fallidas retuvieron su reserva completa, unas 1.645 escrituras.
+
+Cambios publicados en los Workers `09a25804-3ce1-41ad-958f-f130854adea9` y `8ff4d750-a987-425d-a28b-65defa8c1758`:
+- **Reservas de ejecuciones fallidas.** Una ejecución que falla o queda obsoleta (409) antes de escribir entidades se liquida con las escrituras medidas por D1 más 8. Si las escrituras de datos ya empezaron, o falta metadato, conserva la reserva completa.
+- **Cesión al recolector.** El cron no elige `players` ni `articles` mientras el recolector de GitHub haya confirmado una página de esa fuente en los últimos 30 minutos (`COLLECTOR_HANDOFF_SECONDS`). Las sincronizaciones administrativas explícitas no cambian. Si el recolector se detiene, el cron recupera la fuente.
+- **Telemetría.** `/api/admin/status` añade `writeUsage`, el agregado diario por fuente y modo (recolector, cron, pausada o sin liquidar), visible en el panel de administración.
+
+No se ha aumentado `INGESTION_DAILY_BUDGET` ni se han borrado reservas. El día 17 ya estaba agotado al desplegar, así que el efecto debe medirse a partir del 18 Oct comparando la hora de pausa y las escrituras por registro.
+
+Pruebas: 160/160 en 27 archivos, TypeScript y build. Las nuevas pruebas de `tests/write-budget.test.ts` cubren:
+- liquidación tras un 429 previo al guardado;
+- reserva íntegra cuando falla una escritura de jugador;
+- cesión con un commit reciente del recolector;
+- recuperación tras 30 minutos de silencio;
+- sincronización administrativa forzada.
+
+**Pendiente:** migración `0017`, que elimina `idx_snapshots_entity_time`, duplicado del índice UNIQUE `(entity_type,entity_id,captured_at)`. En la copia del 14 Oct, `EXPLAIN QUERY PLAN` muestra que las consultas de análisis, ficha, último hash e históricos usan el índice UNIQUE u otros índices existentes, sin ordenación temporal. No se ha aplicado: la exportación D1 del 17 se creó, pero este equipo no pudo conectar con `*.r2.cloudflarestorage.com` (TCP 443) para descargarla, y la política exige una copia nueva verificada antes de cambiar el esquema.
+
 ## Recopilación de jugadores activos del 14 de octubre de 2026
 
 El Worker `7f9ea9d4-d26c-4d16-846f-f4940c35ee56` publica la política `active-only`: Cron y commits del recolector guardan o actualizan perfiles solo cuando la marca pública de WarEra es exactamente `isActive: true`. Los candidatos falsos, nulos o sin marca se omiten antes de cualquier escritura de jugador, histórico o alerta; sus páginas avanzan igualmente. El recolector de GitHub consulta primero las fichas ligeras y pide fichas completas solo para activos. Los datos ya guardados se conservan y no representan el total actual de activos.

@@ -47,7 +47,7 @@ Las rutas administrativas no usan caché. Todas las mutaciones necesitan `X-WINT
 | --- | --- |
 | `POST /api/admin/login` | `{password}`; cinco intentos por IP cada 15 min |
 | `POST /api/admin/logout` | revoca sesión |
-| `GET /api/admin/status` | estado, cuota estimada y últimas 50 ejecuciones, solo autenticado |
+| `GET /api/admin/status` | estado, cuota estimada, últimas 50 ejecuciones y `writeUsage` (escrituras del día UTC por fuente y modo), solo autenticado |
 | `GET /api/admin/coverage`, `/api/admin/diagnostics` | cobertura y diagnóstico de migraciones privados |
 | `POST /api/admin/maintenance` | ejecuta un lote acotado de archivo histórico |
 | `POST /api/admin/ai/validate` | prueba el binding/modelo de IA con salida máxima de 32 tokens, reserva previa de 120 neuronas y límite de tres intentos por hora; un fallo del proveedor devuelve 503 sin activar la IA |

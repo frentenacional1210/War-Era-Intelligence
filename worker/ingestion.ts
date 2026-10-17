@@ -4,7 +4,7 @@ import { fetchBattleReconciliation } from './battle-reconciliation';
 import { orderbookSourceTables,fetchOrderbookBatch,saveOrderbookBatch,normalizeOrderbookEntity } from './orderbook';
 import type { ExtendedSource } from '../shared/intelligence';
 import { projectPublicGroupRelations } from '../shared/intelligence';
-import { COLLECTOR_PLAYER_ROWS, DETAIL_ROWS, INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, INGESTION_SLOTS, PAGE_ROWS, PLAYER_ROWS } from '../shared/ingestion-config';
+import { COLLECTOR_HANDOFF_SECONDS, COLLECTOR_PLAYER_ROWS, DETAIL_ROWS, INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET, INGESTION_READ_RESERVATION, INGESTION_SLOTS, PAGE_ROWS, PLAYER_ROWS } from '../shared/ingestion-config';
 import {
   WarEraClient, WarEraError, articleSchema, countryDetailSchema, countryFeedSchema, namedSchema,
   objectSchema, pagedObjectsSchema, pagedPlayersSchema,
@@ -345,7 +345,8 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
         JOIN ingestion_cursors c ON c.source_id=r.id WHERE r.id=? AND r.enabled=1`).bind(options.source).first<SourceRow>()
     : await env.DB.prepare(`SELECT r.id,r.endpoint,r.interval_seconds,c.cursor,c.next_run_at,c.lease_until FROM source_registry r
         JOIN ingestion_cursors c ON c.source_id=r.id WHERE r.enabled=1 AND r.id IN (${supportedIdsSql}) AND c.next_run_at<=? AND (c.lease_until IS NULL OR c.lease_until<=?)
-        ORDER BY CASE WHEN r.id=? THEN 0 WHEN ? IS NULL AND r.id NOT IN ('players','articles') THEN 0 ELSE 1 END,c.next_run_at,r.id LIMIT 1`).bind(now, now,preferred,preferred).first<SourceRow>();
+        AND NOT (r.id IN ('players','articles') AND EXISTS(SELECT 1 FROM ingestion_runs x WHERE x.source_id=r.id AND x.started_at>=? AND x.collector_mode='compact'))
+        ORDER BY CASE WHEN r.id=? THEN 0 WHEN ? IS NULL AND r.id NOT IN ('players','articles') THEN 0 ELSE 1 END,c.next_run_at,r.id LIMIT 1`).bind(now, now,plus(started,-COLLECTOR_HANDOFF_SECONDS),preferred,preferred).first<SourceRow>();
   if (!row) return { status: 'idle' };
   if(options.expectedCursor!==undefined && row.cursor!==options.expectedCursor)return {status:'busy',source:row.id};
   if (!options.force && row.next_run_at > now) return { status: 'idle' };
@@ -384,6 +385,9 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
     return { status: 'busy', source };
   }
   let globalReleased = false;
+  // Set once the reservation is held; cleared when entity writes begin. Until
+  // then a failed run has only touched bookkeeping and can settle on metadata.
+  let settleable: D1Result[] | null = null;
   try {
     // Reserve quota and create the run together. A failed INSERT rolls back the
     // reservation; a quota rejection still records an auditable paused run.
@@ -413,8 +417,10 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
       if (!paused[0].meta.changes) throw new Error('Sync lease expired before quota pause');
       return { status: 'quota-paused', source, nextRunAt };
     }
+    settleable = [...claims, ...start];
     const client = new WarEraClient(env.WARERA_BASE_URL, env.WARERA_API_KEY,options.fetcher);
     const batch = await getBatch(env, client, source, parseCursor(row.cursor),runId,playerLimit);
+    settleable = null;
     const saved = source==='orderbooks'?await saveOrderbookBatch(env,batch.records,client,now):source === 'markets'
       ? await saveMarkets(env, batch.records, batch.sourceUrl!, now)
       : await saveEntities(env, source, batch.records, client, now);
@@ -466,25 +472,51 @@ export async function runSync(env: Env, options: { source?: string; force?: bool
     if(error instanceof WarEraError && error.status===409){
       // A runner prepared a page while another capture advanced the country or
       // the live/archive turn. Never overwrite the successful source status.
-      await env.DB.prepare(`UPDATE ingestion_cursors SET lease_until=NULL WHERE source_id=? AND lease_until=?
+      const released = await env.DB.prepare(`UPDATE ingestion_cursors SET lease_until=NULL WHERE source_id=? AND lease_until=?
         AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`).bind(source,leaseUntil,runId).run();
-      await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=? WHERE id=?').bind(doneAt.toISOString(),'busy','Prepared page became stale',runId).run();
+      const marked = await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=? WHERE id=?').bind(doneAt.toISOString(),'busy','Prepared page became stale',runId).run();
+      await settleFailedRun(env, settleable, [released, marked], reservation, runId, now, doneAt, options.fetcher ? 'compact' : 'direct');
       return {status:'busy',source};
     }
     const message = error instanceof Error ? error.message.slice(0, 240) : 'Unknown sync error';
     const retryAfter = error instanceof WarEraError && error.retryAfterSeconds ? error.retryAfterSeconds : Math.min(900, Math.max(60, row.interval_seconds));
     const nextRunAt = plus(doneAt, retryAfter);
-    await env.DB.prepare(`UPDATE source_registry SET status=?,last_attempt=?,last_error=? WHERE id=?
+    const recorded = [
+      await env.DB.prepare(`UPDATE source_registry SET status=?,last_attempt=?,last_error=? WHERE id=?
       AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`)
-      .bind(error instanceof WarEraError && (error.status === 401 || error.status === 403) ? 'auth-required' : 'error', now, message, source,runId).run();
-    await env.DB.prepare(`UPDATE ingestion_cursors SET next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?
+        .bind(error instanceof WarEraError && (error.status === 401 || error.status === 403) ? 'auth-required' : 'error', now, message, source,runId).run(),
+      await env.DB.prepare(`UPDATE ingestion_cursors SET next_run_at=?,lease_until=NULL WHERE source_id=? AND lease_until=?
       AND EXISTS(SELECT 1 FROM ingestion_lock WHERE id='global' AND owner=?)`)
-      .bind(nextRunAt, source, leaseUntil,runId).run();
-    await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=?,duration_ms=? WHERE id=?')
-      .bind(doneAt.toISOString(), 'error', message, doneAt.valueOf() - started.valueOf(), runId).run();
+        .bind(nextRunAt, source, leaseUntil,runId).run(),
+      await env.DB.prepare('UPDATE ingestion_runs SET finished_at=?,status=?,error=?,duration_ms=? WHERE id=?')
+        .bind(doneAt.toISOString(), 'error', message, doneAt.valueOf() - started.valueOf(), runId).run(),
+    ];
+    await settleFailedRun(env, settleable, recorded, reservation, runId, now, doneAt, options.fetcher ? 'compact' : 'direct');
     return { status: 'error', source, error: message, nextRunAt };
   } finally {
     if (!globalReleased) await env.DB.prepare("UPDATE ingestion_lock SET owner=NULL,lease_until=NULL WHERE id='global' AND owner=?").bind(runId).run();
+  }
+}
+
+/**
+ * Refund a failed run's write reservation only when it failed before any entity
+ * write and D1 reported every bookkeeping write. Anything else keeps the full
+ * reservation, so an unmeasured or partial save never earns a refund.
+ */
+async function settleFailedRun(env: Env, settleable: D1Result[] | null, recorded: D1Result[], reservation: number,
+  runId: string, now: string, doneAt: Date, mode: 'compact' | 'direct'): Promise<void> {
+  if (!settleable) return;
+  const metered = [...settleable, ...recorded];
+  if (!measured(metered)) return;
+  const rows = written(metered);
+  try {
+    await env.DB.batch([
+      env.DB.prepare('UPDATE ingestion_budget SET reserved_writes=MAX(0,reserved_writes-?+?),measured_writes=measured_writes+?,updated_at=? WHERE day_key=?')
+        .bind(reservation, rows + 8, rows, doneAt.toISOString(), now.slice(0, 10)),
+      env.DB.prepare('UPDATE ingestion_runs SET rows_written=?,reserved_writes=?,collector_mode=? WHERE id=?').bind(rows, reservation, mode, runId),
+    ]);
+  } catch {
+    console.warn('wint_budget_settlement_deferred', { runId });
   }
 }
 

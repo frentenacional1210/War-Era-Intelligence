@@ -1,0 +1,460 @@
+{
+  "checkedAt": "2026-10-17T15:07:18.625Z",
+  "worker": "8ff4d750-a987-425d-a28b-65defa8c1758",
+  "loginStatus": 200,
+  "quota": {
+    "day": "2026-10-17",
+    "dailyBudget": 80000,
+    "reserved": 79765,
+    "remaining": 235,
+    "tickCount": 835,
+    "dailyReadBudget": 3000000,
+    "reservedReads": 552347,
+    "measuredReads": 87347,
+    "measuredWrites": 71480,
+    "databaseBytes": 45056000,
+    "estimate": true,
+    "method": "Measured ingestion batch metadata plus reserves; API visitors, discarded read envelopes, legacy writes and other applications are not fully metered"
+  },
+  "writeUsage": {
+    "day": "2026-10-17",
+    "bySource": [
+      {
+        "source_id": "players",
+        "mode": "compact",
+        "runs": 299,
+        "ok_runs": 299,
+        "failed_runs": 0,
+        "records": 2185,
+        "measured_writes": 34441,
+        "reserved_writes": 209300,
+        "writes_per_record": 15.8
+      },
+      {
+        "source_id": "articles",
+        "mode": "compact",
+        "runs": 299,
+        "ok_runs": 299,
+        "failed_runs": 0,
+        "records": 1433,
+        "measured_writes": 22173,
+        "reserved_writes": 146510,
+        "writes_per_record": 15.5
+      },
+      {
+        "source_id": "players",
+        "mode": "direct",
+        "runs": 91,
+        "ok_runs": 91,
+        "failed_runs": 0,
+        "records": 359,
+        "measured_writes": 6289,
+        "reserved_writes": 38220,
+        "writes_per_record": 17.5
+      },
+      {
+        "source_id": "articles",
+        "mode": "direct",
+        "runs": 44,
+        "ok_runs": 44,
+        "failed_runs": 0,
+        "records": 184,
+        "measured_writes": 2590,
+        "reserved_writes": 21560,
+        "writes_per_record": 14.1
+      },
+      {
+        "source_id": "military-units",
+        "mode": "direct",
+        "runs": 11,
+        "ok_runs": 11,
+        "failed_runs": 0,
+        "records": 110,
+        "measured_writes": 1266,
+        "reserved_writes": 5390,
+        "writes_per_record": 11.5
+      },
+      {
+        "source_id": "parties",
+        "mode": "direct",
+        "runs": 10,
+        "ok_runs": 10,
+        "failed_runs": 0,
+        "records": 100,
+        "measured_writes": 963,
+        "reserved_writes": 4900,
+        "writes_per_record": 9.6
+      },
+      {
+        "source_id": "battles",
+        "mode": "direct",
+        "runs": 11,
+        "ok_runs": 11,
+        "failed_runs": 0,
+        "records": 81,
+        "measured_writes": 861,
+        "reserved_writes": 5390,
+        "writes_per_record": 10.6
+      },
+      {
+        "source_id": "elections",
+        "mode": "direct",
+        "runs": 10,
+        "ok_runs": 10,
+        "failed_runs": 0,
+        "records": 30,
+        "measured_writes": 788,
+        "reserved_writes": 2450,
+        "writes_per_record": 26.3
+      },
+      {
+        "source_id": "companies",
+        "mode": "direct",
+        "runs": 10,
+        "ok_runs": 10,
+        "failed_runs": 0,
+        "records": 30,
+        "measured_writes": 500,
+        "reserved_writes": 2450,
+        "writes_per_record": 16.7
+      },
+      {
+        "source_id": "regions",
+        "mode": "direct",
+        "runs": 9,
+        "ok_runs": 9,
+        "failed_runs": 0,
+        "records": 27,
+        "measured_writes": 424,
+        "reserved_writes": 2205,
+        "writes_per_record": 15.7
+      },
+      {
+        "source_id": "countries",
+        "mode": "direct",
+        "runs": 9,
+        "ok_runs": 9,
+        "failed_runs": 0,
+        "records": 27,
+        "measured_writes": 327,
+        "reserved_writes": 2205,
+        "writes_per_record": 12.1
+      },
+      {
+        "source_id": "markets",
+        "mode": "direct",
+        "runs": 10,
+        "ok_runs": 10,
+        "failed_runs": 0,
+        "records": 30,
+        "measured_writes": 320,
+        "reserved_writes": 2450,
+        "writes_per_record": 10.7
+      },
+      {
+        "source_id": "battle-reconciliation",
+        "mode": "direct",
+        "runs": 8,
+        "ok_runs": 8,
+        "failed_runs": 0,
+        "records": 8,
+        "measured_writes": 313,
+        "reserved_writes": 1960,
+        "writes_per_record": 39.1
+      },
+      {
+        "source_id": "governments",
+        "mode": "direct",
+        "runs": 9,
+        "ok_runs": 9,
+        "failed_runs": 0,
+        "records": 9,
+        "measured_writes": 225,
+        "reserved_writes": 2205,
+        "writes_per_record": 25
+      },
+      {
+        "source_id": "articles",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "articles",
+        "mode": "unsettled",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 1,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "battle-reconciliation",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "battles",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "companies",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "countries",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "countries",
+        "mode": "unsettled",
+        "runs": 2,
+        "ok_runs": 0,
+        "failed_runs": 2,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "elections",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "governments",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "markets",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "military-units",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "orderbooks",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "parties",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "players",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "players",
+        "mode": "unsettled",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 1,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "regions",
+        "mode": "paused",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 0,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      },
+      {
+        "source_id": "regions",
+        "mode": "unsettled",
+        "runs": 1,
+        "ok_runs": 0,
+        "failed_runs": 1,
+        "records": 0,
+        "measured_writes": null,
+        "reserved_writes": null,
+        "writes_per_record": null
+      }
+    ]
+  },
+  "coverage": {
+    "players_registered": 7842,
+    "countries_total": 180,
+    "countries_started": 180,
+    "countries_completed": 138,
+    "countries_pending": 42,
+    "completed_sweeps": 417,
+    "countries_not_started": 0,
+    "countries_in_progress": 42,
+    "rows_new_today": 786,
+    "rows_updated_today": 1674,
+    "profiles_per_hour": 0,
+    "eta": null,
+    "player_total": null,
+    "active_player_total": null,
+    "methodology_since": "2026-10-12T12:25:33.049Z",
+    "coverage_denominator": "countries stored from verified discovery",
+    "errors_last_hour": 0
+  },
+  "playerCollectionPolicy": {
+    "mode": "active-only",
+    "activeField": "isActive",
+    "activeValue": true,
+    "unknownActivity": "skip",
+    "rediscovery": "country-sweeps",
+    "existingRecords": "preserved"
+  },
+  "quotaPausedSources": [
+    {
+      "id": "articles",
+      "last_success": "2026-10-17T04:29:59.389Z",
+      "last_attempt": "2026-10-17T04:31:32.681Z"
+    },
+    {
+      "id": "battle-reconciliation",
+      "last_success": "2026-10-17T04:09:32.954Z",
+      "last_attempt": "2026-10-17T04:38:32.683Z"
+    },
+    {
+      "id": "battles",
+      "last_success": "2026-10-17T04:27:32.935Z",
+      "last_attempt": "2026-10-17T04:43:32.681Z"
+    },
+    {
+      "id": "companies",
+      "last_success": "2026-10-17T04:33:32.930Z",
+      "last_attempt": "2026-10-17T04:46:32.680Z"
+    },
+    {
+      "id": "countries",
+      "last_success": "2026-10-17T04:28:32.984Z",
+      "last_attempt": "2026-10-17T04:44:32.681Z"
+    },
+    {
+      "id": "elections",
+      "last_success": "2026-10-17T04:35:32.975Z",
+      "last_attempt": "2026-10-17T04:47:32.683Z"
+    },
+    {
+      "id": "governments",
+      "last_success": "2026-10-17T04:19:32.953Z",
+      "last_attempt": "2026-10-17T04:39:32.680Z"
+    },
+    {
+      "id": "markets",
+      "last_success": "2026-10-17T04:13:32.938Z",
+      "last_attempt": "2026-10-17T04:36:32.682Z"
+    },
+    {
+      "id": "military-units",
+      "last_success": "2026-10-17T04:29:32.922Z",
+      "last_attempt": "2026-10-17T04:45:32.687Z"
+    },
+    {
+      "id": "orderbooks",
+      "last_success": "2026-10-16T04:26:32.906Z",
+      "last_attempt": "2026-10-17T04:42:32.682Z"
+    },
+    {
+      "id": "parties",
+      "last_success": "2026-10-17T04:17:32.952Z",
+      "last_attempt": "2026-10-17T04:37:32.682Z"
+    },
+    {
+      "id": "players",
+      "last_success": "2026-10-17T04:32:33.042Z",
+      "last_attempt": "2026-10-17T04:34:32.679Z"
+    },
+    {
+      "id": "regions",
+      "last_success": "2026-10-17T04:23:32.954Z",
+      "last_attempt": "2026-10-17T04:41:32.681Z"
+    }
+  ],
+  "note": "Baseline measured before the failed-run settlement and collector handoff took effect (UTC day 2026-10-17 was already exhausted). Compare with the next UTC days."
+}

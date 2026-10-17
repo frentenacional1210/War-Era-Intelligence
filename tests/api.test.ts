@@ -79,7 +79,9 @@ describe('public D1 API and administrative isolation',()=>{
     expect(response.status).toBe(200);
     const cookie=response.headers.get('Set-Cookie')!;expect(cookie).toContain('HttpOnly');expect(cookie).toContain('Secure');
     const headers={Cookie:cookie.split(';')[0],'X-WINT-CSRF':'1'};
-    expect((await call('/api/admin/status',{headers})).status).toBe(200);
+    const admin=await call('/api/admin/status',{headers});
+    expect(admin.status).toBe(200);
+    expect((await admin.json() as {writeUsage:{day:string;bySource:unknown[]}}).writeUsage).toMatchObject({day:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),bySource:expect.any(Array)});
     expect((await call('/api/admin/logout',{method:'POST',headers})).status).toBe(200);
     expect((await call('/api/admin/status',{headers})).status).toBe(401);
   });
