@@ -10,9 +10,9 @@ export function date(value: unknown): string {
   const d = new Date(value);
   return Number.isNaN(d.valueOf()) ? 'Sin fecha' : new Intl.DateTimeFormat('es-ES', { dateStyle: 'medium', timeStyle: 'short' }).format(d);
 }
-export function age(value: unknown): string {
+export function age(value: unknown, now = Date.now()): string {
   if (!value || typeof value !== 'string') return 'antigüedad desconocida';
-  const diff = Date.now() - new Date(value).valueOf();
+  const diff = now - new Date(value).valueOf();
   if (!Number.isFinite(diff)) return 'antigüedad desconocida';
   if (diff < -60_000) return 'fecha futura';
   if (diff < 60_000) return 'hace menos de 1 min';
@@ -62,3 +62,25 @@ export function readFavorites(): string[] {
   catch { return []; }
 }
 export function saveFavorites(items: string[]): void { localStorage.setItem(FAV_KEY, JSON.stringify(items)); }
+
+/**
+ * Plain-language freshness of the collected data, so visitors never mistake the
+ * last capture before a quota pause for current data. Derived sources (alerts,
+ * events) are recomputed from captures and do not count as upstream activity.
+ */
+export function ingestionFreshness(sources: Source[], now = Date.now()): { tone: 'warn'; title: string; detail: string } | null {
+  const upstream = sources.filter(source => !String(source.endpoint ?? '').startsWith('derived:') && source.enabled !== 0 && source.enabled !== false);
+  if (!upstream.length) return null;
+  const latest = upstream.map(source => Date.parse(source.last_success ?? '')).filter(Number.isFinite).reduce((max, value) => Math.max(max, value), 0);
+  const last = latest ? `Última captura ${age(new Date(latest).toISOString(), now)}.` : 'Aún no hay capturas confirmadas.';
+  const paused = upstream.filter(source => source.status === 'quota-paused').length;
+  if (paused * 2 >= upstream.length) {
+    const reset = new Date(now); reset.setUTCHours(24, 0, 0, 0);
+    const minutes = Math.max(0, Math.ceil((reset.valueOf() - now) / 60_000));
+    const wait = minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`;
+    return { tone: 'warn', title: 'Recopilación en pausa por la cuota diaria gratuita',
+      detail: `${last} Se reanuda a las 00:00 UTC (dentro de ${wait}). Los datos mostrados no reflejan cambios posteriores.` };
+  }
+  if (latest && now - latest > 3_600_000) return { tone: 'warn', title: 'Sin capturas recientes', detail: `${last} Los datos pueden no reflejar el estado actual de WarEra.` };
+  return null;
+}

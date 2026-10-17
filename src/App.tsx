@@ -1,10 +1,10 @@
-import { Activity, Bell, Bot, ChartNoAxesCombined, ChevronDown, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
+import { Activity, Bell, Bot, ChartNoAxesCombined, ChevronDown, Clock3, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { getStatus } from './api';
 import { useRemote } from './hooks';
 import { Badge, Loading } from './components';
-import { age, sourceState } from './utils';
+import { age, ingestionFreshness, sourceState } from './utils';
 import type { ResourceKey } from './types';
 
 const Dashboard = lazy(() => import('./pages').then(module => ({ default: module.Dashboard })));
@@ -64,6 +64,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   const goodSources = sourceStates.filter(x => x.tone === 'good').length;
   const label = status.loading ? 'Consultando fuentes' : status.error ? 'API no disponible' : badSources ? `${badSources} fuentes con error` : goodSources ? `${goodSources} fuentes activas` : 'Sin capturas confirmadas';
   const tone = status.error || badSources ? 'bad' : goodSources ? 'good' : 'warn';
+  const freshness = status.data ? ingestionFreshness(status.data.sources) : null;
   return <div className={`app-shell ${collapsed ? 'sidebar-collapsed' : ''}`}>
     {mobileOpen && <button className="mobile-scrim" onClick={() => setMobileOpen(false)} aria-label="Cerrar navegación" />}
     <aside className={`sidebar ${mobileOpen ? 'mobile-open' : ''}`}>
@@ -71,7 +72,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       <div className="sidebar-body"><div className="nav-caption">PLATAFORMA <ChevronDown size={12} /></div><nav aria-label="Navegación principal">{navigation.map(item => <NavLink key={item.path} to={item.path} end={item.path === '/'} title={item.label} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><item.icon size={18} strokeWidth={1.8} /><span>{item.label}</span></NavLink>)}</nav></div>
       <Link to="/estado" className="sidebar-status"><DatabaseZap size={17} /><span><strong>Estado de datos</strong><small>{label}</small></span><span className={`status-led ${tone}`} /></Link>
     </aside>
-    <div className="main-column"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Abrir menú"><Menu size={21} /></button><span className="topbar-breadcrumb">WINT <span>/</span> {navigation.find(x => location.pathname === x.path || (x.path !== '/' && location.pathname.startsWith(x.path + '/')))?.label ?? (location.pathname === '/estado' ? 'Estado de datos' : 'Explorador')}</span></div><div className="topbar-right"><Link to="/buscar" className="topbar-search"><Search size={15} /> Explorar registros</Link><Link to="/estado" className="topbar-status"><Badge tone={tone}>{label}</Badge></Link><span className="topbar-time" title={status.data?.timestamp}>{status.data ? age(status.data.timestamp) : '—'}</span></div></header><main className="content">{children}</main><footer className="footer"><span>WINT · Plataforma independiente de análisis de WarEra</span><a className="source-link" href="https://github.com/frentenacional1210/War-Era-Intelligence" target="_blank" rel="noopener noreferrer">Código fuente · AGPL-3.0</a><span>Los datos proceden de fuentes públicas indicadas en cada registro.</span></footer></div>
+    <div className="main-column"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Abrir menú"><Menu size={21} /></button><span className="topbar-breadcrumb">WINT <span>/</span> {navigation.find(x => location.pathname === x.path || (x.path !== '/' && location.pathname.startsWith(x.path + '/')))?.label ?? (location.pathname === '/estado' ? 'Estado de datos' : 'Explorador')}</span></div><div className="topbar-right"><Link to="/buscar" className="topbar-search"><Search size={15} /> Explorar registros</Link><Link to="/estado" className="topbar-status"><Badge tone={tone}>{label}</Badge></Link><span className="topbar-time" title={status.data?.timestamp}>{status.data ? age(status.data.timestamp) : '—'}</span></div></header><main className="content">{freshness && <div className="notice warn" role="status"><Clock3 size={16} aria-hidden="true" /><span><strong>{freshness.title}.</strong> {freshness.detail} <Link to="/estado" className="text-link">Ver estado de las fuentes</Link></span></div>}{children}</main><footer className="footer"><span>WINT · Plataforma independiente de análisis de WarEra</span><a className="source-link" href="https://github.com/frentenacional1210/War-Era-Intelligence" target="_blank" rel="noopener noreferrer">Código fuente · AGPL-3.0</a><span>Los datos proceden de fuentes públicas indicadas en cada registro.</span></footer></div>
   </div>;
 }
 

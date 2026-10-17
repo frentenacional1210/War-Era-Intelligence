@@ -1,6 +1,19 @@
 # Validación de entrega
 
-## Rendimiento del presupuesto de escrituras del 17 de octubre de 2026
+## Aviso de frescura de datos del 17 de octubre de 2026
+
+El Worker `b750d76c-649d-4a71-a4e7-5f2c766dcf24` muestra un aviso en todas las páginas cuando la información no está al día, a partir de `/api/status` y `ingestionFreshness` en `src/utils.ts`:
+- **Pausa por cuota:** si al menos la mitad de las fuentes externas están en `quota-paused`, el aviso indica la última captura y cuánto falta para las 00:00 UTC.
+- **Datos antiguos:** si no hay pausa, pero no hay capturas nuevas en más de una hora, se indica.
+- Las fuentes derivadas (alertas y eventos) y las desactivadas no cuentan.
+
+Verificación:
+- Pruebas: 163/163 en 28 archivos, con `tests/freshness.test.ts`.
+- En producción, con Edge, el aviso aparece en escritorio y móvil sin desbordamiento horizontal. El 17 Oct, 15:32 UTC, decía «Última captura hace 10 h. Se reanuda a las 00:00 UTC (dentro de 8 h 28 min)».
+- Suite E2E completa contra producción: 53 correctas y 7 omitidas.
+
+**Aplazado:** commits de 24 jugadores en lugar de 8. Requiere comprobar contra WarEra el `limit` admitido, el coste del lote frente al límite de 100 peticiones y el tamaño del cuerpo (hoy 32 KB, perfiles hasta 16 KB). Desde este equipo `api2.warera.io` no era accesible (TCP 443), como tampoco R2.
+
 
 Medición en producción del 17 Oct, 14:50–15:20 UTC:
 - 7.842 jugadores, 180 países iniciados, 138 con primera pasada completada, 42 pendientes y 417 recorridos completos.

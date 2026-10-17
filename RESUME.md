@@ -1,5 +1,18 @@
 # Punto de continuidad
 
+**17 Oct, después:**
+- Aviso global de frescura publicado (Worker `b750d76c-649d-4a71-a4e7-5f2c766dcf24`).
+- Hoja de mejoras priorizada:
+  1. commits de recolector mayores, aplazados por falta de acceso a WarEra desde esta red;
+  2. capturas solo en cambios relevantes, que requiere decisión del usuario;
+  3. IA con resolución por nombre y respuesta en español;
+  4. fichas de país conectadas;
+  5. panel de seguimiento;
+  6. carga diferida de gráficos;
+  7. revisión de accesibilidad;
+  8. resumen diario;
+  9. títulos de eventos en español (hoy «Election finished in public record»).
+
 **Actualización del 17 Oct 2026.**
 - Medición: 7.842 jugadores y 138/42 países completados/pendientes. El presupuesto interno de 80.000 escrituras se agota hacia las 04:30 UTC y la ingesta queda pausada el resto del día.
 - Workers `8ff4d750-a987-425d-a28b-65defa8c1758` publicados con tres cambios: liquidación de reservas en ejecuciones fallidas antes de escribir datos, cesión de `players`/`articles` al recolector durante 30 minutos y `writeUsage` por fuente en `/api/admin/status`. Detalle en `VALIDATION.md`.
