@@ -60,6 +60,8 @@ simpleGet('/api/relations','Relaciones observadas de una entidad',[{name:'resour
 simpleGet('/api/politics','Gobierno y elecciones públicos por país',[{name:'country',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/today','Resumen determinista de lo observado por WINT en las últimas 24 horas (eventos por tema, altas de jugadores activos y artículos)',[]);
 simpleGet('/api/activity','Actividad semanal observable: altas en el censo de WINT y última conexión observada, global o por país',[{name:'country',in:'query',required:false,schema:{type:'string',maxLength:100}}]);
+simpleGet('/api/game-config','Reglas oficiales de WarEra proyectadas (habilidades, objetos, recetas, batalla, elecciones); en vivo con caché de 6 h o copia fechada',[]);
+simpleGet('/api/elections/live','Sin país: elecciones cerradas o abiertas en 48 h. Con país: recuento en vivo de WarEra, nombres y proyección',[{name:'country',in:'query',required:false,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/strategy','Informe descriptivo de datos públicos capturados para un país',[{name:'country',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/military','Unidad militar, miembros observados y batallas',[{name:'unit',in:'query',required:true,schema:{type:'string',maxLength:100}}]);
 simpleGet('/api/alerts/feed','Alertas deterministas sobre cambios capturados',[

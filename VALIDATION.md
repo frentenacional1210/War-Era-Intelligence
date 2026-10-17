@@ -1,6 +1,19 @@
 # Validación de entrega
 
-## Interfaz, análisis y operación del 17 y 18 de octubre de 2026
+## Herramientas e interfaz por tareas del 18 de octubre de 2026
+
+Petición del usuario: la interfaz debe ser intuitiva y convertir los datos en herramientas. Hallazgos que lo hicieron posible:
+- **Reglas oficiales.** El contrato público de WarEra (`api2.warera.io/docs`) incluye `gameConfig.getGameConfig`: tablas de habilidades, rangos de armas y equipo, munición, comida, recetas, bonificaciones de batalla y reglas electorales.
+- **Votos reales.** `election.getElections` publica los votos por candidato en el mapa `votes`, mientras `candidates[].voteCount` vale 0. WINT descartaba ese mapa y por eso sus 852 candidatos tenían 0 votos. Corregido: `voteSource: 'votes-map'`.
+
+Publicado (Worker `cc7f178d-e4d3-4304-830a-1202035e9a44`):
+- **Interfaz.** Portada nueva («¿Qué quieres saber hoy?», buscador, herramientas con dato en vivo, resumen del día y accesos para explorar). Navegación agrupada en Inicio / Herramientas / Explorar / Tu espacio / Datos y sistema (plegado), en lugar de 23 entradas sueltas. El panel anterior queda en `/panel`.
+- **¿Qué producir?** Recetas oficiales con precios observados: ranking por beneficio, valor por punto, opción de producir también las materias primas y salario por punto. Con los precios del 17 Oct, el producto más rentable era el pescado cocinado (0,1266 por punto).
+- **Calculadora de combate.** Parámetros oficiales y un modelo de combinación documentado como aproximación: daño por golpe y por barra, coste por 1.000 de daño, desglose y comparación con una configuración de referencia.
+- **Predicción electoral.** Recuento en vivo con nombres (los no capturados se piden a `user.getUserLite`, sin guardarlos), 2.000 simulaciones con semilla y nivel de fiabilidad. El estado «abierta» se calcula con la fecha oficial de cierre, no con un indicador guardado que puede estar desfasado.
+
+Pruebas: 213 unitarias, entre ellas los motores de producción, combate, proyección y el mapa de votos. E2E completa con 2 procesos: 77 correctas; las 4 restantes (portada antigua y contraste de un chip) se corrigieron y la nueva ejecución dio 34/34 en `app.spec` y accesibilidad (14 páginas × 2).
+
 
 Publicado entre los Workers `d4e93da3…` y el final de la sesión. Cada punto se verificó en producción con Edge, salvo que se indique otra cosa.
 

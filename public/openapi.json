@@ -3505,6 +3505,78 @@
         }
       }
     },
+    "/api/game-config": {
+      "get": {
+        "summary": "Reglas oficiales de WarEra proyectadas (habilidades, objetos, recetas, batalla, elecciones); en vivo con caché de 6 h o copia fechada",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
+    "/api/elections/live": {
+      "get": {
+        "summary": "Sin país: elecciones cerradas o abiertas en 48 h. Con país: recuento en vivo de WarEra, nombres y proyección",
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Respuesta correcta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros inválidos"
+          },
+          "404": {
+            "description": "Registro no recopilado"
+          },
+          "429": {
+            "description": "Límite de peticiones alcanzado"
+          },
+          "503": {
+            "description": "D1 o configuración no disponible"
+          }
+        }
+      }
+    },
     "/api/strategy": {
       "get": {
         "summary": "Informe descriptivo de datos públicos capturados para un país",

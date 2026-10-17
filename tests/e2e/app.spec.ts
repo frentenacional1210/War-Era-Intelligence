@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 test('dashboard, real directories and read only API',async({page,request})=>{
-  await page.goto('/');await expect(page.getByRole('heading',{name:'Centro de mando',exact:true})).toBeVisible();
+  await page.goto('/');await expect(page.getByRole('heading',{name:'¿Qué quieres saber hoy?',exact:true})).toBeVisible();
+  await page.goto('/panel');await expect(page.getByRole('heading',{name:'Centro de mando',exact:true})).toBeVisible();
   const countries=await request.get('/api/countries?limit=1');expect(countries.ok()).toBeTruthy();
   const data=await countries.json();expect(Array.isArray(data.items)).toBeTruthy();
   await page.goto('/jugadores');await expect(page.getByRole('heading',{name:'Jugadores',exact:true,level:1})).toBeVisible();

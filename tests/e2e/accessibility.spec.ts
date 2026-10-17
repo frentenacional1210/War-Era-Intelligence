@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 // Main public pages. Serious and critical WCAG 2.1 A/AA violations fail the run;
 // moderate findings are attached to the report for follow-up.
-const PAGES = ['/', '/hoy', '/paises', '/jugadores', '/alertas', '/historicos', '/cobertura', '/mercados', '/ia', '/seguimiento', '/estado'];
+const PAGES = ['/', '/hoy', '/herramientas/produccion', '/herramientas/combate', '/herramientas/elecciones', '/paises', '/jugadores', '/alertas', '/historicos', '/cobertura', '/mercados', '/ia', '/seguimiento', '/estado'];
 
 for (const path of PAGES) {
   test(`accesibilidad sin infracciones graves en ${path}`, async ({ page }, testInfo) => {

@@ -47,6 +47,8 @@ Las rutas administrativas no usan caché. Todas las mutaciones necesitan `X-WINT
 | --- | --- |
 | `POST /api/admin/login` | `{password}`; cinco intentos por IP cada 15 min |
 | `POST /api/admin/logout` | revoca sesión |
+| `GET /api/game-config` | reglas oficiales del juego (habilidades por nivel, armas, equipo, munición, comida, recetas de producción, bonificaciones de batalla, reglas electorales); en vivo desde `gameConfig.getGameConfig` con caché de 6 h y copia fechada de respaldo |
+| `GET /api/elections/live?country=ID` | recuento en vivo de WarEra (mapa oficial `votes`), nombres de candidatos y proyección por simulación; sin `country`, elecciones de las últimas 48 h; caché de 2 min, sin escrituras en D1 |
 | `GET /api/today` | resumen de las últimas 24 horas observadas: eventos por tema con enlace a la entidad, altas de jugadores activos y artículos publicados; solo D1 |
 | `GET /api/activity?country=ID` | ocho semanas UTC de altas en el censo de WINT y última conexión observada, global o por país; las bajas no son observables |
 | `GET /api/admin/status` | estado, cuota estimada, últimas 50 ejecuciones y `writeUsage` (escrituras del día UTC por fuente y modo), solo autenticado |

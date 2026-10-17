@@ -20,7 +20,12 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Copia comprobada con `npm run backup` (exporta, restaura en SQLite y verifica) y procedimiento semanal documentado.
 - [x] Actividad semanal observada (`/api/activity`) global en cobertura y por país en su ficha; tablas desplazables accesibles con teclado.
 
+- [x] Interfaz por tareas, portada nueva y herramientas: ¿qué producir?, combate y predicción electoral con reglas oficiales y votos reales.
+
 ## Pendiente
+- [ ] Proyección de batallas con `battle.getLiveBattleData`, `round.getById` y los puntos de ronda oficiales (`pointsToWinRound`, `tickPoints`); falta estudiar cómo se asignan los puntos por tramo.
+- [ ] Calculadora de empresas y mejoras (`upgradesConfig`, `workOffer.*` para salarios reales) y planificador de habilidades por nivel de jugador.
+- [ ] Validar el modelo de combate con daños reales observados (`battleRanking`, `round.getLastHits`) y ajustar la combinación.
 - [ ] Verificar en producción tras la reanudación del 18 Oct (00:00 UTC): commits de 24 jugadores, hora de agotamiento del presupuesto, escrituras por registro y capturas evitadas, comparándolos con `artifacts/validation/write-budget-2026-10-17.json`.
 - [ ] Traducir las explicaciones de eventos (`data_json.explanation`), que siguen en inglés en la vista detallada de alertas.
 - [ ] Mejorar la interpretación de la IA, que es genérica con el modelo gratuito de 3B; valorar otro modelo de Workers AI dentro del presupuesto gratuito.

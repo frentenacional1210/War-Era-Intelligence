@@ -1,4 +1,4 @@
-import { Activity, Bell, Bot, CalendarDays, ChartNoAxesCombined, ChevronDown, Clock3, Star, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
+import { Activity, Bell, Bot, CalendarDays, ChartNoAxesCombined, ChevronDown, Clock3, LayoutDashboard, Scale, Star, Swords, Vote, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { getStatus } from './api';
@@ -25,41 +25,64 @@ const MilitaryPage = lazy(() => import('./intelligence').then(module => ({ defau
 const IndustrialPage = lazy(() => import('./industrial').then(module => ({ default: module.IndustrialPage })));
 const IntelligenceAIPage = lazy(() => import('./ai').then(module => ({ default: module.IntelligenceAIPage })));
 const AlertFeedPage = lazy(() => import('./alerts').then(module => ({ default: module.AlertFeedPage })));
+const HomePage = lazy(() => import('./home').then(module => ({ default: module.HomePage })));
+const ToolsHub = lazy(() => import('./tools').then(module => ({ default: module.ToolsHub })));
+const ProductionTool = lazy(() => import('./tools').then(module => ({ default: module.ProductionTool })));
+const CombatTool = lazy(() => import('./tools').then(module => ({ default: module.CombatTool })));
+const ElectionTool = lazy(() => import('./tools').then(module => ({ default: module.ElectionTool })));
 const TodayPage = lazy(() => import('./today').then(module => ({ default: module.TodayPage })));
 const FollowPage = lazy(() => import('./follow').then(module => ({ default: module.FollowPage })));
 const StrategyPage = lazy(() => import('./strategy').then(module => ({ default: module.StrategyPage })));
 const OrderbookPage = lazy(() => import('./orderbook').then(module => ({ default: module.OrderbookPage })));
 const PressPage = lazy(() => import('./press').then(module => ({ default: module.PressPage })));
 
-const navigation = [
-  { path: '/', label: 'Centro de mando', icon: House },
-  { path: '/hoy', label: 'Hoy en WarEra', icon: CalendarDays },
-  { path: '/mundo', label: 'Mundo', icon: Map },
-  { path: '/paises', label: 'Países', icon: Globe2 },
-  { path: '/jugadores', label: 'Jugadores', icon: UsersRound },
-  { path: '/partidos', label: 'Partidos y elecciones', icon: Landmark },
-  { path: '/politica', label: 'Gobiernos y elecciones', icon: Landmark },
-  { path: '/unidades', label: 'Unidades militares', icon: Shield },
-  { path: '/militar', label: 'Análisis militar', icon: Shield },
-  { path: '/batallas', label: 'Batallas', icon: Crosshair },
-  { path: '/mercados', label: 'Economía y mercados', icon: ChartNoAxesCombined },
-  { path: '/industria', label: 'Empresas e industria', icon: Factory },
-  { path: '/articulos', label: 'Prensa y artículos', icon: Newspaper },
-  { path: '/prensa', label: 'Hemeroteca y temas', icon: Newspaper },
-  { path: '/analisis', label: 'Comparadores e históricos', icon: Activity },
-  { path: '/historicos', label: 'Históricos', icon: ChartNoAxesCombined },
-  { path: '/estrategia', label: 'Informe por país', icon: Activity },
-  { path: '/cobertura', label: 'Cobertura del censo', icon: DatabaseZap },
-  { path: '/buscar', label: 'Búsqueda global', icon: Search },
-  { path: '/ia', label: 'Informes de IA', icon: Bot },
-  { path: '/alertas', label: 'Alertas', icon: Bell },
-  { path: '/seguimiento', label: 'Seguimiento', icon: Star },
-  { path: '/admin', label: 'Administración', icon: LockKeyhole },
+type NavItem = { path: string; label: string; icon: typeof House };
+// Grouped by what the visitor wants to do, not by database table.
+const navGroups: { id: string; label: string; collapsible?: boolean; items: NavItem[] }[] = [
+  { id: 'start', label: 'Inicio', items: [
+    { path: '/', label: 'Inicio', icon: House },
+    { path: '/hoy', label: 'Hoy en WarEra', icon: CalendarDays },
+    { path: '/buscar', label: 'Buscar', icon: Search },
+  ] },
+  { id: 'tools', label: 'Herramientas', items: [
+    { path: '/herramientas/produccion', label: '¿Qué producir?', icon: Factory },
+    { path: '/herramientas/combate', label: 'Calculadora de combate', icon: Swords },
+    { path: '/herramientas/elecciones', label: 'Predicción electoral', icon: Vote },
+    { path: '/estrategia', label: 'Comparar países', icon: Scale },
+    { path: '/ia', label: 'Preguntar a la IA', icon: Bot },
+  ] },
+  { id: 'explore', label: 'Explorar', items: [
+    { path: '/paises', label: 'Países', icon: Globe2 },
+    { path: '/jugadores', label: 'Jugadores', icon: UsersRound },
+    { path: '/politica', label: 'Política y elecciones', icon: Landmark },
+    { path: '/unidades', label: 'Unidades militares', icon: Shield },
+    { path: '/batallas', label: 'Batallas', icon: Crosshair },
+    { path: '/mercados', label: 'Mercados', icon: ChartNoAxesCombined },
+    { path: '/industria', label: 'Empresas', icon: Factory },
+    { path: '/prensa', label: 'Prensa', icon: Newspaper },
+    { path: '/mundo', label: 'Mapa', icon: Map },
+    { path: '/historicos', label: 'Históricos', icon: Activity },
+  ] },
+  { id: 'mine', label: 'Tu espacio', items: [
+    { path: '/seguimiento', label: 'Seguimiento', icon: Star },
+    { path: '/alertas', label: 'Alertas', icon: Bell },
+  ] },
+  { id: 'system', label: 'Datos y sistema', collapsible: true, items: [
+    { path: '/panel', label: 'Panel de datos', icon: LayoutDashboard },
+    { path: '/cobertura', label: 'Cobertura del censo', icon: DatabaseZap },
+    { path: '/partidos', label: 'Directorio de partidos', icon: Landmark },
+    { path: '/militar', label: 'Análisis militar', icon: Shield },
+    { path: '/analisis', label: 'Comparador de registros', icon: Activity },
+    { path: '/articulos', label: 'Artículos', icon: Newspaper },
+    { path: '/admin', label: 'Administración', icon: LockKeyhole },
+  ] },
 ];
+const navigation = navGroups.flatMap(group => group.items);
 
 function Shell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [systemOpen, setSystemOpen] = useState(false);
   const location = useLocation();
   const status = useRemote(getStatus, 'global-status', 90_000);
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
@@ -73,10 +96,17 @@ function Shell({ children }: { children: React.ReactNode }) {
     {mobileOpen && <button className="mobile-scrim" onClick={() => setMobileOpen(false)} aria-label="Cerrar navegación" />}
     <aside className={`sidebar ${mobileOpen ? 'mobile-open' : ''}`}>
       <div className="brand"><Link to="/" className="brand-link"><span className="brand-symbol"><Activity size={24} strokeWidth={2.4} /></span><span className="brand-word"><strong>WINT<span>.</span></strong><small>WARERA INTELLIGENCE</small></span></Link><button className="collapse-btn" onClick={() => setCollapsed(!collapsed)} aria-label="Contraer navegación"><PanelLeftClose size={17} /></button><button className="mobile-close" onClick={() => setMobileOpen(false)} aria-label="Cerrar menú"><X size={19} /></button></div>
-      <div className="sidebar-body"><div className="nav-caption">PLATAFORMA <ChevronDown size={12} /></div><nav aria-label="Navegación principal">{navigation.map(item => <NavLink key={item.path} to={item.path} end={item.path === '/'} title={item.label} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><item.icon size={18} strokeWidth={1.8} /><span>{item.label}</span></NavLink>)}</nav></div>
+      <div className="sidebar-body"><nav aria-label="Navegación principal">{navGroups.map(group => {
+        const open = !group.collapsible || systemOpen || group.items.some(item => location.pathname === item.path || location.pathname.startsWith(item.path + '/'));
+        return <div key={group.id} className="nav-group">
+          {group.collapsible ? <button className="nav-caption nav-toggle" aria-expanded={open} onClick={() => setSystemOpen(!systemOpen)}>{group.label.toUpperCase()} <ChevronDown size={12} className={open ? 'rotate' : ''} /></button>
+            : <div className="nav-caption">{group.label.toUpperCase()}</div>}
+          {open && group.items.map(item => <NavLink key={item.path} to={item.path} end={item.path === '/'} title={item.label} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}><item.icon size={18} strokeWidth={1.8} /><span>{item.label}</span></NavLink>)}
+        </div>;
+      })}</nav></div>
       <Link to="/estado" className="sidebar-status"><DatabaseZap size={17} /><span><strong>Estado de datos</strong><small>{label}</small></span><span className={`status-led ${tone}`} /></Link>
     </aside>
-    <div className="main-column"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Abrir menú"><Menu size={21} /></button><span className="topbar-breadcrumb">WINT <span>/</span> {navigation.find(x => location.pathname === x.path || (x.path !== '/' && location.pathname.startsWith(x.path + '/')))?.label ?? (location.pathname === '/estado' ? 'Estado de datos' : 'Explorador')}</span></div><div className="topbar-right"><Link to="/buscar" className="topbar-search"><Search size={15} /> Explorar registros</Link><Link to="/estado" className="topbar-status"><Badge tone={tone}>{label}</Badge></Link><span className="topbar-time" title={status.data?.timestamp}>{status.data ? age(status.data.timestamp) : '—'}</span></div></header><main className="content">{freshness && <div className="notice warn" role="status"><Clock3 size={16} aria-hidden="true" /><span><strong>{freshness.title}.</strong> {freshness.detail} <Link to="/estado" className="text-link">Ver estado de las fuentes</Link></span></div>}{children}</main><footer className="footer"><span>WINT · Plataforma independiente de análisis de WarEra</span><a className="source-link" href="https://github.com/frentenacional1210/War-Era-Intelligence" target="_blank" rel="noopener noreferrer">Código fuente · AGPL-3.0</a><span>Los datos proceden de fuentes públicas indicadas en cada registro.</span></footer></div>
+    <div className="main-column"><header className="topbar"><div className="topbar-left"><button className="mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Abrir menú"><Menu size={21} /></button><span className="topbar-breadcrumb">WINT <span>/</span> {navigation.find(x => location.pathname === x.path || (x.path !== '/' && location.pathname.startsWith(x.path + '/')))?.label ?? (location.pathname === '/estado' ? 'Estado de datos' : location.pathname === '/herramientas' ? 'Herramientas' : 'Explorador')}</span></div><div className="topbar-right"><Link to="/buscar" className="topbar-search"><Search size={15} /> Explorar registros</Link><Link to="/estado" className="topbar-status"><Badge tone={tone}>{label}</Badge></Link><span className="topbar-time" title={status.data?.timestamp}>{status.data ? age(status.data.timestamp) : '—'}</span></div></header><main className="content">{freshness && <div className="notice warn" role="status"><Clock3 size={16} aria-hidden="true" /><span><strong>{freshness.title}.</strong> {freshness.detail} <Link to="/estado" className="text-link">Ver estado de las fuentes</Link></span></div>}{children}</main><footer className="footer"><span>WINT · Plataforma independiente de análisis de WarEra</span><a className="source-link" href="https://github.com/frentenacional1210/War-Era-Intelligence" target="_blank" rel="noopener noreferrer">Código fuente · AGPL-3.0</a><span>Los datos proceden de fuentes públicas indicadas en cada registro.</span></footer></div>
   </div>;
 }
 
@@ -85,7 +115,9 @@ function DetailRoute({ resource }: { resource: ResourceKey }) { return <DetailPa
 
 export default function App() {
   return <Shell><Suspense fallback={<Loading label="Abriendo vista…" />}><Routes>
-    <Route path="/" element={<Dashboard />} />
+    <Route path="/" element={<HomePage />} /><Route path="/panel" element={<Dashboard />} />
+    <Route path="/herramientas" element={<ToolsHub />} /><Route path="/herramientas/produccion" element={<ProductionTool />} />
+    <Route path="/herramientas/combate" element={<CombatTool />} /><Route path="/herramientas/elecciones" element={<ElectionTool />} />
     <Route path="/mundo" element={<WorldExplorerPage />} />
     <Route path="/politica" element={<PoliticalPage />} /><Route path="/militar" element={<MilitaryPage />} />
     <Route path="/paises" element={<ResourceRoute resource="countries" />} /><Route path="/paises/:id" element={<DetailRoute resource="countries" />} />

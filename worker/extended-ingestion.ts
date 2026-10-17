@@ -104,9 +104,14 @@ export function normalizeExtendedEntity(source: ExtendedSource, input: unknown, 
   }
   if (source === 'elections') {
     const country = requiredId(raw.country, 'election country');
+    // WarEra publishes per-candidate tallies in a separate `votes` map (candidate user ID -> votes);
+    // `candidates[].voteCount` is observed as 0. Prefer the map, keep the field only as fallback.
+    const tally = asObject(raw.votes);
+    const hasTally = Object.keys(tally).length > 0;
     const candidates = Array.isArray(raw.candidates) ? raw.candidates.slice(0, 200).map(candidate => {
-      const row = asObject(candidate);
-      return { user: safeId(row.user), party: safeId(row.party), voteCount: smallNumber(row.voteCount), isElected: row.isElected === true };
+      const row = asObject(candidate), user = safeId(row.user);
+      const mapped = user && hasTally ? smallNumber(tally[user] ?? 0) : null;
+      return { user, party: safeId(row.party), voteCount: mapped ?? smallNumber(row.voteCount), isElected: row.isElected === true };
     }) : [];
     const electedCandidates = Array.isArray(raw.electedCandidates) ? idsOf(raw.electedCandidates.slice(0, 200), 'elected candidate') : [];
     const electionType = safeText(raw.type, 40) || null, status = safeText(raw.status, 60) || null;
@@ -114,7 +119,8 @@ export function normalizeExtendedEntity(source: ExtendedSource, input: unknown, 
       votesStartAt: dateString(raw.votesStartAt), votesEndAt: dateString(raw.votesEndAt), votesCount: smallNumber(raw.votesCount),
       electedCount: smallNumber(raw.electedCount), electedCandidates, candidates,
       candidatesTruncated: Array.isArray(raw.candidates) && raw.candidates.length > 200,
-      electedCandidatesTruncated: Array.isArray(raw.electedCandidates) && raw.electedCandidates.length > 200 };
+      electedCandidatesTruncated: Array.isArray(raw.electedCandidates) && raw.electedCandidates.length > 200,
+      voteSource: hasTally ? 'votes-map' : 'candidate-field' };
     return { ...base, name: `Election ${electionType ?? 'unknown'}`, country_id: country,
       source_url: client.url('election.getElections', { countryId: country, limit: 3 }), data_json: JSON.stringify(data),
       extra: { election_type: electionType, status, votes_count: smallNumber(raw.votesCount), is_active: booleanNumber(raw.isActive),

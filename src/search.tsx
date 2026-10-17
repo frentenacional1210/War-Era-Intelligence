@@ -25,8 +25,10 @@ const limited = (value: string) => Array.from(value).reduce((result, character) 
 }, '');
 
 export function GlobalSearchPage() {
-  const [input, setInput] = useState('');
-  const [query, setQuery] = useState('');
+  // A search started elsewhere (e.g. the home page) arrives as ?q=.
+  const initial = (new URLSearchParams(window.location.search).get('q') ?? '').slice(0, 40);
+  const [input, setInput] = useState(initial);
+  const [query, setQuery] = useState(initial);
   useEffect(() => { const timer = window.setTimeout(() => setQuery(input.trim()), 300); return () => window.clearTimeout(timer); }, [input]);
   const ready = query.length >= 2;
   const result = useRemote(() => ready ? request<SearchResponse>(`/api/search?${new URLSearchParams({ q: query, limit: '30' })}`).then(data => ({ ...data, query })) : Promise.resolve({ items: [], timestamp: '', query: '' }), `global-search:${ready ? query : ''}`, 0);
