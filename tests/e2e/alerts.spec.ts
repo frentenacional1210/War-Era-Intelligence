@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { localizedTitle } from '../../src/utils';
 
 type Feed = { items: { id: string; title: string; sourceUrl: string }[]; limit: number };
 
@@ -10,7 +11,7 @@ test('alert feed displays only returned observations and keeps local filter pref
   await expect(page.getByRole('heading', { name: 'Alertas observadas' })).toBeVisible();
   await expect(page.locator('.alerts-feed>li')).toHaveCount(feed.items.length);
   if (feed.items.length) {
-    await expect(page.locator('.alerts-feed>li').first()).toContainText(feed.items[0].title);
+    await expect(page.locator('.alerts-feed>li').first()).toContainText(localizedTitle(feed.items[0].title));
     await page.locator('.alerts-feed>li').first().getByText('Ver datos observados y criterio').click();
     await expect(page.locator('.alerts-feed>li').first().getByText('Antes', { exact: true })).toBeVisible();
   } else {

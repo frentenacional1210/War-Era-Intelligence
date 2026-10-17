@@ -1,5 +1,8 @@
 {
-  "name": "warera-intelligence", "version": "0.1.0", "private": true, "type": "module",
+  "name": "warera-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "dev:worker": "wrangler dev --port 8787 --test-scheduled",
@@ -17,15 +20,30 @@
     "docs:api": "node scripts/openapi.mjs"
   },
   "dependencies": {
-    "react": "^19.2.0", "react-dom": "^19.2.0", "react-router-dom": "^7.9.0",
-    "lucide-react": "^0.468.0", "recharts": "^3.2.0", "zod": "^4.1.0",
-    "papaparse": "^5.5.3", "fflate": "^0.8.2"
+    "fflate": "^0.8.2",
+    "lucide-react": "^0.468.0",
+    "papaparse": "^5.5.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.0",
+    "recharts": "^3.2.0",
+    "zod": "^4.1.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261011.1", "wrangler": "^4.149.0",
-    "typescript": "^5.9.0", "vite": "^7.1.0", "@vitejs/plugin-react": "^5.0.0",
-    "@types/react": "^19.2.0", "@types/react-dom": "^19.2.0", "@types/node": "^24.0.0",
-    "@types/papaparse": "^5.3.16", "vitest": "^3.2.0", "tsx": "^4.20.0",
-    "@playwright/test": "^1.56.0", "tailwindcss": "^4.1.0", "@tailwindcss/vite": "^4.1.0"
+    "@axe-core/playwright": "4.10.2",
+    "@cloudflare/workers-types": "^5.20261011.1",
+    "@playwright/test": "^1.56.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^24.0.0",
+    "@types/papaparse": "^5.3.16",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.1.0",
+    "vitest": "^3.2.0",
+    "wrangler": "^4.149.0"
   }
 }

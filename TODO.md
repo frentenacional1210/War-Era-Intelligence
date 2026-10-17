@@ -13,14 +13,14 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Títulos de acontecimientos y alertas en español en toda la interfaz.
 - [x] Ficha de país conectada con diez bloques enlazados e informe estratégico.
 - [x] Seguimiento local de hasta 20 registros con cambios campo a campo desde la última visita.
+- [x] Carga diferida de gráficos: la portada pasa de unos 712 KB a unos 365 KB de JavaScript.
+- [x] Auditoría axe WCAG 2.1 A/AA en 11 páginas (escritorio y móvil) sin infracciones graves; contraste corregido.
+- [x] Resumen diario «Hoy en WarEra» (`/hoy` y `/api/today`).
 
 ## Pendiente
 ### Experiencia de usuario
-- [ ] Carga diferida de la librería de gráficos.
-- [ ] Revisión de accesibilidad automatizada en las páginas principales.
 
 ### Análisis
-- [ ] Resumen diario «Hoy en WarEra».
 - [ ] Tendencias semanales de actividad observada por país.
 
 ### Operación
