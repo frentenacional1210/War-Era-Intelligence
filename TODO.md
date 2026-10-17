@@ -16,6 +16,7 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Carga diferida de gráficos: la portada pasa de unos 712 KB a unos 365 KB de JavaScript.
 - [x] Auditoría axe WCAG 2.1 A/AA en 11 páginas (escritorio y móvil) sin infracciones graves; contraste corregido.
 - [x] Resumen diario «Hoy en WarEra» (`/hoy` y `/api/today`).
+- [x] Alerta operativa en administración (recolector sin commits, tasa de errores), sin culpar las pausas de cuota.
 
 ## Pendiente
 ### Experiencia de usuario
@@ -24,5 +25,4 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [ ] Tendencias semanales de actividad observada por país.
 
 ### Operación
-- [ ] Alerta en administración si el recolector de GitHub deja de confirmar páginas o aumentan los errores.
 - [ ] Procedimiento de copia periódica documentado y comprobado.

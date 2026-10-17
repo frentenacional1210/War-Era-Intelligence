@@ -12,6 +12,7 @@ import { strategyRoute } from './strategy';
 import { orderbookRoute } from './orderbook';
 import { pressRoute } from './press';
 import { todayRoute } from './today';
+import { operationsHealth } from '../shared/operations';
 import { dataRoute, dataCors } from './data';
 import { AI_MODEL } from '../shared/ai';
 import { INGESTION_DAILY_BUDGET, INGESTION_DAILY_READ_BUDGET } from '../shared/ingestion-config';
@@ -126,7 +127,13 @@ async function admin(request:Request,env:Env,path:string) {
       ROUND(1.0*SUM(rows_written)/NULLIF(SUM(CASE WHEN rows_written IS NOT NULL THEN records_count END),0),1) writes_per_record
       FROM ingestion_runs WHERE started_at>=? GROUP BY source_id,mode ORDER BY measured_writes DESC`)
       .bind(new Date().toISOString().slice(0,10)).all();
-    return json({...await status(env),runs:runs.results,writeUsage:{day:new Date().toISOString().slice(0,10),bySource:writeUsage.results}},200,privateHeaders);
+    const hourAgo=new Date(Date.now()-3_600_000).toISOString();
+    const ops=await env.DB.prepare(`SELECT (SELECT MAX(started_at) FROM ingestion_runs WHERE collector_mode='compact' AND status='ok') last_commit,
+      (SELECT COUNT(*) FROM ingestion_runs WHERE started_at>=? AND status='error') errors,(SELECT COUNT(*) FROM ingestion_runs WHERE started_at>=?) runs,
+      (SELECT COUNT(*) FROM source_registry WHERE id IN ('players','articles') AND status='quota-paused') paused`).bind(hourAgo,hourAgo)
+      .first<{last_commit:string|null;errors:number;runs:number;paused:number}>();
+    const operations=operationsHealth({now:new Date(),lastCollectorCommitAt:ops?.last_commit ?? null,errorsLastHour:Number(ops?.errors ?? 0),runsLastHour:Number(ops?.runs ?? 0),collectorSourcesPaused:Number(ops?.paused ?? 0)===2});
+    return json({...await status(env),runs:runs.results,operations,writeUsage:{day:new Date().toISOString().slice(0,10),bySource:writeUsage.results}},200,privateHeaders);
   }
   if(path==='coverage' && request.method==='GET')return json(await coverageData(env),200,privateHeaders);
   if(path==='maintenance' && request.method==='POST')return json(await runHistoryMaintenance(env),200,privateHeaders);
