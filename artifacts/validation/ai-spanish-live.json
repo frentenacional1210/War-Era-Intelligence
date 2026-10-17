@@ -1,0 +1,121 @@
+{
+  "checkedAt": "2026-10-17T21:46:41.318Z",
+  "runs": [
+    {
+      "checkedAt": "2026-10-17T21:45:33.737Z",
+      "worker": "efaafb27-e7f5-4a97-bc8f-d8e87100a0f9",
+      "results": [
+        {
+          "question": "Compara España y Francia",
+          "http": 200,
+          "tool": "country-compare",
+          "facts": 2,
+          "facts_labels": [
+            "France",
+            "Spain"
+          ],
+          "notes": [
+            "Países reconocidos por nombre: Spain, France."
+          ],
+          "missing": [],
+          "interpretation": "La comparación de países puede proporcionar información útil sobre las diferencias y semejanzas entre naciones.",
+          "ai": {
+            "available": true,
+            "model": "@cf/meta/llama-3.2-3b-instruct"
+          }
+        },
+        {
+          "question": "¿Quién gobierna en Alemania?",
+          "http": 200,
+          "tool": "politics",
+          "facts": 4,
+          "facts_labels": [
+            "Government",
+            "Election congress",
+            "Election president"
+          ],
+          "notes": [
+            "Países reconocidos por nombre: Germany."
+          ],
+          "missing": [],
+          "interpretation": "La política es un campo complejo y multifacético que involucra el proceso de toma de decisiones y gestión de instituciones en un país.",
+          "ai": {
+            "available": true,
+            "model": "@cf/meta/llama-3.2-3b-instruct"
+          }
+        },
+        {
+          "question": "¿Qué tal el ejército de Polonia?",
+          "http": 200,
+          "tool": "strategy",
+          "facts": 1,
+          "facts_labels": [
+            "Poland"
+          ],
+          "notes": [
+            "Países reconocidos por nombre: Poland."
+          ],
+          "missing": [
+            "6813b6d446e731854c7ac7ae: No reliable global player denominator or active-player census.",
+            "6813b6d446e731854c7ac7ae: Company country attribution is used only when explicitly supplied."
+          ],
+          "interpretation": "La estrategia requiere más información para tomar decisiones informadas.",
+          "ai": {
+            "available": true,
+            "model": "@cf/meta/llama-3.2-3b-instruct"
+          }
+        },
+        {
+          "question": "noticias de España",
+          "http": 200,
+          "tool": "press",
+          "facts": 1,
+          "facts_labels": [
+            "Press sample coverage"
+          ],
+          "notes": [
+            "Países reconocidos por nombre: Spain."
+          ],
+          "missing": [
+            "No hay artículos capturados en esta muestra de prensa."
+          ],
+          "interpretation": "El instrumento de prensa utiliza datos incompletos para generar un informe.",
+          "ai": {
+            "available": true,
+            "model": "@cf/meta/llama-3.2-3b-instruct"
+          }
+        }
+      ]
+    },
+    {
+      "checkedAt": "2026-10-17T21:46:41.318Z",
+      "worker": "0a9a0208-8b46-47ae-8f9a-772d0ed36736",
+      "results": [
+        {
+          "question": "Compara España y Francia",
+          "http": 200,
+          "tool": "country-compare",
+          "facts": 2,
+          "facts_labels": [
+            "France",
+            "Spain"
+          ],
+          "notes": [
+            "Países reconocidos por nombre: Spain, France."
+          ],
+          "missing": [],
+          "interpretation": "La población de un país se encuentra en una relación de proporción con la de otro país.",
+          "ai": {
+            "available": true,
+            "model": "@cf/meta/llama-3.2-3b-instruct"
+          }
+        },
+        {
+          "question": "Spain vs Germany",
+          "http": 429,
+          "error": "Límite de consultas de IA por visitante alcanzado."
+        }
+      ]
+    }
+  ]
+}

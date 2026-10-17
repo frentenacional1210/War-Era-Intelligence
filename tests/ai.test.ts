@@ -42,7 +42,7 @@ describe('bounded public AI tools', () => {
       expect(parseAiPlan({tool:'census',ids:'unused',resource:'unused'})).toMatchObject({tool:'census'});
       expect(parseAiPlan({tool:'player-compare',ids:'malformed'})).toBeNull();
       const { env } = envWith(store.db, ['{"tool":"SELECT * FROM admin_sessions"}']);
-      const answer = await runAiQuery(env, { question: 'Public Player' }, NOW);
+      const answer = await runAiQuery(env, { question: 'Public' }, NOW);
       expect(answer.status).toBe(200);
       expect(answer.body).toMatchObject({ tool: 'entity-search', ai: { available: false, reason: 'invalid-plan' } });
       expect(JSON.stringify(answer.body)).not.toContain('never expose');
@@ -72,16 +72,18 @@ describe('bounded public AI tools', () => {
     const store = createTestDB();
     try {
       enable(store);
-      const { env, calls } = envWith(store.db, ['{"insight":"The public registry covers collected sources."}']);
+      const { env, calls } = envWith(store.db, ['{"insight":"El registro público solo cubre las fuentes capturadas."}']);
       const first = await runAiQuery(env, { question: 'censo' }, NOW);
       const second = await runAiQuery(env, { question: 'censo' }, NOW);
       expect(first.status).toBe(200);
       expect(second.body).toMatchObject({ cached: true });
       expect(calls()).toBe(1);
       expect(store.sqlite.prepare('SELECT request_count FROM ai_daily_budget WHERE day_key=?').get('2026-10-12')?.request_count).toBe(1);
-      const failed = await runAiQuery({ ...env, AI: { async run() { throw Error('provider offline'); } } }, { question: 'events now' }, NOW);
+      const failed = await runAiQuery({ ...env, AI: { async run() { throw Error('provider offline'); } } }, { question: 'cobertura de datos' }, NOW);
       expect(failed.status).toBe(200);
-      expect(failed.body).toMatchObject({ tool: 'events-24h', ai: { available: false, reason: 'provider-unavailable' } });
+      expect(failed.body).toMatchObject({ tool: 'census', ai: { available: false, reason: 'provider-unavailable' } });
+      const empty = await runAiQuery(env, { question: 'events now' }, NOW);
+      expect(empty.body).toMatchObject({ tool: 'events-24h', facts: [], ai: { available: false, reason: 'no-facts' } });
     } finally { store.sqlite.close(); }
   });
 
@@ -92,11 +94,11 @@ describe('bounded public AI tools', () => {
       let calls=0;
       const env={DB:store.db,ASSETS:{fetch:async()=>new Response()} as unknown as Fetcher,AI_ENABLED:'true',AI_DAILY_BUDGET:'100',AI:{async run(){
         calls++;
-        return {response:calls===1?{tool:'census'}:{insight:'The observed registry is incomplete.'}};
+        return {response:calls===1?{tool:'census'}:{insight:'El registro observado es incompleto.'}};
       }}} as AiEnv;
-      const result=await runAiQuery(env,{question:'Please explain the censo information'},NOW);
+      const result=await runAiQuery(env,{question:'¿Qué fuentes tiene WINT ahora mismo?'},NOW);
       expect(result.status).toBe(200);
-      expect(result.body).toMatchObject({tool:'census',interpretation:'The observed registry is incomplete.',ai:{available:true}});
+      expect(result.body).toMatchObject({tool:'census',interpretation:'El registro observado es incompleto.',ai:{available:true}});
       expect(calls).toBe(2);
       expect(store.sqlite.prepare('SELECT reserved_neurons FROM ai_daily_budget WHERE day_key=?').get('2026-10-12')?.reserved_neurons).toBe(120);
     } finally {store.sqlite.close();}

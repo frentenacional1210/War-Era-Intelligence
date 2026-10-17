@@ -1,6 +1,27 @@
 # Validación de entrega
 
-## Migración 0017 y recolector de 24 jugadores del 17 de octubre de 2026
+## IA en español y por nombres del 17 de octubre de 2026
+
+`worker/ai-resolve.ts` entiende sin coste de IA las preguntas en español o inglés:
+- **Palabras clave:** «compara», «elecciones», «gobierna», «presidencia», «estrategia», «ejército», «jugador», «unidad», «histórico», «prensa», «precios», «eventos» y «censo».
+- **Países por nombre:** se reconocen por el nombre guardado o por su nombre ISO en español o inglés (`Intl.DisplayNames`). Gana la coincidencia más larga y se respeta el orden de la pregunta.
+- **Jugadores, partidos y unidades:** se buscan por nombre exacto, sin distinguir mayúsculas. Un nombre compartido por varios registros se declara ambiguo y no se elige.
+- **Planes del modelo:** si el modelo pone nombres en lugar de IDs, se sustituyen por los IDs capturados.
+- **Ahorro de llamadas:** cuando el plan es determinista no se usa la llamada de planificación, lo que permite reintentar una vez la interpretación. Una interpretación en inglés se descarta (`non-spanish-interpretation`) y se conservan los hechos y las citas.
+- **Mensajes:** los de datos ausentes y supuestos pasan al español.
+- **Comparación de países:** añade población, desarrollo, partido gobernante y jugadores capturados por WINT.
+
+Pruebas: banco de 22 preguntas reales en `tests/ai-resolve.test.ts`, más ambigüedad, nombres solapados, idioma y tres flujos completos. Total 195/195 en 30 archivos.
+
+Producción (Workers `efaafb27…` y `0a9a0208…`, evidencia [ai-spanish-live.json](artifacts/validation/ai-spanish-live.json)):
+- «Compara España y Francia» → `country-compare` con 2 hechos.
+- «¿Quién gobierna en Alemania?» → `politics` con 4 hechos.
+- «¿Qué tal el ejército de Polonia?» → `strategy`.
+- «noticias de España» → `press`.
+- Todas las interpretaciones salieron en español.
+
+Límite honesto: el modelo gratuito de 3B produce interpretaciones genéricas; el valor está en los hechos citados. Una quinta consulta seguida recibió el 429 del límite por visitante, como estaba previsto.
+
 
 **Copia previa y migración 0017**
 - Copia privada `pre-0017-2026-10-17.sql`: 36.958.055 bytes, SHA-256 `67ccab1a…97ae8`.

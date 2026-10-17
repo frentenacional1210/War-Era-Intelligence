@@ -9,13 +9,9 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] Capturas históricas solo en cambios relevantes de jugadores y artículos (`80b7324`).
 - [x] Copia nueva restaurada en SQLite y migración 0017 aplicada.
 - [x] Recolector con 24 jugadores por commit y lotes de 8 hacia WarEra, sondeado en real.
+- [x] IA: resolución por nombre, respuesta en español con reintento y banco de 22 preguntas de regresión.
 
 ## Pendiente
-### IA
-- [ ] Resolución de entidades por nombre (países, jugadores, partidos, unidades).
-- [ ] Respuesta garantizada en español o, si no se consigue, solo hechos y citas.
-- [ ] Banco de preguntas reales en español como prueba de regresión.
-
 ### Experiencia de usuario
 - [ ] Títulos de acontecimientos y alertas en español.
 - [ ] Ficha de país conectada: jugadores, partidos, gobierno, elecciones, batallas, empresas y prensa.
