@@ -1,4 +1,4 @@
-import { Activity, Bell, Bot, ChartNoAxesCombined, ChevronDown, Clock3, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
+import { Activity, Bell, Bot, ChartNoAxesCombined, ChevronDown, Clock3, Star, Crosshair, DatabaseZap, Factory, Globe2, House, Landmark, LockKeyhole, Map, Menu, Newspaper, PanelLeftClose, Search, Shield, UsersRound, X } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { getStatus } from './api';
@@ -25,6 +25,7 @@ const MilitaryPage = lazy(() => import('./intelligence').then(module => ({ defau
 const IndustrialPage = lazy(() => import('./industrial').then(module => ({ default: module.IndustrialPage })));
 const IntelligenceAIPage = lazy(() => import('./ai').then(module => ({ default: module.IntelligenceAIPage })));
 const AlertFeedPage = lazy(() => import('./alerts').then(module => ({ default: module.AlertFeedPage })));
+const FollowPage = lazy(() => import('./follow').then(module => ({ default: module.FollowPage })));
 const StrategyPage = lazy(() => import('./strategy').then(module => ({ default: module.StrategyPage })));
 const OrderbookPage = lazy(() => import('./orderbook').then(module => ({ default: module.OrderbookPage })));
 const PressPage = lazy(() => import('./press').then(module => ({ default: module.PressPage })));
@@ -50,6 +51,7 @@ const navigation = [
   { path: '/buscar', label: 'Búsqueda global', icon: Search },
   { path: '/ia', label: 'Informes de IA', icon: Bot },
   { path: '/alertas', label: 'Alertas', icon: Bell },
+  { path: '/seguimiento', label: 'Seguimiento', icon: Star },
   { path: '/admin', label: 'Administración', icon: LockKeyhole },
 ];
 
@@ -102,7 +104,7 @@ export default function App() {
     <Route path="/articulos" element={<ResourceRoute resource="articles" />} /><Route path="/articulos/:id" element={<DetailRoute resource="articles" />} />
     <Route path="/prensa" element={<PressPage />} />
     <Route path="/ia" element={<IntelligenceAIPage />} />
-    <Route path="/alertas" element={<AlertFeedPage />} /><Route path="/alertas/:id" element={<DetailRoute resource="alerts" />} />
+    <Route path="/alertas" element={<AlertFeedPage />} /><Route path="/seguimiento" element={<FollowPage />} /><Route path="/alertas/:id" element={<DetailRoute resource="alerts" />} />
     <Route path="/estado" element={<StatusPage />} /><Route path="/admin" element={<AdminPage />} />
     <Route path="/dashboard" element={<Navigate to="/" replace />} /><Route path="*" element={<NotFound />} />
   </Routes></Suspense></Shell>;

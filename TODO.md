@@ -12,10 +12,10 @@ Creada el 17 de octubre de 2026 a partir de la propuesta priorizada. Se marca un
 - [x] IA: resolución por nombre, respuesta en español con reintento y banco de 22 preguntas de regresión.
 - [x] Títulos de acontecimientos y alertas en español en toda la interfaz.
 - [x] Ficha de país conectada con diez bloques enlazados e informe estratégico.
+- [x] Seguimiento local de hasta 20 registros con cambios campo a campo desde la última visita.
 
 ## Pendiente
 ### Experiencia de usuario
-- [ ] Panel de seguimiento de favoritos con sus cambios desde la última visita.
 - [ ] Carga diferida de la librería de gráficos.
 - [ ] Revisión de accesibilidad automatizada en las páginas principales.
 
